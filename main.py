@@ -42,7 +42,11 @@ def parse_args():
         choices=["Cypherbench", "Mind_the_query", "Neo4j_Text2Cypher"],
         help="Benchmark name",
     )
-    parser.add_argument("--db", required=True, help="Database name of each benchmark")
+    parser.add_argument(
+        "--db",
+        default=None,
+        help='Database name of each benchmark. If omitted or set to "full", use all data.',
+    )
     parser.add_argument(
         "--model", default="Qwen/Qwen3-0.6B", help="Model name or path"
     )
@@ -64,14 +68,36 @@ def parse_args():
     return parser.parse_args()
 
 
-def load_schema_and_subset_test_data(benchmark, db, limit=None):
+def is_full_db(db: Optional[str]) -> bool:
+    return db is None or str(db).strip().lower() in {"full", "all", ""}
+
+
+def load_schema_for_graph(benchmark: str, graph_name: str) -> Optional[str]:
+    if benchmark == "Cypherbench":
+        schema_path = Path("benchmarks") / benchmark / "graphs" / f"{graph_name}_schema.json"
+    elif benchmark == "Mind_the_query":
+        schema_path = Path("benchmarks") / benchmark / "graphs" / f"{graph_name}.json"
+    else:
+        return None
+
+    if not schema_path.exists():
+        logger.warning(f"Schema file not found for graph={graph_name}: {schema_path}")
+        return None
+
+    schema = read_json_file(schema_path)
+    return json.dumps(schema, indent=4, ensure_ascii=False)
+
+
+def load_schema_and_subset_test_data(benchmark, db=None, limit=None):
     raw_test_data = read_json_file(Path("benchmarks") / benchmark / "test.json")
 
+    use_all = is_full_db(db)
     subset_test_data = []
+
     for item in raw_test_data:
         try:
             sample = Nl2CypherSample(**item)
-            if sample.graph == db:
+            if use_all or sample.graph == db:
                 subset_test_data.append(sample)
         except Exception as e:
             logger.warning(f"Skipping invalid item: {e}")
@@ -79,37 +105,40 @@ def load_schema_and_subset_test_data(benchmark, db, limit=None):
     if limit is not None:
         subset_test_data = subset_test_data[:limit]
 
-    if benchmark == "Cypherbench":
-        schema = read_json_file(
-            Path("benchmarks") / benchmark / "graphs" / f"{db}_schema.json"
-        )
-        schema_str = json.dumps(schema, indent=4, ensure_ascii=False)
+    shared_schema_str = None
+    schema_map = {}
 
-    elif benchmark == "Mind_the_query":
-        schema = read_json_file(
-            Path("benchmarks") / benchmark / "graphs" / f"{db}.json"
-        )
-        schema_str = json.dumps(schema, indent=4, ensure_ascii=False)
+    if benchmark in ["Cypherbench", "Mind_the_query"]:
+        if use_all:
+            unique_graphs = sorted(
+                {sample.graph for sample in subset_test_data if sample.graph}
+            )
+            for graph_name in unique_graphs:
+                schema_map[graph_name] = load_schema_for_graph(benchmark, graph_name)
+        else:
+            shared_schema_str = load_schema_for_graph(benchmark, db)
 
-    else:
-        schema_str = None
-
-    return subset_test_data, schema_str
+    return subset_test_data, shared_schema_str, schema_map
 
 
 def get_question_and_schema(
     sample: Nl2CypherSample,
     benchmark: str,
     shared_schema_str: Optional[str] = None,
+    schema_map: Optional[Dict[str, Optional[str]]] = None,
 ):
     question = sample.nl_question
 
     if benchmark in ["Cypherbench", "Mind_the_query"]:
-        schema_str = shared_schema_str
+        if shared_schema_str is not None:
+            schema_str = shared_schema_str
+        else:
+            schema_str = (schema_map or {}).get(sample.graph)
     else:
         schema_str = sample.schema
 
     return question, schema_str
+
 
 def process_item(
     sample: Nl2CypherSample,
@@ -119,8 +148,14 @@ def process_item(
     max_length,
     model_lock,
     shared_schema_str=None,
+    schema_map=None,
 ):
-    question, schema_str = get_question_and_schema(sample, benchmark, shared_schema_str)
+    question, schema_str = get_question_and_schema(
+        sample,
+        benchmark,
+        shared_schema_str,
+        schema_map,
+    )
 
     qid = sample.qid if sample.qid is not None else sample.instance_id
     if qid is None:
@@ -128,6 +163,7 @@ def process_item(
 
     logger.info("-" * 80)
     logger.info(f"Processing item: {qid}")
+    logger.info(f"Graph: {sample.graph}")
     logger.info(f"Question: {question}")
 
     try:
@@ -154,6 +190,7 @@ def process_item(
 
         return {
             "qid": qid,
+            "graph": sample.graph,
             "question": question,
             "raw_response": raw_response,
             "think": parsed.get("think", ""),
@@ -169,6 +206,7 @@ def process_item(
         sample.pred_cypher = None
         return {
             "qid": qid,
+            "graph": sample.graph,
             "question": question,
             "raw_response": None,
             "think": "",
@@ -189,10 +227,13 @@ def run_parallel_inference(
     max_length,
     max_workers=4,
     shared_schema_str=None,
+    schema_map=None,
 ):
     results = []
     errors = []
     model_lock = threading.Lock()
+
+    run_name = db if not is_full_db(db) else "full"
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_item = {}
@@ -207,6 +248,7 @@ def run_parallel_inference(
                 max_length,
                 model_lock,
                 shared_schema_str,
+                schema_map,
             )
             future_to_item[future] = (
                 sample.qid if sample.qid is not None else sample.instance_id
@@ -215,7 +257,7 @@ def run_parallel_inference(
         progress_bar = tqdm(
             as_completed(future_to_item),
             total=len(future_to_item),
-            desc=f"Running {benchmark}/{db}",
+            desc=f"Running {benchmark}/{run_name}",
         )
 
         for future in progress_bar:
@@ -238,17 +280,26 @@ def run_parallel_inference(
     logger.info(f"Finished. Success: {len(results) - len(errors)}, Failed: {len(errors)}")
     return results, errors
 
+
 def main():
     setup_hf_token()
     args = parse_args()
 
-    subset_test_data, schema_str = load_schema_and_subset_test_data(args.benchmark, args.db, args.limit)
+    subset_test_data, schema_str, schema_map = load_schema_and_subset_test_data(
+        args.benchmark,
+        args.db,
+        args.limit,
+    )
+
+    db_name = args.db if not is_full_db(args.db) else "full"
 
     print(f"Loading model: {args.model}")
     logger.info(f"Loading model: {args.model}")
     tokenizer, model = init_model(args.model)
 
-    print(f"Running benchmark={args.benchmark}, db={args.db}, samples={len(subset_test_data)}")
+    print(
+        f"Running benchmark={args.benchmark}, db={db_name}, samples={len(subset_test_data)}"
+    )
     print(f"Using max_workers={args.max_workers}")
 
     results, errors = run_parallel_inference(
@@ -260,11 +311,12 @@ def main():
         max_length=args.max_length,
         max_workers=args.max_workers,
         shared_schema_str=schema_str,
+        schema_map=schema_map,
     )
 
     output = {
         "benchmark": args.benchmark,
-        "db": args.db,
+        "db": db_name,
         "model": args.model,
         "num_samples": len(subset_test_data),
         "num_success": sum(1 for r in results if r["success"]),
@@ -272,11 +324,10 @@ def main():
         "results": results,
         "updated_samples": [r["sample"] for r in results],
         "errors": errors,
-
     }
 
     os.makedirs(Path(RESULTS_DIR) / args.benchmark, exist_ok=True)
-    output_path = Path(RESULTS_DIR) /args.benchmark / f"{args.db}_cyphers_result.json"
+    output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(output, f, indent=4, ensure_ascii=False)
 

@@ -61,7 +61,9 @@ The benchmark datasets need to be downloaded and extracted to the `benchmarks/` 
 
 The main script (`main.py`) runs the Qwen model on selected benchmarks and evaluates the generated Cypher queries.
 ```bash
-python main.py --benchmark "Cypherbench" --db "nba" --model "Qwen/Qwen3-0.6B" --device "cuda" --max-workers 10
+python main.py --benchmark "Cypherbench" --model "Qwen/Qwen3-0.6B" --device "cuda" --max-workers 10   (run full dataset)
+python main.py --benchmark "Cypherbench" --db "nba" --model "Qwen/Qwen3-0.6B" --device "cuda" --max-workers 10   (run nba sub-dataset)
+
 ```
 
 ### **Command-Line Arguments Explanation**
