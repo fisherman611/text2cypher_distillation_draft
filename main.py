@@ -74,9 +74,9 @@ def is_full_db(db: Optional[str]) -> bool:
 
 def load_schema_for_graph(benchmark: str, graph_name: str) -> Optional[str]:
     if benchmark == "Cypherbench":
-        schema_path = Path("benchmarks") / benchmark / "graphs" / f"{graph_name}_schema.json"
+        schema_path = Path("benchmarks") / benchmark / "graphs" / "schemas" / f"{graph_name}_schema.json"
     elif benchmark == "Mind_the_query":
-        schema_path = Path("benchmarks") / benchmark / "graphs" / f"{graph_name}.json"
+        schema_path = Path("benchmarks") / benchmark / "graphs" / "schemas" / f"{graph_name}.json"
     else:
         return None
 
