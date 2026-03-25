@@ -35,7 +35,7 @@ def parse_args():
 
 
 def init_model(model_name):
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
@@ -59,7 +59,7 @@ def generate_response(tokenizer, model, messages, max_length=512):
             max_length=max_length,
             do_sample=True,
             temperature=0.7,
-            top_p=0.9,
+            top_p=0.7,
         )
 
     generated_ids = outputs[0][inputs["input_ids"].shape[1]:]
