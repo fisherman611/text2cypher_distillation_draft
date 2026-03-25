@@ -11,11 +11,12 @@ import json
 import torch
 import argparse
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from huggingface_hub import login
 from src.llm_services import parse_json_from_string, parse_llm_response
 
 hf_token = os.getenv("HF_READ_TOKEN")
 if hf_token:
-    os.environ["HUGGINGFACE_HUB_TOKEN"] = hf_token
+    login(token=hf_token, add_to_git_credential=False)
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -35,20 +36,23 @@ def parse_args():
 
 
 def init_model(model_name):
-    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True, token=hf_token)
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+        dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float16,
         device_map="auto",
+        token=hf_token
     )
+    model.eval()
     return tokenizer, model
 
 
-def generate_response(tokenizer, model, messages, max_length=512):
+def generate_response(tokenizer, model, messages, max_length=512, enable_thinking=False):
     text = tokenizer.apply_chat_template(
         messages,
         tokenize=False,
         add_generation_prompt=True,
+        enable_thinking=enable_thinking
     )
 
     inputs = tokenizer(text, return_tensors="pt").to(model.device)

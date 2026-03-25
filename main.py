@@ -22,16 +22,6 @@ os.makedirs(LOG_DIR, exist_ok=True)
 log_path = os.path.join(LOG_DIR, f"log_{int(time())}.txt")
 logger = setup_logger(__name__, log_file=log_path)
 
-
-def setup_hf_token():
-    token = os.getenv("HUGGINGFACE_HUB_TOKEN")
-    if not token:
-        token = os.getenv("HF_TOKEN") or os.getenv("HF_READ_TOKEN")
-    if token:
-        os.environ["HUGGINGFACE_HUB_TOKEN"] = token
-    return token
-
-
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Load Qwen model and benchmark on text2cypher problems"
@@ -57,7 +47,7 @@ def parse_args():
         help="Device to run the model on (default: cuda if available else cpu)",
     )
     parser.add_argument(
-        "--max-length", type=int, default=8192, help="Max generation length"
+        "--max-length", type=int, default=1024, help="Max generation length"
     )
     parser.add_argument(
         "--max-workers", type=int, default=4, help="Number of worker threads"
@@ -282,7 +272,6 @@ def run_parallel_inference(
 
 
 def main():
-    setup_hf_token()
     args = parse_args()
 
     subset_test_data, schema_str, schema_map = load_schema_and_subset_test_data(
