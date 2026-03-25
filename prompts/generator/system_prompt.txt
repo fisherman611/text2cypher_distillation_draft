@@ -11,8 +11,8 @@ Rules:
 - Ensure the query is syntactically valid.
 
 Output format:
-{{
+{
   "cypher": "The complete Cypher query"
-}}
+}
 
 Return only the JSON object and nothing else.
