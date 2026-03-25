@@ -13,7 +13,7 @@ import argparse
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from src.llm_services import parse_json_from_string, parse_llm_response
 
-hf_token = os.getenv("HF_TOKEN")
+hf_token = os.getenv("HF_READ_TOKEN")
 if hf_token:
     os.environ["HUGGINGFACE_HUB_TOKEN"] = hf_token
 

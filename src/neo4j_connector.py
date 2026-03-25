@@ -1,3 +1,5 @@
+import os
+import subprocess
 from neo4j import GraphDatabase, Query, NotificationDisabledClassification
 from neo4j.exceptions import Neo4jError
 from typing import Literal, Tuple, List, Dict, Any
@@ -25,10 +27,7 @@ class Neo4jConnector:
         """A clean, robust Neo4j connector with query + notification logging."""
         self.name = name
         self.database = database
-        self.debug = debug  
-
-        connection_uri = f"{host}:{port}"
-        logger.info(f"Connecting to Neo4j at: {connection_uri}")
+        self.debug = debug
 
         self.driver = GraphDatabase.driver(
             f"{host}:{port}",
@@ -42,19 +41,19 @@ class Neo4jConnector:
         self,
         cypher,
         timeout=None,
-        convert_func: Literal["data", "graph"] = "data",
-        **kwargs,
+        convert_func: Literal['data', 'graph'] = 'data',
+        **kwargs
     ):
         if self.debug:
             t0 = time.time()
-            logger.info(f"Running Cypher:\n```\n{cypher}\n```")
+            logger.info(f'Running Cypher:\n```\n{cypher}\n```')
         try:
             with self.driver.session(database=self.database) as session:
                 query = Query(cypher, timeout=timeout)
                 result = session.run(query, **kwargs)
-                if convert_func == "data":
+                if convert_func == 'data':
                     result = result.data()
-                elif convert_func == "graph":
+                elif convert_func == 'graph':
                     result = result.graph()
                 else:
                     raise ValueError(f"Invalid convert_func: {convert_func}")
@@ -66,14 +65,14 @@ class Neo4jConnector:
         if self.debug:
             logger.info("Query finished in %.2fs", time.time() - t0)
         return result
-    
+
     def run_query_advance(
         self,
         cypher: Any,
         *,
         timeout: int = None,
         convert_func: Literal["list", "data", "graph"] = "list",
-        **kwargs,
+        **kwargs
     ) -> Dict:
         if self.debug:
             logger.info("==== RUN QUERY ====")
@@ -103,20 +102,18 @@ class Neo4jConnector:
                 notifications = []
                 has_error = False
                 for note in summary.gql_status_objects:
-                    notifications.append(
-                        {
-                            "severity": note.severity.name,
-                            "gql_status": note.gql_status,
-                            "description": note.status_description,
-                            "position": {
-                                "line": getattr(note.position, "line", None),
-                                "column": getattr(note.position, "column", None),
-                                "offset": getattr(note.position, "offset", None),
-                            },
-                            "classification": str(note.classification),
-                            "raw_classification": note.raw_classification,
-                        }
-                    )
+                    notifications.append({
+                        "severity": note.severity.name,
+                        "gql_status": note.gql_status,
+                        "description": note.status_description,
+                        "position": {
+                            "line": getattr(note.position, "line", None),
+                            "column": getattr(note.position, "column", None),
+                            "offset": getattr(note.position, "offset", None),
+                        },
+                        "classification": str(note.classification),
+                        "raw_classification": note.raw_classification,
+                    })
                     if note.severity.name in {"ERROR", "FATAL", "WARNING"}:
                         has_error = True
                 if self.debug:
@@ -127,7 +124,7 @@ class Neo4jConnector:
                 return {
                     "success": not has_error,
                     "records": records,
-                    "notifications": notifications,
+                    "notifications": notifications
                 }
 
         # except Neo4jError as e:
@@ -147,15 +144,15 @@ class Neo4jConnector:
             return {
                 "success": False,
                 "records": [],
-                "notifications": [{"severity": "EXCEPTION", "description": str(e)}],
+                "notifications": [{"severity": "EXCEPTION", "description": str(e)}]
             }
-    
+
     def get_num_entities(self):
-        return self.run_query("MATCH (n) RETURN count(n) as num")[0]["num"]
+        return self.run_query("MATCH (n) RETURN count(n) as num")[0]['num']
 
     def get_num_relations(self):
-        return self.run_query("MATCH ()-[r]->() RETURN count(r) as num")[0]["num"]
-    
+        return self.run_query("MATCH ()-[r]->() RETURN count(r) as num")[0]['num']
+
     def wait_for_db_online(self, db_name, timeout=10):
         """Wait until DB is online."""
         with self.driver.session(database="system") as session:
@@ -163,76 +160,28 @@ class Neo4jConnector:
             while True:
                 dbs = session.run("SHOW DATABASES").data()
                 for db in dbs:
-                    if (
-                        db["name"] == db_name
-                        and db["currentStatus"].lower() == "online"
-                    ):
+                    if db["name"] == db_name and db["currentStatus"].lower() == "online":
                         logger.info("Database '%s' is online!", db_name)
                         return
                 if time.time() - start > timeout:
-                    raise TimeoutError(
-                        f"Database '{db_name}' not online after {timeout} seconds"
-                    )
+                    raise TimeoutError(f"Database '{db_name}' not online after {timeout} seconds")
                 time.sleep(0.5)
 
     def create_or_reset_db(self, db_name: str, overwrite: bool):
-        """Create DB if not exist. If overwrite=True, clear all data (Community Edition compatible)."""
-        try:
-            with self.driver.session(database="system") as session:
-                dbs = session.run("SHOW DATABASES").data()
-                exists = any(db["name"] == db_name for db in dbs)
+        """Create DB if not exist. If overwrite=True, drop then recreate."""
+        with self.driver.session(database="system") as session:
+            dbs = session.run("SHOW DATABASES").data()
+            exists = any(db["name"] == db_name for db in dbs)
 
-                if exists and overwrite:
-                    # Try Enterprise Edition commands first
-                    try:
-                        logger.info(
-                            "Dropping existing database: '%s' (Enterprise)", db_name
-                        )
-                        session.run(f"DROP DATABASE {db_name} IF EXISTS")
-                        session.run(f"CREATE DATABASE {db_name}")
-                        logger.info("Database dropped and recreated successfully")
-                        return
-                    except Neo4jError as e:
-                        if "UnsupportedAdministrationCommand" in str(e):
-                            logger.info(
-                                "Enterprise commands not supported, using Community Edition method"
-                            )
-                            # Fall through to Community Edition method below
-                        else:
-                            raise
-                elif not exists:
-                    logger.info("Creating new database: '%s'", db_name)
-                    try:
-                        session.run(f"CREATE DATABASE {db_name}")
-                        logger.info("Database created successfully")
-                        return
-                    except Neo4jError as e:
-                        if "UnsupportedAdministrationCommand" in str(e):
-                            logger.info(
-                                "Database creation not supported (Community Edition)"
-                            )
-                            # Use default database
-                        else:
-                            raise
-                else:
-                    logger.info(
-                        "Database '%s' already exists — skip (overwrite=False)", db_name
-                    )
-                    return
-        except Exception as e:
-            logger.warning(
-                "Could not access system database, assuming Community Edition: %s", e
-            )
-
-        # Community Edition: Clear all data in the target database
-        if overwrite:
-            logger.info(
-                "Clearing all data in database '%s' (Community Edition)", db_name
-            )
-            with self.driver.session(database=db_name) as session:
-                # Delete all relationships first, then nodes
-                session.run("MATCH (n) DETACH DELETE n")
-                logger.info("All data cleared from database '%s'", db_name)
+            if exists and overwrite:
+                logger.info("Dropping existing database: '%s'", db_name)
+                session.run(f"DROP DATABASE {db_name} IF EXISTS")
+                session.run(f"CREATE DATABASE {db_name}")
+            elif not exists:
+                logger.info("Creating new database: '%s'", db_name)
+                session.run(f"CREATE DATABASE {db_name}")
+            else:
+                logger.info("Database '%s' already exists — skip (overwrite=False)", db_name)
 
     @staticmethod
     def apply_schema_constraints(session, schema):
