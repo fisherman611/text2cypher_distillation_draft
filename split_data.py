@@ -64,8 +64,14 @@ def parse_args():
     return parser.parse_args()
 
 
+# Benchmarks that use a different source filename
+TRAIN_FILE_MAP: dict[str, str] = {
+    "Mind_the_query": "train_val.jsonl",
+}
+
+
 def split_file(train_jsonl: Path, train_ratio: float, seed: int, shuffle: bool):
-    """Read train.jsonl, split, and write train.jsonl + dev.jsonl in-place."""
+    """Read *source* jsonl, split, and write train.jsonl + dev.jsonl."""
     lines = train_jsonl.read_text(encoding="utf-8").splitlines()
     lines = [l for l in lines if l.strip()]  # drop blank lines
 
@@ -81,15 +87,18 @@ def split_file(train_jsonl: Path, train_ratio: float, seed: int, shuffle: bool):
     train_lines = lines[:split_idx]
     dev_lines = lines[split_idx:]
 
-    dev_jsonl = train_jsonl.parent / "dev.jsonl"
+    out_dir = train_jsonl.parent
+    out_train = out_dir / "train.jsonl"
+    out_dev   = out_dir / "dev.jsonl"
 
-    # Overwrite train.jsonl with the train portion
-    train_jsonl.write_text("\n".join(train_lines) + "\n", encoding="utf-8")
-    # Write dev.jsonl
-    dev_jsonl.write_text("\n".join(dev_lines) + "\n", encoding="utf-8")
+    # Write train split (may overwrite the source if it was already train.jsonl)
+    out_train.write_text("\n".join(train_lines) + "\n", encoding="utf-8")
+    # Write dev split
+    out_dev.write_text("\n".join(dev_lines) + "\n", encoding="utf-8")
 
+    src_note = f" (from {train_jsonl.name})" if train_jsonl.name != "train.jsonl" else ""
     print(
-        f"  [OK] {train_jsonl.parent.name}: "
+        f"  [OK] {out_dir.name}{src_note}: "
         f"{len(train_lines)} train / {len(dev_lines)} dev "
         f"(total {len(lines)})"
     )
@@ -114,14 +123,18 @@ def main():
 
     found_any = False
     for bdir in benchmark_dirs:
-        train_jsonl = bdir / "train.jsonl"
-        if not train_jsonl.exists():
-            print(f"  [SKIP] {bdir.name}: train.jsonl not found (run format_data.py first)")
+        src_filename = TRAIN_FILE_MAP.get(bdir.name, "train.jsonl")
+        src_jsonl = bdir / src_filename
+        if not src_jsonl.exists():
+            print(
+                f"  [SKIP] {bdir.name}: {src_filename} not found "
+                f"(run format_data.py first)"
+            )
             continue
         found_any = True
-        print(f"Processing {bdir.name} ...")
+        print(f"Processing {bdir.name} (source: {src_filename}) ...")
         split_file(
-            train_jsonl=train_jsonl,
+            train_jsonl=src_jsonl,
             train_ratio=args.train_ratio,
             seed=args.seed,
             shuffle=not args.no_shuffle,
