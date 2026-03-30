@@ -19,7 +19,7 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 # open-ed/ is the package root (finetune.py lives there and imports from it)
-BASE_PATH=""
+BASE_PATH=.
 
 # Data lives outside open-ed, relative to the project root
 DATA_DIR="benchmarks/Cypherbench"
