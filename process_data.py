@@ -76,11 +76,12 @@ def main():
     with open(os.path.join(args.data_dir, "test.jsonl")) as f:
         test_data = f.readlines()
 
-    all_data = {
-        "valid": valid_data,
-        "train": train_data,
-        "test": test_data
-    }
+    if args.dev_num > 0:
+        all_data = {
+            "valid": valid_data,
+            "train": train_data,
+            "test": test_data
+        }
     
     for split in all_data:
         
