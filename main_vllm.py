@@ -177,7 +177,8 @@ def run_batch_inference(
 
     # Process in batches
     total_batches = (len(meta) + batch_size - 1) // batch_size
-    pbar = tqdm(total=len(meta), desc=f"vLLM {benchmark}/{run_name}")
+    pbar_samples = tqdm(total=len(meta), desc="  Samples", unit="sample", position=1, leave=True)
+    pbar_batches = tqdm(total=total_batches, desc=f"vLLM {benchmark}/{run_name}", unit="batch", position=0, leave=True)
 
     for batch_idx in range(total_batches):
         batch_meta = meta[batch_idx * batch_size : (batch_idx + 1) * batch_size]
@@ -207,7 +208,8 @@ def run_batch_inference(
                     "sample": sample.model_dump(mode="json"),
                 })
             logger.error(f"Batch {batch_idx} failed: {e}", exc_info=True)
-            pbar.update(len(batch_meta))
+            pbar_samples.update(len(batch_meta))
+            pbar_batches.update(1)
             continue
 
         # ------------------------------------------------------------------
@@ -259,9 +261,12 @@ def run_batch_inference(
                     "sample": sample.model_dump(mode="json"),
                 })
 
-            pbar.update(1)
+            pbar_samples.update(1)
 
-    pbar.close()
+        pbar_batches.update(1)
+
+    pbar_samples.close()
+    pbar_batches.close()
     logger.info(f"Done. Success: {len(results) - len(errors)}, Failed: {len(errors)}")
     return results, errors
 
