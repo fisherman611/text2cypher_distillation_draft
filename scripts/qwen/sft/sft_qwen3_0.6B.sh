@@ -22,7 +22,7 @@ DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE \
 BASE_PATH=.
 
 # Data lives outside open-ed, relative to the project root
-DATA_DIR="benchmarks/Cypherbench"
+DATA_DIR="benchmarks/Cypherbench/"
 
 # ── Model ─────────────────────────────────────────────────────────────────────
 CKPT_NAME="qwen3-0.6B"
