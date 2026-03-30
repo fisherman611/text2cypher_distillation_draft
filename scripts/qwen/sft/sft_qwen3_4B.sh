@@ -3,6 +3,19 @@
 GPUS=(0 1)
 export CUDA_VISIBLE_DEVICES=$(IFS=,; echo "${GPUS[*]}")
 
+# DeepSpeed requires CUDA_HOME. Auto-detect from nvcc if not already set.
+if [ -z "${CUDA_HOME}" ]; then
+    NVCC_PATH=$(which nvcc 2>/dev/null)
+    if [ -n "${NVCC_PATH}" ]; then
+        export CUDA_HOME=$(dirname $(dirname ${NVCC_PATH}))
+        echo "[INFO] Auto-detected CUDA_HOME=${CUDA_HOME}"
+    else
+        echo "[ERROR] CUDA_HOME is not set and nvcc was not found in PATH."
+        echo "        Set it manually, e.g.:  export CUDA_HOME=/usr/local/cuda"
+        exit 1
+    fi
+fi
+
 MASTER_ADDR=localhost
 MASTER_PORT=66$(($RANDOM%90+10))
 NNODES=1
