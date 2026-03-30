@@ -38,7 +38,8 @@ def main():
         for item in data:
             graph = item['graph']
             schema_json_str = schemas.get(graph, "")
-            user_prompt = usr_prompt_template.replace("{question}", item['nl_question']).replace("{schema}", schema_json_str)
+            question = item['nl_question'] if args.benchmark != "Mind_the_query" else item['question']
+            user_prompt = usr_prompt_template.replace("{question}", question).replace("{schema}", schema_json_str)
             response_obj = {"cypher": item.get("gold_cypher", "")}
             response_str = json.dumps(response_obj)
             
