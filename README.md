@@ -62,7 +62,7 @@ cd text2cypher_distillation_draft
        --model-path Qwen/Qwen3-0.6B \
        --model-type qwen \
        --data-process-workers 8 \
-       --max-prompt-length 460 --dev-num 1
+       --max-prompt-length 797 --dev-num 1
    ```
 
 ### **Environment Configuration**
