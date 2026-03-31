@@ -148,13 +148,38 @@ def setup_model_and_optimizer(args, ds_config, device, set_optim=True):
 def prepare_dataset(args, tokenizer):
     data = {}
     rng_sample = random.Random(args.seed)
+    
+    from torch.utils.data import Subset
+    
     if args.do_train:
-        data["train"] = LMTrainDataset(args, tokenizer, args.data_dir, "train", args.train_num, args.train_ratio, rng_sample)
+        # Full data
+        # data["train"] = LMTrainDataset(args, tokenizer, args.data_dir, "train", args.train_num, args.train_ratio, rng_sample)
+        # data["dev"] = LMTrainDataset(args, tokenizer, args.data_dir, "valid", args.dev_num, args.dev_ratio, rng_sample)
+        
+        # Sliced data for testing
+        full_train = LMTrainDataset(args, tokenizer, args.data_dir, "train", args.train_num, args.train_ratio, rng_sample)
+        data["train"] = Subset(full_train, range(min(100, len(full_train))))
+        data["train"].collate = full_train.collate
+        data["train"].move_to_device = full_train.move_to_device
         print_rank("train num", len(data["train"]))
-        data["dev"] = LMTrainDataset(args, tokenizer, args.data_dir, "valid", args.dev_num, args.dev_ratio, rng_sample)
+        
+        full_dev = LMTrainDataset(args, tokenizer, args.data_dir, "valid", args.dev_num, args.dev_ratio, rng_sample)
+        data["dev"] = Subset(full_dev, range(min(20, len(full_dev))))
+        data["dev"].collate = full_dev.collate
+        data["dev"].move_to_device = full_dev.move_to_device
+        if hasattr(full_dev, 'answers'):
+            data["dev"].answers = [full_dev.answers[i] for i in data["dev"].indices]
 
-    data["test"] = LMTrainDataset(args, tokenizer, args.data_dir, "test", args.dev_num, args.dev_ratio, rng_sample)
-
+    # Full data
+    # data["test"] = LMTrainDataset(args, tokenizer, args.data_dir, "test", args.dev_num, args.dev_ratio, rng_sample)
+    
+    # Sliced data
+    full_test = LMTrainDataset(args, tokenizer, args.data_dir, "test", args.dev_num, args.dev_ratio, rng_sample)
+    data["test"] = Subset(full_test, range(min(20, len(full_test))))
+    data["test"].collate = full_test.collate
+    data["test"].move_to_device = full_test.move_to_device
+    if hasattr(full_test, 'answers'):
+        data["test"].answers = [full_test.answers[i] for i in data["test"].indices]
         
     # pre-trained dataset
     if args.do_train and args.lm_data_dir is not None:
