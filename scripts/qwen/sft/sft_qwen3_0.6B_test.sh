@@ -25,21 +25,21 @@ BASE_PATH=.
 DATA_DIR="processed_data/benchmarks/Cypherbench/qwen/"
 
 # ── Model ─────────────────────────────────────────────────────────────────────
-CKPT_NAME="qwen3-4B"
-CKPT="Qwen/Qwen3-4B-Instruct-2507"
+CKPT_NAME="qwen3-0.6B"
+CKPT="Qwen/Qwen3-0.6B"
 
 # ── Hyper-parameters ──────────────────────────────────────────────────────────
-BATCH_SIZE=2
-LR=0.00001
-GRAD_ACC=8
-EVAL_BATCH_SIZE=32
-EPOCHS=3
+BATCH_SIZE=4
+LR=0.00005
+GRAD_ACC=4
+EVAL_BATCH_SIZE=16
+EPOCHS=5
 
 # ── Length ────────────────────────────────────────────────────────────────────
-MAX_LENGTH=768
+MAX_LENGTH=1024
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
-SAVE_PATH="${BASE_PATH}/results/qwen3/sft_4B"
+SAVE_PATH="${BASE_PATH}/results/qwen3/sft_0.6B"
 SEED=42
 
 
@@ -55,7 +55,7 @@ OPTS+=" --gradient-checkpointing"     # saves VRAM on a single GPU
 OPTS+=" --data-dir ${DATA_DIR}"
 OPTS+=" --num-workers 0"
 OPTS+=" --dev-num -1"
-# OPTS+=" --slice-data"
+OPTS+=" --slice-data"
 # hp
 OPTS+=" --lr ${LR}"
 OPTS+=" --batch-size ${BATCH_SIZE}"

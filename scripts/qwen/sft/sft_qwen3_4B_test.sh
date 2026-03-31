@@ -55,7 +55,7 @@ OPTS+=" --gradient-checkpointing"     # saves VRAM on a single GPU
 OPTS+=" --data-dir ${DATA_DIR}"
 OPTS+=" --num-workers 0"
 OPTS+=" --dev-num -1"
-# OPTS+=" --slice-data"
+OPTS+=" --slice-data"
 # hp
 OPTS+=" --lr ${LR}"
 OPTS+=" --batch-size ${BATCH_SIZE}"
