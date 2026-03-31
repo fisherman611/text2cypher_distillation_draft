@@ -26,7 +26,7 @@ DATA_DIR="processed_data/benchmarks/Cypherbench/qwen/"
 
 # ── Model ─────────────────────────────────────────────────────────────────────
 CKPT_NAME="qwen3-0.6B"
-CKPT="Qwen/Qwen3-0.6B"
+CKPT="Qwen3-0.6B"
 
 # ── Hyper-parameters ──────────────────────────────────────────────────────────
 BATCH_SIZE=4
