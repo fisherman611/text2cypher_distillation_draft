@@ -4,13 +4,17 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(description="Format text2cypher data to jsonl")
-    parser.add_argument("--base-dir", default=r"d:\text2cypher_distillation_draft", help="Base directory")
+    parser.add_argument("--base-dir", default="", help="Base directory")
     parser.add_argument("--benchmark", default="Cypherbench", help="Benchmark name (e.g. Cypherbench)")
     parser.add_argument("--split", default="train", help="Dataset split (e.g. train or test)")
     args = parser.parse_args()
 
     base_dir = args.base_dir
-    train_path = os.path.join(base_dir, "benchmarks", args.benchmark, f"{args.split}.json")
+    if args.benchmark == "Mind_the_query" and args.split == "train":
+        train_path = os.path.join(base_dir, "benchmarks", args.benchmark, "train_val.json")
+    else:
+        train_path = os.path.join(base_dir, "benchmarks", args.benchmark, f"{args.split}.json")
+        
     out_path = os.path.join(base_dir, "benchmarks", args.benchmark, f"{args.split}.jsonl")
     sys_prompt_path = os.path.join(base_dir, "prompts", "generator", "system_prompt.txt")
     usr_prompt_path = os.path.join(base_dir, "prompts", "generator", "user_prompt.txt")
@@ -38,9 +42,16 @@ def main():
         for item in data:
             graph = item['graph']
             schema_json_str = schemas.get(graph, "")
-            question = item['nl_question'] if args.benchmark != "Mind_the_query" else item['question']
+            
+            if args.benchmark == "Mind_the_query":
+                question = item.get('question', "")
+                gold_cypher = item.get("gold_cypher", "")
+            else:
+                question = item.get('nl_question', "")
+                gold_cypher = item.get("gold_cypher", "")
+
             user_prompt = usr_prompt_template.replace("{question}", question).replace("{schema}", schema_json_str)
-            response_obj = {"cypher": item.get("gold_cypher", "")}
+            response_obj = {"cypher": gold_cypher}
             response_str = json.dumps(response_obj)
             
             jsonl_obj = {

@@ -33,7 +33,7 @@ def parse_args():
     )
     parser.add_argument(
         "--base-dir",
-        default=r"d:\text2cypher_distillation_draft",
+        default="",
         help="Project root directory",
     )
     parser.add_argument(
