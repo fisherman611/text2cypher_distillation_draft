@@ -64,12 +64,6 @@ def parse_args():
     return parser.parse_args()
 
 
-# Benchmarks that use a different source filename
-TRAIN_FILE_MAP: dict[str, str] = {
-    "Mind_the_query": "train_val.jsonl",
-}
-
-
 def split_file(train_jsonl: Path, train_ratio: float, seed: int, shuffle: bool):
     """Read *source* jsonl, split, and write train.jsonl + dev.jsonl."""
     lines = train_jsonl.read_text(encoding="utf-8").splitlines()
@@ -123,7 +117,7 @@ def main():
 
     found_any = False
     for bdir in benchmark_dirs:
-        src_filename = TRAIN_FILE_MAP.get(bdir.name, "train.jsonl")
+        src_filename = "train.jsonl"
         src_jsonl = bdir / src_filename
         if not src_jsonl.exists():
             print(
