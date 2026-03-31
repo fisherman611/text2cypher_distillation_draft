@@ -195,7 +195,7 @@ def get_optimizer_params(args, model: nn.Module):
                     if any(nd in n for nd in no_decay) and not any(nd in n for nd in projector_param)], 'weight_decay': 0.0},
     ]
 
-    return optimizer_grouped_parameters
+    return [g for g in optimizer_grouped_parameters if len(g['params']) > 0]
 
 
 def get_optimizer_params_peft(args, model: nn.Module):
