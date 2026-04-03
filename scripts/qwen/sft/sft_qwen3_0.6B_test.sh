@@ -29,10 +29,10 @@ CKPT_NAME="qwen3-0.6B"
 CKPT="Qwen/Qwen3-0.6B"
 
 # ── Hyper-parameters ──────────────────────────────────────────────────────────
-BATCH_SIZE=4
+BATCH_SIZE=1
 LR=0.00005
 GRAD_ACC=4
-EVAL_BATCH_SIZE=16
+EVAL_BATCH_SIZE=1
 EPOCHS=5
 
 # ── Length ────────────────────────────────────────────────────────────────────
