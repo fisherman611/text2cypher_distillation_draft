@@ -10,6 +10,15 @@ import torch.distributed as dist
 from torch.utils.data import DataLoader, DistributedSampler
 from torch.optim import AdamW
 import deepspeed
+from huggingface_hub import login
+
+# hf_token = os.getenv("HF_READ_TOKEN")
+from kaggle_secrets import UserSecretsClient
+secret_label = "huggingface"
+hf_token = UserSecretsClient().get_secret(secret_label)
+
+if hf_token:
+    login(token=hf_token, add_to_git_credential=False)
 
 import random
 import json
