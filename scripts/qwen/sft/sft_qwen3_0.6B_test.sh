@@ -69,7 +69,7 @@ OPTS+=" --clip-grad 1.0"
 OPTS+=" --epochs ${EPOCHS}"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
-OPTS+=" --max-prompt-length 460"
+OPTS+=" --max-prompt-length 797"
 # runtime
 OPTS+=" --do-train"
 OPTS+=" --do-valid"
