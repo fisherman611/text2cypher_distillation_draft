@@ -549,8 +549,8 @@ def evaluate(args, tokenizer, model, dataset: LMTrainDataset, split, epoch, devi
             
             res = compute_metrics(responses, references)
 
-            ed_metrics = ed_evaluate(responses, references)
-            res.update(ed_metrics)
+            # ed_metrics = ed_evaluate(responses, references)
+            # res.update(ed_metrics)
         
             eval_dir = os.path.join(args.save, "eval", str(epoch))
             print_rank(eval_dir)
