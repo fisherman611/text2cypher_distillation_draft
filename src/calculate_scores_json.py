@@ -68,7 +68,8 @@ def calculate_result(result, metrics=['execution_accuracy', 'psjs', 'executable'
     aggregated = {
         'overall': {
             m: avg_and_round(
-                [item["metrics"][m] for item in result if "metrics" in item and m in item["metrics"]]
+                [(item["metrics"][m] if not isinstance(item["metrics"][m], dict) else 0.0)
+                 for item in result if "metrics" in item and m in item["metrics"]]
             )
             for m in metrics
         }
@@ -77,7 +78,8 @@ def calculate_result(result, metrics=['execution_accuracy', 'psjs', 'executable'
 
 
 # with open(r"format_results/Cypherbench/qwen3/sft_4B/calculated_scores/test_result.json", "r", encoding="utf-8") as f:
-with open(r"format_results/Cypherbench/qwen3/sft_0.6B/calculated_scores/test_result.json", "r", encoding="utf-8") as f:
+# with open(r"results\Cypherbench\calculated_scores_Qwen3_0.6B\company_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results\Cypherbench\calculated_scores_Qwen3_4B_Instruct_2507\company_cyphers_result.json", "r", encoding="utf-8") as f:
     result = json.load(f)
 
 metric_scores = calculate_result(result)

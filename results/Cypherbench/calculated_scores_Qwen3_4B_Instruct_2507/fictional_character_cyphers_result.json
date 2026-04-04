@@ -1,0 +1,3874 @@
+[
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character {name: 'Wipeout'}), (m0:Character {name: 'Chris Bradley'}) RETURN n.gender = m0.gender AS answer",
+    "pred_cypher": "MATCH (c1:Character {name: 'Wipeout'})-[:fromUniverse]->(u:FictionalUniverse)-[:fromUniverse]->(c2:Character {name: 'Chris Bradley'}) RETURN c1.gender = c2.gender AS share_same_gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Cao Cao'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Wu Lan'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE (c.hasFather)-->(f:Character) AND f.name = 'Cao Cao' OR (c.killedBy)-->(k:Character) AND k.name = 'Wu Lan' RETURN COUNT(c) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasSpouse]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n.creator)",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:killedBy]->(killed:Character) RETURN DISTINCT c.creator AS creator_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.10869565217391304
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Petyr Baelish'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (petyr:Character {birth_name: 'Petyr Baelish'})-[:hasSpouse]->(spouse:Character)-[:killedBy]->(killer:Character) RETURN DISTINCT killer.birth_name AS killer_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character)<-[r1:hasMother]-(m1:Character {name: 'Jean Grey'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character)-[:hasSpouse]->(spouse:Character) RETURN DISTINCT spouse.name, m.creator",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.001597444089456869
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Yuno Gasai'}) WITH DISTINCT n WHERE NOT 'serial killer' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(y:Character {name: 'Yuno Gasai'}) RETURN DISTINCT c.name AS student_name WHERE c.occupation IS NULL OR c.occupation NOT CONTAINS 'serial killer'",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6666666666666666
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (o:Organization) RETURN COUNT(DISTINCT o) AS distinct_organizations",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r1:basedIn]-(m1:Organization {name: 'Night\\'s Watch'}) OPTIONAL MATCH (n:Location)<-[r0:diedIn]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (o:Organization)-[:basedIn]->(l:Location) WHERE o.name = 'Night\\'s Watch' RETURN DISTINCT l.name AS location_name, COUNT(c:Character)-[:killedBy]->(c) AS deaths_in_location",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.375
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (l:Location) RETURN DISTINCT l.name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'King\\'s Landing'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Jeyne Lannister'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character {name: 'Lieutenant Flap'}), (m0:Character {name: 'Liu Bi'}) RETURN n.gender = m0.gender AS answer",
+    "pred_cypher": "MATCH (c1:Character {birth_name: 'Lieutenant Flap'})-[:hasSpouse]->(c2:Character), (c3:Character {birth_name: 'Liu Bi'}) RETURN DISTINCT c1.gender = c3.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Future Diary universe'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killed:Character) RETURN c.birth_name AS character_name, COUNT(killed) AS killed_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Team X'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(org:Organization), (c)-[:memberOf]->(team:Organization {name: 'Team X'}) RETURN org.name, count(c) AS member_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Organization)-[r0:basedIn]->(m0:Location {name: 'Wall'}) RETURN n, m0 as m UNION MATCH (n:Organization)<-[r1:memberOf]-(m1:Character {name: 'Janos Slynt'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (o:Organization) WHERE o.basedIn.some(l) WHERE l.name = 'Wall' OR (o.memberOf)-[:memberOf]->(c:Character) WHERE c.birth_name = 'Janos Slynt' RETURN COUNT(o) AS organization_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'New Mutants'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE c.name = 'New Mutants' RETURN DISTINCT fu.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Daenerys Targaryen'}) WITH DISTINCT n UNWIND n.occupation AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:killedBy]->(daenerys:Character {birth_name: 'Daenerys Targaryen'}) RETURN DISTINCT c.occupation",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Liu Fu'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady Liu'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(l:Character {birth_name: 'Liu Fu'}) OR (c:Character)-[:hasSpouse]->(l:Character {birth_name: 'Lady Liu'}) RETURN COUNT(c) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character) RETURN c.birth_name AS name, c.creator AS creator",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Thundra'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(thundra:Character {name: 'Thundra'}) RETURN DISTINCT c.name, c.occupation",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Kandor'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Earth-167'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE fu.inception_year = 167 AND (c)-[:bornIn]->(l:Location) WHERE l.name = 'Kandor' RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Hoster Tully'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Walder Frey'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Tully'})<-[:hasFather]-(c2:Character)-[:killedBy]->(w:Character {birth_name: 'Walder Frey'}) RETURN DISTINCT c2.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location),(n:Character)-[r1:bornIn]->(m0:Location) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location)-[:diedIn]->(l2:Location) WHERE l = l2 RETURN DISTINCT c.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Euron Greyjoy'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Trystane Martell'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killer:Character) WHERE killer.name IN ['Euron Greyjoy', 'Trystane Martell'] RETURN COUNT(c) AS character_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.8333333333333334
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location) RETURN COUNT(DISTINCT l) AS distinct_locations",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location) WITH DISTINCT n WHERE 'Yan' IN n.country_of_citizenship RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location), (c)-[:hasStudent]->(s:Character) WHERE c.country_of_citizenship CONTAINS 'Yan' RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Jacqueline Bouvier'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Jacqueline Bouvier' RETURN c.birth_name AS character_name, COUNT(c) AS count_of_children",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Minisa Tully'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Minisa Tully' RETURN c.birth_name AS character_name, COUNT(c) AS count_of_characters",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Exemplars'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Exemplars' RETURN DISTINCT c.name, COUNT(c.hasFather) AS father_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.75
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character {name: 'Mystique'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (m:Character {name: 'Mystique'})-[:hasSpouse]->(s:Character) RETURN s.name AS spouse",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:diedIn]->(m1:Location {name: 'Dreadfort'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (m:Character)-[:hasMother]->(mother:Character)-[:hasStudent]->(child:Character)-[:diedIn]->(dreadfort:Location) WHERE dreadfort.name = 'Dreadfort' RETURN DISTINCT mother.name, count(child) AS children_died_at_dreadfort ORDER BY mother.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse) WITH DISTINCT n WHERE n.creator = 'Edgar Rice Burroughs' RETURN n.name",
+    "pred_cypher": "MATCH (fu:FictionalUniverse) WHERE fu.creator = 'Edgar Rice Burroughs' RETURN DISTINCT fu.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character {name: 'Tarzan'}), (m0:Character {name: 'Karma'}) RETURN n.creator = m0.creator AS answer",
+    "pred_cypher": "MATCH (c1:Character {birth_name: 'Tarzan'})-[:fromUniverse]->(u:FictionalUniverse), (c2:Character {birth_name: 'Karma'})-[:fromUniverse]->(u) RETURN c1.creator = c2.creator AS share_same_creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Cao Yong'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c1:Character)-[:killedBy]->(c2:Character)-[:hasSpouse]->(c3:Character) RETURN DISTINCT c3.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.009708737864077669
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character {name: 'Fantomex'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Fantomex'})-[:memberOf]->(o:Organization) RETURN DISTINCT o.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Beyond the Wall'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location), (c)-[:diedIn]->(d:Location) WHERE l.name = 'Beyond the Wall' RETURN d.name AS location, count(*) AS character_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'New Mutants'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (org:Organization)-[:fromUniverse]->(universe:FictionalUniverse) WHERE org.name = 'New Mutants' RETURN DISTINCT universe.name, universe.creator",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Adam X'}),(n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Solo'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred_cypher": "MATCH (c1:Character {birth_name: 'Adam X'})-[:fromUniverse]->(u:FictionalUniverse), (c2:Character {birth_name: 'Solo'})-[:fromUniverse]->(u:FictionalUniverse) RETURN DISTINCT u.name, u.inception_year",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Azazel'}),(n:Character)<-[r1:hasFather]-(m1:Character {name: 'Nocturne'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(azazel:Character {birth_name: 'Azazel'})-[:hasStudent]->(nocturne:Character {birth_name: 'Nocturne'}) RETURN DISTINCT c.birth_name AS name, c.occupation AS occupation",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Cersei Lannister'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character) WHERE k.birth_name = 'Cersei Lannister' RETURN DISTINCT c.birth_name, COUNT(c)-1 AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.8888888888888888
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Yuqing Guan'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE l.name = 'Yuqing Guan' RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Cersei Lannister'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Cassana Baratheon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character) WHERE (c.hasSpouse)-[:hasSpouse]->(cersei:Character {birth_name: 'Cersei Lannister'}) OR (c.hasMother)-[:hasMother]->(cassana:Character {birth_name: 'Cassana Baratheon'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Subhuti'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killed:Character)-[:hasStudent]->(student:Character) WHERE student.name = 'Subhuti' RETURN DISTINCT c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) OPTIONAL MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character) RETURN c.birth_name AS character_name, count(s) AS student_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Riverrun'}),(n:Character)<-[r1:killedBy]-(m1:Character {name: 'Jon Arryn'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Riverrun'}) WHERE (c)-[:killedBy]->(j:Character {name: 'Jon Arryn'}) RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Jixian'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'The Romance of the Three Kingdoms universe'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {name: 'The Romance of the Three Kingdoms'}) WHERE c:diedIn->(l:Location {name: 'Jixian'}) RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location),(n:Character)-[r1:diedIn]->(m0:Location) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location)-[:diedIn]->(l2:Location) WHERE l = l2 RETURN DISTINCT c.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Loras Tyrell'}),(n:Character)<-[r1:hasMother]-(m1:Character {name: 'Myrcella Baratheon'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(loras:Character {name: 'Loras Tyrell'}) WITH c, c.hasMother AS mother, c.hasFather AS father MATCH (c)-[:hasSpouse]->(spouse:Character) WHERE EXISTS((spouse)-[:hasMother]->(myrcella:Character {name: 'Myrcella Baratheon'})) RETURN DISTINCT c.name AS character_name, c.creator AS creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character {name: 'Morbius, the Living Vampire'}), (m0:Character {name: 'Giganto'}) RETURN n.creator = m0.creator AS answer",
+    "pred_cypher": "MATCH (c1:Character {birth_name: 'Morbius, the Living Vampire'})-[:fromUniverse]->(u:FictionalUniverse), (c2:Character {birth_name: 'Giganto'})-[:fromUniverse]->(u), (c3:Character {birth_name: 'Morbius, the Living Vampire'})-[:fromUniverse]->(u) RETURN DISTINCT c1.creator = c2.creator AS share_same_creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Chang\\'an'}) OPTIONAL MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character {name: 'Lysa Arryn'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character) WHERE c.birth_name = 'Lysa Arryn' RETURN DISTINCT (c)-[:diedIn]->(l:Location) RETURN l.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Corlys Velaryon'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Daemon Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE (c.hasFather) OPTIONAL MATCH (c)-[:hasFather]->(f:Character) WHERE f.birth_name = 'Corlys Velaryon' OR (c)-[:hasSpouse]->(s:Character) WHERE s.birth_name = 'Daemon Targaryen' RETURN COUNT(DISTINCT c) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (s:Character)-[:hasStudent]->(t:Character)-[:killedBy]->(k:Character) RETURN DISTINCT s.birth_name AS student_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.04878048780487805
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Milla Donovan'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(m:Character) WHERE m.birth_name = 'Milla Donovan' RETURN count(c) + COUNT((c:Character)-[:hasStudent]->(stick:Character) WHERE stick.birth_name = 'Stick') AS total",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Winterfell'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lynesse Hightower'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE c.diedIn some (l:Location) WHERE l.name = 'Winterfell' OR (c.hasSpouse)--(spouse:Character) WHERE spouse.birth_name = 'Lynesse Hightower' RETURN COUNT(c) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Cthulhu Mythos'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (f:Character)-[:hasFather]->(father:Character)-[:fromUniverse]->(universe:FictionalUniverse) WHERE universe.name = 'Cthulhu Mythos' RETURN DISTINCT father.name AS father_name, count(f.name) AS child_count ORDER BY father_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Lance Hunter'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Lance Hunter'})-[:fromUniverse]->(fu:FictionalUniverse) RETURN DISTINCT fu.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'King\\'s Landing'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Shaera Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE c.bornIn some (l:Location) WHERE l.name = 'King's Landing' OR (c.hasMother)--(m:Character) WHERE m.birth_name = 'Shaera Targaryen' RETURN COUNT(c) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'The Simpsons universe'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killed:Character)-[:diedIn]->(l:Location) RETURN DISTINCT l.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasSpouse]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred_cypher": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character)-[:killedBy]->(c3:Character) RETURN DISTINCT c1.gender AS gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.10869565217391304
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Subhuti'}),(n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Xuanzang'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (s1:Character)-[:hasStudent]->(c:Character), (s2:Character)-[:hasStudent]->(c) WHERE s1.name = 'Subhuti' AND s2.name = 'Xuanzang' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Lyanna Stark'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Aerys II Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character) WHERE (c.hasSpouse) AND (c.hasSpouse->:Character {birth_name: 'Lyanna Stark'}) OR (c.hasFather->:Character {birth_name: 'Aerys II Targaryen'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Ultimate Wolverine'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(father:Character)-[:fromUniverse]->(universe:FictionalUniverse) WHERE father.name = 'Ultimate Wolverine' RETURN DISTINCT (c)-[:memberOf]->(org:Organization) RETURN org.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Petyr Baelish'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Cersei Lannister'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.name = 'Cersei Lannister' RETURN DISTINCT c.name UNION MATCH (c:Character)-[:killedBy]->(k:Character) WHERE k.name = 'Petyr Baelish' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character) RETURN DISTINCT c1.name, c1.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character) RETURN DISTINCT c.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Midnight Sons'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Midnight Sons' RETURN count(c) AS member_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Marvel Universe'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Red Guardian'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:hasSpouse]->(redGuardian:Character) WHERE redGuardian.name = 'Red Guardian' RETURN DISTINCT c.name, c.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Maggie Murdock'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Avengers'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.name = 'Maggie Murdock' RETURN DISTINCT c.name UNION MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Avengers' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)-[r1:basedIn]->(m1:Location {name: 'Kirky Hassary'}) WITH DISTINCT n WHERE 'spy' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization)-[:basedIn]->(l:Location) WHERE l.name = 'Kirky Hassary' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.3
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character {name: 'Druig'}) WITH DISTINCT n RETURN n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE c.birth_name = 'Druig' RETURN c.creator AS creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Cosmere'}) WITH DISTINCT n WHERE NOT 'therapist' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE fu.name = 'Cosmere' AND c.occupation NOT CONTAINS 'therapist' RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Bråkmakargatan universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (father:Character)-[:hasFather]->(child:Character)-[:fromUniverse]->(universe:FictionalUniverse) WHERE universe.name = 'Bråkmakargatan' RETURN DISTINCT father.name AS father_name, child.name AS child_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'Daily Globe'}) RETURN n, m0 as m UNION MATCH (n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Fei Lian'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (u:FictionalUniverse)-[:fromUniverse]->(o:Organization) WHERE o.name = 'Daily Globe' RETURN count(u) + (MATCH (u:FictionalUniverse)-[:fromUniverse]->(c:Character) WHERE c.name = 'Fei Lian' RETURN count(u)) AS total",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Stick'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Milla Donovan'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(m:Character {birth_name: 'Milla Donovan'}) WITH c MATCH (c)-[:hasStudent]->(s:Character) WHERE s.birth_name = 'Stick' RETURN DISTINCT c.birth_name, c.country_of_citizenship",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)<-[r0:hasMother]-(m0:Character {name: 'Myrcella Baratheon'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Mace Tyrell'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE c.birth_name = 'Myrcella Baratheon' RETURN DISTINCT m.birth_name UNION MATCH (c:Character)-[:killedBy]->(m:Character) WHERE c.birth_name = 'Mace Tyrell' RETURN DISTINCT m.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character {name: 'Betty Ross'}), (m0:Character {name: 'Ultimate Firestar'}) RETURN n.birth_name = m0.birth_name AS answer",
+    "pred_cypher": "MATCH (c1:Character {name: 'Betty Ross'})-[:fromUniverse]->(u:FictionalUniverse), (c2:Character {name: 'Ultimate Firestar'})-[:fromUniverse]->(u) RETURN DISTINCT c1.birth_name, c2.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r1:memberOf]-(m1:Character {name: 'Jessica Drew'}) OPTIONAL MATCH (n:Organization)<-[r0:memberOf]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Jessica Drew'})-[:memberOf]->(org:Organization) RETURN DISTINCT org.name, count(c) AS member_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Cyclops'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:memberOf]->(org:Organization) RETURN COUNT(org) AS organizationCount",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.013779527559055118
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Clancy Bouvier'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (clancy:Character {birth_name: 'Clancy Bouvier'})-[:hasMother]->(child:Character) RETURN child.birth_name AS child_name, COUNT(child) AS mother_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:killedBy]->(killed:Character) RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.10869565217391304
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Brotherhood Without Banners'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Brotherhood Without Banners' MATCH (c)-[:bornIn]->(l:Location) RETURN DISTINCT l.name AS birthplace",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:hasStudent]->(m1:Character {name: 'Yuno Gasai'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (yuno:Character)-[:hasStudent]->(student:Character)-[:killedBy]->(killer:Character) RETURN DISTINCT killer.name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Jon Snow'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(jon:Character {name: 'Jon Snow'})-[:bornIn]->(l:Location) RETURN DISTINCT l.name AS location_name, count(l) AS character_count ORDER BY character_count DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)<-[r1:hasFather]-(m1:Character {name: 'Socks Heeler'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Socks Heeler'})-[:hasFather]->(father:Character)-[:hasFather]->(grandfather:Character) RETURN DISTINCT grandfather.birth_name AS paternal_grandfather",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character),(n:Location)<-[r1:diedIn]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location)-[:diedIn]->(l2:Location) WHERE l = l2 RETURN COUNT(l) AS location_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Nanase'}) WITH DISTINCT n UNWIND n.occupation AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse)-[:fromUniverse]->(n:Character {birth_name: 'Nanase'}) RETURN DISTINCT c.occupation",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Ramsay Bolton'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Catelyn Stark'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Catelyn Stark'})-[:killedBy]->(k:Character {birth_name: 'Ramsay Bolton'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Demon King of Confusion'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Xuanzang'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE (c)-[:killedBy]->(d:Character) WHERE d.name = 'Demon King of Confusion' OR (c)-[:hasStudent]->(x:Character) WHERE x.name = 'Xuanzang' RETURN count(c) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character) WHERE c.name = 'Stick' RETURN DISTINCT s.name, COUNT(s) AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.3333333333333333
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Kevan Lannister'}),(n:Character)-[r1:diedIn]->(m1:Location {name: 'Great Sept of Baelor'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(k:Character {birth_name: 'Kevan Lannister'}) WITH c WHERE c.diedIn some (l:Location {name: 'Great Sept of Baelor'}) RETURN DISTINCT c.birth_name AS name, c.occupation AS occupation",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:hasMother]->(m1:Character {name: 'Lady Wang'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (l:Character)-[:hasMother]->(child:Character)-[:hasFather]->(father:Character) RETURN DISTINCT father.name, father.creator",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.009708737864077669
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Takao Hiyama'}),(n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Takao Hiyama'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(teacher:Character {birth_name: 'Takao Hiyama'}) RETURN c.birth_name AS character_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'Sinister Six'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE c.name = 'Sinister Six' RETURN DISTINCT fu.name, fu.inception_year",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Cao Hong'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character) WHERE k.name = 'Cao Hong' RETURN DISTINCT c.country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location),(n:Character)-[r1:bornIn]->(m0:Location) WITH DISTINCT n RETURN count(DISTINCT n.creator)",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location)-[:diedIn]->(c) RETURN count(DISTINCT c.creator) AS creator_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Arya Stark'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (a:Character)-[:killedBy]->(k:Character) WHERE a.name = 'Arya Stark' RETURN k.name, COUNT(k.hasFather) AS father_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character {name: 'Trixie Heeler'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Trixie Heeler'})-[:hasSpouse]->(spouse:Character) RETURN spouse.birth_name AS married_to",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Takao Hiyama'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (t:Character {birth_name: 'Takao Hiyama'})-[:hasStudent]->(s:Character) MATCH (s)-[:killedBy]->(k:Character) RETURN DISTINCT s.birth_name, count(k) AS killed_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasSpouse]->(m0:Character) WITH DISTINCT n WHERE NOT 'Han' IN n.country_of_citizenship RETURN n.name",
+    "pred_cypher": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character)-[:hasSpouse]->(c3:Character), (c1)-[:killedBy]->(killed:Character) WHERE c1.country_of_citizenship NOT CONTAINS 'Han' RETURN DISTINCT c1.birth_name AS character_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasSpouse]->(m0:Character) WITH DISTINCT n WHERE NOT 'war chief' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:killedBy]->(c) WHERE NOT (c:Character)-[:hasOccupation]->(o:Occupation {name: 'war chief'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'King\\'s Landing'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'King's Landing' MATCH (c)-[:hasMother]->(m:Character) RETURN DISTINCT c.birth_name, count(m) AS mother_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(s:Character) RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Cai Yong'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character) WHERE c.name = 'Cai Yong' RETURN DISTINCT s.name, s.occupation",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Gregor Clegane'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Dragonstone'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(g:Character {birth_name: 'Gregor Clegane'}) RETURN DISTINCT c.birth_name UNION MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Dragonstone' RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.7333333333333333
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) RETURN DISTINCT c.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lulubelle Loon'}) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Lulubelle Loon' RETURN DISTINCT c.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Stannis Baratheon'}),(n:Character)-[r1:hasFather]->(m1:Character {name: 'Stannis Baratheon'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character)-[:killedBy]->(victim:Character) WHERE f.birth_name = 'Stannis Baratheon' RETURN DISTINCT c.birth_name AS name, c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'King\\'s Landing'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Steffon Baratheon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killed:Character) RETURN DISTINCT c.birth_name AS character_name, COUNT(killed) AS killed_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE c.fromUniverse.someProperty = 'World of Ice and Fire' RETURN DISTINCT l.name AS location_name, count(c) AS character_count ORDER BY character_count DESC",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Avengers'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Viper'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE c.memberOf SOME (o:Organization) OR (c.hasSpouse)--(v:Character) WHERE v.name = 'Viper' RETURN COUNT(DISTINCT c) AS character_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Brotherhood Without Banners'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Brotherhood Without Banners' MATCH (c)-[:killedBy]->(killed:Character)-[:diedIn]->(l:Location) RETURN COUNT(DISTINCT l.name) AS distinct_locations",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.3
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization {name: 'Night\\'s Watch'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (o:Organization)-[:basedIn]->(l:Location) WHERE o.name = 'Night\\'s Watch' RETURN count(l) AS location_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character)-[:killedBy]->(k:Character) RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.007352941176470588
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Dragonstone'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Dragonstone' RETURN c.birth_name AS character_name, COUNT(c) AS mother_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Dorne'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE l.name = 'Dorne' RETURN c.name, COUNT(c) AS mother_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.75
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Bian Hong'}),(n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Lady Xu'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killer:Character {name: 'Bian Hong'}) RETURN DISTINCT c.name, c.gender WHERE EXISTS((c)-[:hasSpouse]->(spouse:Character {name: 'Lady Xu'}))",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6666666666666666
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Bambi universe'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE EXISTS((c)-[:fromUniverse]->(u:FictionalUniverse) WHERE u.name = 'Bambi') RETURN DISTINCT c.name, count(m) AS mother_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Lancel Lannister'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (m:Character)-[:hasMother]->(mother:Character)-[:killedBy]->(lancel:Character {birth_name: 'Lancel Lannister'}) RETURN DISTINCT mother.birth_name, mother.country_of_citizenship",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasFather]->(m0:Character) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character)-[:killedBy]->(c) RETURN DISTINCT c.birth_name AS name, c.occupation AS occupation",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Baigujing'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:killedBy]->(baigujing:Character) RETURN DISTINCT c.name, count(s) AS student_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Cao Song'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character)-[:hasMother]->(g:Character) WHERE g.name = 'Cao Song' RETURN DISTINCT c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Mount Huaguo'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Mount Huaguo' RETURN DISTINCT c.name, count(s) AS student_count ORDER BY student_count DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (stick:Character)-[:hasStudent]->(student:Character)-[:memberOf]->(org:Organization) RETURN DISTINCT org.name, count(student) AS student_count ORDER BY student_count DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.031141868512110725
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Heroes for Hire'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Heroes for Hire' RETURN DISTINCT c.name, COUNT(c.hasStudent) AS teacher_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9375
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Euron Greyjoy'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character)-[:killedBy]->(k:Character) WHERE k.name = 'Euron Greyjoy' RETURN DISTINCT c.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.1
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Scarlet Witch'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (s:Character)-[:hasSpouse]->(spouse:Character)-[:memberOf]->(org:Organization) WHERE s.name = 'Scarlet Witch' RETURN DISTINCT org.name, count(spouse) AS spouse_count ORDER BY org.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Xuanzang'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (x:Character)-[:hasStudent]->(student:Character)-[:hasStudent]->(teacher:Character) WHERE x.name = 'Xuanzang' RETURN DISTINCT student.name, count(teacher) AS teacher_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r0:basedIn]->(m0:Location {name: 'New New York'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (o:Organization)-[:basedIn]->(l:Location) WHERE l.name = 'New York' RETURN DISTINCT o.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Loras Tyrell'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasMother]-(m1:Character {name: 'Tommen Baratheon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE c.hasMother->(:Character {birth_name: 'Tommen Baratheon'}) OR (c.killedBy) RETURN COUNT(c) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH DISTINCT n WHERE 'geneticist' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE c.occupation CONTAINS 'geneticist' RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Cersei Lannister'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Ellaria Sand'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(mother:Character {birth_name: 'Cersei Lannister'})<-[:hasMother]-(c2:Character)-[:killedBy]->(killer:Character {birth_name: 'Ellaria Sand'}) RETURN DISTINCT c2.birth_name, c2.country_of_citizenship",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Stannis Baratheon'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character {name: 'Stannis Baratheon'}) RETURN DISTINCT (c)-[:hasMother]->(m:Character) AS mother",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Rhaegar Targaryen'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (r:Character)-[:killedBy]->(child:Character) WHERE EXISTS((r)-[:hasMother]->(m:Character)) AND m.name = 'Rhaegar Targaryen' RETURN DISTINCT r.name AS killer_name, COUNT(child) AS children_killed ORDER BY children_killed DESC",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'X-Factor'}),(n:Character)-[r1:memberOf]->(m1:Organization {name: 'Fallen Angels'}) WITH DISTINCT n WHERE 'thief' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name IN ['X-Factor', 'Fallen Angels'] AND c.occupation CONTAINS 'thief' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization {name: 'Planet Express'}),(n:Location)<-[r1:bornIn]-(m1:Character {name: 'Leela'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE c.name = 'Leela' RETURN DISTINCT l.name UNION ALL MATCH (o:Organization)-[:basedIn]->(l:Location) WHERE o.name = 'Planet Express' RETURN DISTINCT l.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6666666666666666
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Xuanzang'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c1:Character)-[:hasStudent]->(c2:Character)-[:hasStudent]->(xuanzang:Character) RETURN DISTINCT c1.birth_name AS birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Defenders'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (m:Character)-[:hasMother]->(mother:Character)-[:memberOf]->(defender:Character) RETURN DISTINCT mother.birth_name AS mother_name, count(defender) AS number_of_defenders",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Maha Yogi'}) RETURN n, m0 as m UNION MATCH (n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Organization {name: 'MI-13'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (u:FictionalUniverse)-[:fromUniverse]->(c:Character) WHERE c.name IN ['Maha Yogi'] RETURN count(u) + (MATCH (u:FictionalUniverse)-[:fromUniverse]->(o:Organization) WHERE o.name = 'MI-13' RETURN count(u)) AS total_universes",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r0:basedIn]->(m0:Location {name: 'Kirky Hassary'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (o:Organization)-[:basedIn]->(l:Location) WHERE l.name = 'Kirky Hassary' RETURN DISTINCT o.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Kingsguard'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Kingsguard' RETURN DISTINCT c.name, COUNT(c)-1 AS killed_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5789473684210527
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Jaime Lannister'}) WITH DISTINCT n UNWIND n.occupation AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (jaime:Character {name: 'Jaime Lannister'})-[:killedBy]->(killedJaime:Character)-[:killedBy]->(target:Character) RETURN DISTINCT target.occupation",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r0:basedIn]->(m0:Location)<-[r1:diedIn]-(m1:Character {name: 'Jon Snow'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character)-[:diedIn]->(l:Location)-[:basedIn]->(o:Organization) WHERE c.birth_name = 'Jon Snow' RETURN DISTINCT o.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (o:Organization)-[:fromUniverse]->(fu:FictionalUniverse {name: 'World of Ice and Fire'})-[:basedIn]->(l:Location) RETURN l.name, count(o) AS organization_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lady Wu'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady Wang'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Lady Wu'})<-[:hasSpouse]-(s:Character {birth_name: 'Lady Wang'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred_cypher": "MATCH (c1:Character)-[:killedBy]->(c2:Character) RETURN DISTINCT c1.creator AS creator",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Gan Ning'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killer:Character) WHERE killer.name = 'Gan Ning' RETURN DISTINCT c.name, COUNT(c.hasFather) AS father_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.8888888888888888
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Renly Baratheon'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (r:Character {birth_name: 'Renly Baratheon'})-[:hasSpouse]->(spouse:Character)-[:bornIn]->(place:Location) RETURN DISTINCT place.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Asgard'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Asgard'})-[:memberOf]->(o:Organization) RETURN o.name AS organization_name, count(o) AS member_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Maekar I Targaryen'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Maekar I Targaryen' MATCH (c)-[:killedBy]->(k:Character) RETURN COUNT(DISTINCT c.diedIn) AS distinct_locations",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Future Diary universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse)-[:hasStudent]->(t:Character) RETURN DISTINCT c.name, count(t) AS teacher_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (m:Character)-[:hasMother]->(mother:Character)-[:hasStudent]->(student:Character)-[:hasStudent]->(stick:Character) RETURN DISTINCT mother.birth_name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Liu Biao'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE c.name = 'Liu Biao' RETURN DISTINCT m.name AS mother_name, m.birth_name AS birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character {name: 'Ygritte'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {name: 'Ygritte'})-[:bornIn]->(l:Location) RETURN l",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location)<-[r1:bornIn]-(m1:Character {name: 'Liu Shan'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (c1:Character)-[:bornIn]->(l:Location), (c2:Character)-[:diedIn]->(l), (c1)-[:fromUniverse]->(u:FictionalUniverse), (c2)-[:fromUniverse]->(u) RETURN DISTINCT c1.name, c1.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'The Romance of the Three Kingdoms universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(victim:Character)-[:fromUniverse]->(u:FictionalUniverse) WHERE u.name = 'The Romance of the Three Kingdoms' RETURN c.name AS character_name, COUNT(victim) AS number_killed",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)<-[r1:hasFather]-(m1:Character {name: 'Liu Xuan'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (l:Character)-[:hasMother]->(m:Character)-[:hasMother]->(g:Character) WHERE l.name = 'Liu Xuan' RETURN DISTINCT g.name AS paternal_grandmother",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:killedBy]->(k:Character) RETURN DISTINCT c.birth_name AS character_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.04878048780487805
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Cabal'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Cabal' RETURN c.name, COUNT(o) AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.35294117647058826
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lady Wu'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'The Romance of the Three Kingdoms universe'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.name = 'Lady Wu' RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Magus'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'New Mutants'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character) WHERE (c.hasFather)-[:hasFather]->(m:Character) AND m.name = 'Magus' OR (c)-[:memberOf]->(o:Organization) RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (f:Character)-[:hasFather]->(father:Character)-[:hasMother]->(child:Character) WHERE (father)-[:killedBy]->(child) RETURN DISTINCT father.birth_name AS father_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character {name: 'Feral'}), (m0:Character {name: 'Nightcrawler'}) RETURN n.birth_name = m0.birth_name AS answer",
+    "pred_cypher": "MATCH (c1:Character {name: 'Feral'})-[:fromUniverse]->(u:FictionalUniverse), (c2:Character {name: 'Nightcrawler'})-[:fromUniverse]->(u) WHERE u.inception_year IS NOT NULL RETURN DISTINCT c1.birth_name, c2.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Jiao Bing'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(j:Character {birth_name: 'Jiao Bing'}) RETURN DISTINCT c.birth_name AS character_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Westeros'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Melessa Tarly'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character) WHERE (c.diedIn) IN [\"Westeros\"] OR EXISTS((c)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Melessa Tarly') RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character) RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Minisa Tully'}),(n:Character)-[r1:bornIn]->(m1:Location {name: 'Riverrun'}) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Minisa Tully' AND (c)-[:bornIn]->(l:Location) WHERE l.name = 'Riverrun' RETURN DISTINCT c.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Cao Wenshu'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Cao Wenshu'})-[:fromUniverse]->(fu:FictionalUniverse) RETURN DISTINCT fu.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(t:Character) RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character {name: 'Trixie Heeler'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Trixie Heeler'})-[:hasSpouse]->(spouse:Character) RETURN DISTINCT spouse.birth_name AS spouse_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'King\\'s Landing'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Alysanne Targaryen'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization)<-[r1:memberOf]-(m1:Character {name: 'Samwell Tarly'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Samwell Tarly'})-[:memberOf]->(o:Organization)-[:basedIn]->(l:Location) RETURN DISTINCT l.name, count(l.name) AS organization_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH DISTINCT n WHERE NOT 'terrorist' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(victim:Character) WHERE c.occupation NOT CONTAINS 'terrorist' RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Mystique'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (m:Character)-[:hasSpouse]->(c:Character)-[:fromUniverse]->(u:FictionalUniverse) WHERE u.name = 'Mystique' RETURN DISTINCT c.name, c.creator ORDER BY c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:fromUniverse]->(u:FictionalUniverse) WHERE u.name = 'Journey to the West' RETURN c.name, count(s) AS student_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character), (c1)-[:killedBy]->(killer:Character) WHERE (c2)-[:hasSpouse]->(killer) RETURN DISTINCT c1.name, c1.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Metropolis'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Metropolis' RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Guo Guifei'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasFather]-(m1:Character {name: 'Cao Lin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(g:Character {birth_name: 'Guo Guifei'}) RETURN count(c) + COUNT((c:Character)-[:hasFather]->(cl:Character {birth_name: 'Cao Lin'})) AS total",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:diedIn]->(m1:Location {name: 'Dorne'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(d:Location), (c)-[:bornIn]->(b:Location) WHERE d.name = 'Dorne' RETURN b.name AS birth_location, count(b) AS character_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'The Riverlands'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(child:Character)-[:bornIn]->(l:Location) WHERE l.name = 'The Riverlands' RETURN DISTINCT c.birth_name AS character_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Twins'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE l.name = 'Twins' RETURN DISTINCT c.name, COUNT(c)-1 AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.8333333333333334
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Baron Strucker'}),(n:Character)-[r1:memberOf]->(m1:Organization {name: 'Thunderbolts'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character) WHERE f.name = 'Baron Strucker' AND (c)-[:memberOf]->(:Organization) RETURN count(c) AS count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character) RETURN DISTINCT c.birth_name AS character_name, count(s) AS number_of_teachers",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Brotherhood of Mutants'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'X-Men'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name IN ['Brotherhood of Mutants', 'X-Men'] RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Huang Zhong'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killer:Character) WHERE killer.name = 'Huang Zhong' RETURN DISTINCT c.diedIn.name AS location_name, count(c) AS character_count ORDER BY character_count DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) RETURN DISTINCT m.country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Jeyne Westerling'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (jeyne:Character {birth_name: 'Jeyne Westerling'})\nMATCH (spouse:Character)-[:hasSpouse]->(jeyne)\nMATCH (killer:Character)-[:killedBy]->(spouse)\nWITH killer.birth_name AS killer_name, count(spouse) AS spouse_count\nRETURN DISTINCT killer_name, spouse_count ORDER BY spouse_count DESC",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Milla Donovan'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:hasStudent]->(student:Character) WHERE spouse.birth_name = 'Milla Donovan' RETURN DISTINCT c.name, c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) RETURN DISTINCT l.name AS location_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character {name: 'Tommen Baratheon'}),(n:Character)<-[r1:killedBy]-(m1:Character {name: 'Kevan Lannister'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (t:Character {birth_name: 'Tommen Baratheon'})-[:hasMother]->(m:Character)-[:killedBy]->(k:Character {birth_name: 'Kevan Lannister'}) RETURN DISTINCT m.birth_name, m.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Yuno Gasai'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(y:Character {birth_name: 'Yuno Gasai'}) RETURN DISTINCT c.birth_name AS name, c.occupation AS occupation",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Alerie Tyrell'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Cersei Lannister'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(a:Character {birth_name: 'Alerie Tyrell'})-[:killedBy]->(k:Character {birth_name: 'Cersei Lannister'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character {name: 'Celeste Cuckoo'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Celeste Cuckoo'})-[:hasMother]->(m:Character) RETURN DISTINCT m.birth_name, m.country_of_citizenship",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'King\\'s Landing'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Alysanne Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Lance Hunter'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE c.birth_name = 'Lance Hunter' RETURN DISTINCT fu.name, fu.inception_year",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Joanna Lannister'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (joanna:Character {birth_name: 'Joanna Lannister'})-[:hasMother]->(child:Character) RETURN DISTINCT child.birth_name, COUNT((child)-[:killedBy]->(:Character)) AS killed_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (s:Character)-[:hasStudent]->(student:Character)-[:hasSpouse]->(spouse:Character) RETURN DISTINCT spouse.name, spouse.country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.021739130434782608
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization)<-[r1:memberOf]-(m1:Character {name: 'Eddison Tollett'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Eddison Tollett'})-[:memberOf]->(org:Organization)-[:basedIn]->(loc:Location) RETURN DISTINCT loc.name AS location, count(org) AS organization_count ORDER BY location",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Guan Yin'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(g:Character)-[:hasMother]->(m:Character) WHERE m.name = 'Guan Yin' RETURN DISTINCT (u:FictionalUniverse) WHERE (c)-[:fromUniverse]->(u) RETURN u.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Bluey universe'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(father:Character) RETURN c.birth_name AS character_name, COUNT(father) AS father_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lady Wang'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Lady He'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE (c.hasMother)-->(:Character {birth_name: 'Lady Wang'}) OR (c.hasSpouse)-->(:Character {birth_name: 'Lady He'}) RETURN count(c) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'X-Men'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'X-Men' RETURN c.name, COUNT(c) AS mother_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9259259259259259
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(t:Character) RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:hasStudent]->(m1:Character {name: 'Zhu Bajie'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (zhu:Character)-[:hasStudent]->(student:Character)-[:hasStudent]->(char:Character) RETURN DISTINCT char.name, count(char) AS student_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:killedBy]->(c) RETURN DISTINCT c.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Cassana Baratheon'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Mance Rayder'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Cassana Baratheon' RETURN DISTINCT c.birth_name UNION MATCH (c:Character)-[:killedBy]->(m:Character) WHERE m.birth_name = 'Mance Rayder' RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(other:Character) RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.25169712793733684
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Lethal Legion'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Lethal Legion'}) RETURN DISTINCT c.name, count(c) AS mother_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Yog-Sothoth'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasFather]-(m1:Character {name: 'Cthulhu'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(y:Character {name: 'Yog-Sothoth'}) OR (c:Character)-[:hasMother]->(c:Character {name: 'Cthulhu'}) RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) RETURN c.birth_name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Daimon Hellstrom'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:fromUniverse]->(u:FictionalUniverse) WHERE spouse.name = 'Daimon Hellstrom' RETURN DISTINCT u.name, u.inception_year",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Dragonstone'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Dragonstone' RETURN c.birth_name AS character_name, COUNT(c.hasFather) AS father_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.7333333333333333
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Jean Grey'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Jean Grey' RETURN DISTINCT c.birth_name AS character_name, COUNT(c)-1 AS organization_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Stripe Heeler'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character)-[:hasSpouse]->(s:Character) WHERE s.birth_name = 'Stripe Heeler' RETURN DISTINCT c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:killedBy]->(t:Character) WHERE s.occupation CONTAINS 'student' AND t.occupation CONTAINS 'teacher' RETURN DISTINCT c.birth_name AS name, c.creator AS creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred_cypher": "MATCH (c:Character) RETURN COUNT(DISTINCT c.gender) AS distinct_genders",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character)-[r1:hasStudent]->(m1:Character {name: 'Yukiteru Amano'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(y:Character {birth_name: 'Yukiteru Amano'})-[:fromUniverse]->(fu:FictionalUniverse) RETURN DISTINCT fu.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location),(n:Character)-[r1:diedIn]->(m0:Location) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location)-[:diedIn]->(c) RETURN DISTINCT c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Milla Donovan'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:hasSpouse]->(m:Character {birth_name: 'Milla Donovan'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Mount Huaguo'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Mount Huaguo' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Cersei Lannister'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (m:Character)-[:hasMother]->(mother:Character)-[:killedBy]->(child:Character) WHERE child.name = 'Cersei Lannister' RETURN DISTINCT mother.name AS mother_name, count(mother) AS children_killed",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Hellfire Club'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Jacob Shaw'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE c.hasFather->(:Character {birth_name: 'Jacob Shaw'}) OR (c)-[:memberOf]->(:Organization {name: 'Hellfire Club'}) RETURN COUNT(c) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Known Space'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (o:Organization)-[:fromUniverse]->(fu:FictionalUniverse) RETURN DISTINCT o.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.001015744032503809
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character) RETURN DISTINCT c.gender AS gender COUNT(*) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(teacher:Character) RETURN DISTINCT c.birth_name AS character_name, count(teacher) AS number_of_teachers",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lady Wang'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady He'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE (c.hasMother) OPTIONAL MATCH (m:Character) WHERE m.birth_name = 'Lady Wang' AND c.hasMother->m OR (c.hasSpouse) OPTIONAL MATCH (s:Character) WHERE s.birth_name = 'Lady He' AND c.hasSpouse->s RETURN COUNT(DISTINCT c) AS character_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n.birth_name)",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character) RETURN COUNT(DISTINCT c.birth_name) AS unique_birth_names",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (o:Organization) RETURN DISTINCT o.name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Marvel Universe'}),(n:Organization)<-[r1:memberOf]-(m1:Character {name: 'Kamala Khan'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Kamala Khan'})-[:memberOf]->(o:Organization) RETURN DISTINCT o.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Li Jing'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character) WHERE f.birth_name = 'Li Jing' RETURN DISTINCT c.birth_name AS character_name, COUNT(c.hasStudent) AS teacher_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'X-Men'}),(n:Character)<-[r1:hasMother]-(m1:Character {name: 'Wolfsbane'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character)-[:memberOf]->(org:Organization) WHERE m.name = 'Wolfsbane' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Great Sept of Baelor'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character) WHERE c.diedIn.someProperty = 'Great Sept of Baelor' RETURN DISTINCT c.name, count(c.memberOf) AS organization_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character)<-[r1:hasFather]-(m1:Character {name: 'Cao Zhang'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(father:Character)-[:hasSpouse]->(spouse:Character) WHERE c.name = 'Cao Zhang' RETURN DISTINCT spouse.name, spouse.occupation",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Stryfe'}) RETURN n, m0 as m UNION MATCH (n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Hope Summers'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE c.birth_name IN ['Stryfe', 'Hope Summers'] RETURN DISTINCT fu.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'World of Ice and Fire'}),(n:Character)-[r1:diedIn]->(m1:Location {name: 'Dragonstone'}) WITH DISTINCT n WHERE 'warrior' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE fu.name = 'World of Ice and Fire' AND (c:diedIn)-[:diedIn]->(l:Location) WHERE l.name = 'Dragonstone' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character {name: 'Milla Donovan'}),(n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(m:Character {birth_name: 'Milla Donovan'})<-[:hasSpouse]-(s:Character)-[:hasStudent]->(stick:Character {birth_name: 'Stick'}) RETURN DISTINCT c.birth_name AS name, c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Wild Pack'}) WITH DISTINCT n WHERE 'Symkaria' IN n.country_of_citizenship RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Wild Pack' AND c.country_of_citizenship CONTAINS 'Symkaria' RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)-[r1:basedIn]->(m1:Location {name: 'Kirky Hassary'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization)-[:basedIn]->(l:Location) WHERE l.name = 'Kirky Hassary' RETURN c.name, count(o) AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Shallan Davar'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Shallan Davar'})-[:fromUniverse]->(fu:FictionalUniverse)-[:fromUniverse]->(o:Organization) RETURN COUNT(o) AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasStudent]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c1:Character)-[:hasStudent]->(c2:Character)-[:killedBy]->(c3:Character) RETURN DISTINCT c1.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.04878048780487805
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Brotherhood Without Banners'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'King\\'s Landing'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Zhu Bajie'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(zhu:Character {name: 'Zhu Bajie'}) RETURN DISTINCT c.name, c.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Earth-167'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(u:FictionalUniverse) WHERE u.name = 'Earth-167' MATCH (c)-[:bornIn]->(l:Location) RETURN l.name AS location, COUNT(l) AS character_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Cosmere'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(v:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE fu.name = 'Cosmere' RETURN c.name AS character_name, COUNT(v) AS victim_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Riverrun'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Riverrun' WITH c.birth_name AS character_name, COUNT(c) AS killed_count RETURN DISTINCT character_name, killed_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.875
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Lü Xiang'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(l:Character {name: 'Lü Xiang'}) RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Night\\'s Watch'}),(n:Character)-[r1:diedIn]->(m1:Location {name: 'Beyond the Wall'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Night's Watch' AND (c:diedIn)-[:diedIn]->(l:Location) WHERE l.name = 'Beyond the Wall' RETURN DISTINCT c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) OPTIONAL MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character) RETURN c.birth_name AS character_name, count(s) AS number_of_students",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Future Foundation'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Future Foundation' MATCH (c)-[:hasFather]->(f:Character) RETURN DISTINCT f.country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Winterfell'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Winterfell'}) RETURN DISTINCT c.name AS killer_name, COUNT(c) AS deaths_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.35714285714285715
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Liao Hua'}) WITH DISTINCT n RETURN count(DISTINCT n.creator)",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character) WHERE k.name = 'Liao Hua' RETURN COUNT(DISTINCT c.creator) AS creator_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Cosmere'}) OPTIONAL MATCH (n:Organization)<-[r0:memberOf]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (o:Organization)-[:memberOf]->(c:Character) WHERE o.fromUniverse = 'Cosmere' RETURN o.name AS organization_name, count(c) AS character_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Rhaella Targaryen'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Rhaella Targaryen' MATCH (c)-[:hasFather]->(f:Character) RETURN DISTINCT c.birth_name AS character_name, COUNT(f) AS father_count ORDER BY character_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse {name: 'Known Space'}), (m0:FictionalUniverse {name: 'Ultimate Universe'}) RETURN CASE WHEN n.inception_year > m0.inception_year THEN n.name ELSE m0.name END AS answer",
+    "pred_cypher": "MATCH (u:FictionalUniverse) WHERE u.name IN ['Known Space', 'the Ultimate Universe'] RETURN u.name AS universe, u.inception_year AS inception_year ORDER BY u.inception_year DESC LIMIT 1",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Grandfather of the Troublemaker Street children'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Grandmother of the Troublemaker Street children'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character)-[:hasFather]->(g:Character), (c)-[:hasFather]->(f:Character)-[:hasMother]->(gf:Character) WHERE g.name = 'Troublemaker Street' AND gf.name = 'Troublemaker Street' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Riverrun'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Winterfell'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Riverrun' RETURN DISTINCT c.birth_name UNION MATCH (c:Character)-[:diedIn]->(l:Location) WHERE l.name = 'Winterfell' RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'King\\'s Landing'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasFather]-(m1:Character {name: 'Aerys II Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred_cypher": "MATCH (u:FictionalUniverse) RETURN u.name, u.inception_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character {name: 'Snake'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE c.name = 'Snake' RETURN l",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Lysa Arryn'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killed:Character) WHERE killed.birth_name = 'Lysa Arryn' MATCH (c)-[:diedIn]->(place:Location) RETURN DISTINCT place.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH DISTINCT n WHERE 'United States of America' IN n.country_of_citizenship RETURN n.name",
+    "pred_cypher": "MATCH (c:Character) WHERE c.occupation CONTAINS 'father' AND c.country_of_citizenship CONTAINS 'United States of America' RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Chang\\'an'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasStudent]->(m1:Character {name: 'Gu Yong'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Marauders'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Marauders' RETURN c.name, COUNT(c) AS killed_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9090909090909091
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Futuramaverse'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) RETURN DISTINCT c.birth_name AS character_name, COUNT(o) AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Scarlet Witch'}) WITH DISTINCT n UNWIND n.occupation AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Scarlet Witch' RETURN DISTINCT c.occupation",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character {name: 'Li Qiu'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Li Qiu'})-[:killedBy]->(k:Character) RETURN DISTINCT k.diedIn",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Bandit Heeler'}) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(father:Character) WHERE father.birth_name = 'Bandit Heeler' RETURN DISTINCT c.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasStudent]-(m0:Character) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c1:Character)-[:hasStudent]->(c2:Character)-[:killedBy]->(c3:Character) RETURN DISTINCT c1.name, c1.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.04878048780487805
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Guan Yin'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (g:Character {name: 'Guan Yin'})-[:hasStudent]->(s:Character) RETURN DISTINCT s.name, s.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Lady Li'}),(n:Character)<-[r1:killedBy]-(m1:Character {name: 'Zhong Jin'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(l:Character {birth_name: 'Lady Li'})<-[:hasSpouse]-(k:Character)-[:killedBy]->(z:Character {birth_name: 'Zhong Jin'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Mystique'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character) WHERE c2.name = 'Mystique' RETURN DISTINCT c1.name, c1.occupation",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Six-Eared Macaque'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:killedBy]->(sixEaredMacaque:Character) RETURN DISTINCT c.name, count(s) AS student_count ORDER BY student_count DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Cthulhu Mythos'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character) RETURN DISTINCT c.name, count(f) AS father_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'J. Jonah Jameson'}) WITH DISTINCT n WHERE NOT 'aircraft pilot' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character) WHERE f.birth_name = 'J. Jonah Jameson' AND c.occupation NOT CONTAINS 'aircraft pilot' RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Excalibur'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(victim:Character)-[:memberOf]->(org:Organization) WHERE org.name = 'Excalibur' RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(mother:Character) RETURN c.birth_name AS character_name, COUNT(mother) AS mother_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:FictionalUniverse {name: 'Known Space'}), (m0:FictionalUniverse {name: 'Ultimate Universe'}) RETURN n.inception_year - m0.inception_year AS answer",
+    "pred_cypher": "MATCH (u:FictionalUniverse) WHERE u.name IN ['Known Space', 'Ultimate Universe'] RETURN u.name, u.inception_year ORDER BY u.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Jingzhou'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Jingzhou'}) RETURN DISTINCT c.name, COUNT(c) AS mother_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.8888888888888888
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasFather]->(m0:Character) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character)-[:killedBy]->(c) RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'The Stormlands'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'The Stormlands' RETURN DISTINCT c.birth_name, COUNT(c)-1 AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.8
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Maggia'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Maggia' RETURN DISTINCT c.name, COUNT(c.hasFather) AS child_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.8888888888888888
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Brotherhood Without Banners'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Brotherhood Without Banners' MATCH (c)-[:diedIn]->(l:Location) RETURN l.name AS location, COUNT(l) AS death_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Metropolis'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Metropolis' RETURN DISTINCT c.birth_name AS name, c.occupation AS occupation",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Tyrion Lannister'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (t:Character {birth_name: 'Tyrion Lannister'})-[:killedBy]->(k:Character) RETURN k.birth_name AS character_name, COUNT(k.hasMother) AS mother_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Daredevil'}),(n:Character)-[r1:hasStudent]->(m1:Character {name: 'Elektra'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(d:Character {name: 'Daredevil'}) WITH c MATCH (c)-[:hasStudent]->(e:Character {name: 'Elektra'}) RETURN DISTINCT c.name, c.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)<-[r0:hasFather]-(m0:Character {name: 'Rhaenys Targaryen'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Elia Martell'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE c.birth_name = 'Rhaenys Targaryen' RETURN COUNT((c)-[:hasFather]->()) AS father_count UNION ALL MATCH (c:Character) WHERE c.birth_name = 'Elia Martell' RETURN COUNT((c)-[:hasSpouse]->()) AS spouse_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(other:Character) RETURN DISTINCT c.country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Åsa-Nisse universe'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:fromUniverse]->(universe:FictionalUniverse) RETURN COUNT(c) AS marriedCount",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character {name: 'Druig'}) WITH DISTINCT n RETURN n.gender",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Druig'}) RETURN c.gender AS gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Casey Coot'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasMother]-(m1:Character {name: 'Cuthbert Coot'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(casey:Character {birth_name: 'Casey Coot'}) RETURN DISTINCT c.birth_name UNION MATCH (c:Character)-[:hasMother]->(cuthbert:Character {birth_name: 'Cuthbert Coot'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Dark X-Men'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasMother]-(m1:Character {name: 'Celeste Cuckoo'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character) WHERE c.hasMother->(:Character {birth_name: 'Celeste Cuckoo'}) OR (c)-[:memberOf]->(:Organization {name: 'Dark X-Men'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'Grapplers'}) RETURN n, m0 as m UNION MATCH (n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Organization {name: 'Mys-Tech'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (o:Organization) WHERE o.name IN ['Grapplers', 'Mys-Tech'] MATCH (o)-[:fromUniverse]->(fu:FictionalUniverse) RETURN DISTINCT fu.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Zhu Bajie'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(zhu:Character {name: 'Zhu Bajie'}) RETURN DISTINCT c.name AS character_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)-[r1:basedIn]->(m1:Location {name: 'Wall'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization)-[:basedIn]->(l:Location) WHERE l.name = 'Wall' RETURN DISTINCT c.name, COUNT(o) AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasStudent]->(m0:Character) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:killedBy]->(c2:Character) RETURN DISTINCT c.birth_name AS name, c.country_of_citizenship AS country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.04878048780487805
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Cai Yong'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character) WHERE c.birth_name = 'Cai Yong' RETURN s.birth_name AS student",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:hasStudent]->(m1:Character {name: 'Sun Wukong'}) OPTIONAL MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character) WHERE s.name = 'Sun Wukong' RETURN DISTINCT c.name, count(c.name) AS student_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Muzha'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(m:Character {birth_name: 'Muzha'})-[:fromUniverse]->(fu:FictionalUniverse {name: 'Journey to the West'}) RETURN DISTINCT c.birth_name, c.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Donald Duck universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse)-[:fromUniverse]->(o:Organization) RETURN c.name, count(o) AS organization_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Night\\'s Watch'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'The Second Sons'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(father:Character)-[:memberOf]->(org:Organization {name: 'The Second Sons'}) RETURN DISTINCT father.birth_name AS father_name, count(c) AS number_of_children",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:fromUniverse]->(u:FictionalUniverse) WHERE u.name = 'Journey to the West' RETURN DISTINCT c.name, count(s) AS student_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (o:Organization)-[:basedIn]->(l:Location) RETURN DISTINCT l.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) OPTIONAL MATCH (n:Organization)<-[r0:memberOf]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (o:Organization)-[:memberOf]->(c:Character) RETURN o.name AS organization_name, count(c) AS member_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Journey to the West universe'}),(n:Character)-[r1:hasStudent]->(m1:Character {name: 'Muzha'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(m:Character {name: 'Muzha'}) RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Yuno Gasai'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Yuno Gasai'})-[:hasStudent]->(t:Character) RETURN t.birth_name AS teacher",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Future Diary universe'}),(n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Takao Hiyama'}) WITH DISTINCT n WHERE 'serial killer' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(t:Character {birth_name: 'Takao Hiyama'}) WHERE c.occupation CONTAINS 'serial killer' RETURN DISTINCT c.birth_name AS character_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Earth-167'}),(n:Character)-[r1:bornIn]->(m1:Location {name: 'Krypton'}) WITH DISTINCT n WHERE NOT 'murderer' IN n.occupation RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE fu.inception_year = 167 AND c.occupation NOT CONTAINS 'murderer' RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Karen Page'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character {birth_name: 'Karen Page'})\nOPTIONAL MATCH (c)-[:killedBy]->(killer:Character)\nMATCH (killer)-[:memberOf]->(org:Organization)\nWITH org, count(killer) AS member_count\nRETURN DISTINCT org.name AS organization_name, member_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Winterfell'}),(n:Character)<-[r1:killedBy]-(m1:Character {name: 'Alester Florent'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Winterfell'}) RETURN DISTINCT c.name WHERE EXISTS((c)-[:killedBy]->(a:Character {name: 'Alester Florent'}))",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.15384615384615385
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character),(n:Location)<-[r1:diedIn]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location)-[:diedIn]->(c) RETURN DISTINCT l.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character)-[r1:hasMother]->(m1:Character {name: 'Maggie Murdock'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (m:Character)-[:hasMother]->(mother:Character) WHERE mother.name = 'Maggie Murdock' MATCH (m)-[:hasSpouse]->(spouse:Character) RETURN DISTINCT spouse.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) RETURN DISTINCT c.gender AS gender COUNT(*) AS count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Defenders'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Defenders' RETURN c.name, COUNT((c)-[:hasStudent]->(:Character)) AS student_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9534883720930233
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Wild Pack'}) WITH DISTINCT n RETURN count(DISTINCT n.creator)",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Wild Pack' RETURN COUNT(DISTINCT c.creator) AS unique_creators",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character {name: 'Rhaelle Targaryen'}),(n:Character)<-[r1:hasFather]-(m1:Character {name: 'Shaera Targaryen'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (r:Character {birth_name: 'Rhaelle Targaryen'})-[:hasFather]->(f:Character), (s:Character {birth_name: 'Shaera Targaryen'})-[:hasFather]->(f) RETURN f.birth_name AS father_name, f.country_of_citizenship AS country_of_citizenship",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Heilong River'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE l.name = 'Heilong River' RETURN DISTINCT c.name, c.country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Dark X-Men'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character)-[:memberOf]->(org:Organization) WHERE org.name = 'Dark X-Men' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Petyr Baelish'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killer:Character {name: 'Petyr Baelish'}) RETURN DISTINCT c.name, COUNT(c) AS mother_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.75
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Guan Yin'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (t:Character)-[:hasStudent]->(s:Character) WHERE t.birth_name = 'Guan Yin' RETURN DISTINCT s.birth_name AS name, s.country_of_citizenship AS country_of_citizenship",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:killedBy]->(c2:Character) RETURN DISTINCT c.birth_name AS name, c.occupation AS occupation",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.04878048780487805
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Stannis Baratheon'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character) WHERE spouse.name = 'Stannis Baratheon' MATCH (c)-[:killedBy]->(killer:Character) MATCH (killer)-[:diedIn]->(deathPlace:Location) RETURN DISTINCT deathPlace.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Jiao Bing'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(j:Character {birth_name: 'Jiao Bing'}) RETURN DISTINCT c.birth_name AS name, c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character)-[:killedBy]->(k:Character) RETURN DISTINCT c.birth_name AS name, c.country_of_citizenship AS country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.007352941176470588
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'World of Ice and Fire'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Ellaria Sand'}) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character) WHERE k.name = 'Ellaria Sand' RETURN DISTINCT c.gender COUNT(*) AS gender_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Euron Greyjoy'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (f:Character)-[:hasFather]->(father:Character)-[:killedBy]->(child:Character)-[:hasMother]->(e:Character) WHERE e.name = 'Euron Greyjoy' RETURN DISTINCT father.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (s:Character)-[:hasStudent]->(student:Character)-[:memberOf]->(org:Organization) WHERE s.name = 'Stick' RETURN DISTINCT org.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Chang\\'an'}),(n:Character)-[r1:hasStudent]->(m1:Character {name: 'Gu Yong'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Trixie Heeler'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(t:Character {birth_name: 'Trixie Heeler'}) RETURN DISTINCT c.birth_name AS name, c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (f:Character)-[:hasFather]->(child:Character)-[:killedBy]->(father:Character) RETURN DISTINCT father.name AS name, father.birth_name AS birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.007352941176470588
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Highgarden'}),(n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Luthor Tyrell'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Highgarden'}) WHERE (c)-[:hasSpouse]->(s:Character {birth_name: 'Luthor Tyrell'}) RETURN DISTINCT c.birth_name AS character_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location) RETURN DISTINCT l.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Weapon X'}),(n:Character)<-[r1:hasFather]-(m1:Character {name: 'Jimmy Hudson'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(u:FictionalUniverse)-[:hasChild]->(child:Character) WHERE child.name = 'Jimmy Hudson' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse)<-[r1:fromUniverse]-(m1:Organization {name: 'Infinity Watch'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (o:Organization)-[:fromUniverse]->(fu:FictionalUniverse)<-[:fromUniverse]-(c:Character) WHERE c.name = 'Infinity Watch' RETURN DISTINCT o.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Twins'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Twins'}) WITH c.name AS character_name, c AS character MATCH (killed:Character)-[:killedBy]->(character) RETURN DISTINCT character_name, count(killed) AS killed_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Stick'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Milla Donovan'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character) WHERE (c)-[:hasStudent]->(Stick:Character) OR (c)-[:hasSpouse]->(MillaDonovan:Character) RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:hasMother]->(m1:Character {name: 'Lady of House Sunderly'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c1:Character)-[:hasMother]->(m:Character)-[:hasMother]->(l:Character) WHERE l.name = 'Lady of House Sunderly' MATCH (k:Character)-[:killedBy]->(v:Character) WHERE v = c1 RETURN DISTINCT k.name AS killer_name, COUNT(k) AS killed_count ORDER BY killed_count DESC",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (l:Location) RETURN COUNT(DISTINCT l) AS distinct_locations",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r0:basedIn]->(m0:Location {name: 'Kirky Hassary'}),(n:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (org:Organization)-[:basedIn]->(loc:Location) WHERE loc.name = 'Kirky Hassary' RETURN DISTINCT org.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.6666666666666666
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Joffrey Baratheon'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lysa Arryn'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(j:Character {birth_name: 'Joffrey Baratheon'}) WITH c MATCH (c)-[:hasSpouse]->(l:Character {birth_name: 'Lysa Arryn'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Aerys II Targaryen'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Dragonstone'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Aerys II Targaryen'}) RETURN DISTINCT c.birth_name UNION MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.birth_name = 'Dragonstone' RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization {name: 'Planet Express'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (org:Organization)-[:basedIn]->(loc:Location) WHERE org.name = 'Planet Express' RETURN loc.name AS location",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Petyr Baelish'}),(n:Character)<-[r1:hasMother]-(m1:Character {name: 'Robert Arryn'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(petyr:Character {name: 'Petyr Baelish'}) WITH c MATCH (c)-[:hasMother]->(mother:Character) WHERE mother.name = 'Robert Arryn' RETURN DISTINCT c.name, c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Cyclops'}),(n:Character)<-[r1:hasMother]-(m1:Character {name: 'Nate Grey'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred_cypher": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character)-[:hasSpouse]->(cyclops:Character {name: 'Cyclops'}) RETURN DISTINCT c1.name, c1.birth_name WHERE EXISTS((c1)-[:hasSpouse]->(cyclops)) AND EXISTS((c1)-[:hasChild]->(child:Character {name: 'Nate Grey'}))",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(s:Character) RETURN DISTINCT c.creator",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Kirky Hassary'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Tower of Joy'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Tower of Joy' RETURN DISTINCT c.birth_name UNION MATCH (c:Character)-[:diedIn]->(l:Location) WHERE l.name = 'Kirky Hassary' RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Downy O\\'Drake'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": null,
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": {
+        "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
+      }
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Ramsay Bolton'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (f:Character)-[:hasFather]->(father:Character)-[:killedBy]->(child:Character) WHERE EXISTS((child)-[:killedBy]->(RamsayBolton:Character)) RETURN DISTINCT father.birth_name AS father_name, COUNT(child) AS children_killed_by_ramsay_bolton",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Yuqing Guan'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(d:Character) WHERE c.fromUniverse.someProperty = 'Yuqing Guan' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Oldtown'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Rhea Florent'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:hasMother]->(m:Character) WHERE m.birth_name = 'Rhea Florent' AND (c)-[:bornIn]->(l:Location) WHERE l.name = 'Oldtown' RETURN DISTINCT c.birth_name AS name, c.gender",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Mandarin\\'s Minions'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name = 'Mandarin's Minions' RETURN DISTINCT c.name, COUNT(c) AS organization_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Pyke'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (f:Character)-[:hasFather]->(father:Character)-[:bornIn]->(pyke:Location) RETURN DISTINCT father.birth_name AS father_name, COUNT(f) AS children_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Jaehaerys II Targaryen'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (killed:Character)-[:killedBy]->(killer:Character)-[:hasFather]->(father:Character) WHERE father.birth_name = 'Jaehaerys II Targaryen' RETURN DISTINCT killed.birth_name AS name, killed.occupation AS occupation",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'World of Ice and Fire'}),(n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Robb Stark'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:hasSpouse]->(s:Character) WHERE s.birth_name = 'Robb Stark' RETURN COUNT(c) AS character_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'The Assembly of Evil'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE EXISTS((c)-[:fromUniverse]->(:FictionalUniverse {name: 'The Assembly of Evil'})) RETURN COUNT(o) AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasFather]-(m0:Character) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(father:Character)-[:hasMother]->(mother:Character)-[:hasStudent]->(child:Character) WHERE c.occupation CONTAINS 'father' RETURN DISTINCT c.birth_name AS name, c.occupation AS occupation",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'J. Jonah Jameson'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (j:Character {name: 'J. Jonah Jameson'})-[:hasFather]->(father:Character)-[:hasMother]->(mother:Character) RETURN DISTINCT mother.name AS child_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character {name: 'Mattie Franklin'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (m:Character {birth_name: 'Mattie Franklin'})-[:hasFather]->(f:Character) RETURN DISTINCT f.birth_name, f.country_of_citizenship",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Yiling'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE l.name = 'Yiling' RETURN c.name, COUNT(c) AS killed_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.75
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Xuzhou'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE l.name = 'Xuzhou' RETURN DISTINCT c.name, COUNT(c.hasFather) AS father_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.8
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)<-[r1:memberOf]-(m1:Character {name: 'Matsu\\'o Tsurayaba'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c1:Character)-[:memberOf]->(org:Organization)<-[:memberOf]-(c2:Character) WHERE c1.name = 'Matsu'o Tsurayaba' RETURN DISTINCT c2.name, COUNT(org) AS organization_count ORDER BY organization_count DESC",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Bian Hong'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady Xu'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killer:Character {name: 'Bian Hong'}) WITH c MATCH (c)-[:hasSpouse]->(spouse:Character {name: 'Lady Xu'}) RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady He'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (l:Character {birth_name: 'Lady He'})-[:hasSpouse]->(spouse:Character)-[:hasMother]->(mother:Character) RETURN DISTINCT mother.birth_name AS mother_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Forest universe'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE fu.name = 'Forest' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(o:Organization) RETURN c.birth_name AS name, count(o) AS organization_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:diedIn]->(m1:Location {name: 'The North'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (f:Character)-[:hasFather]->(father:Character)-[:hasStudent]->(child:Character)-[:diedIn]->(location:Location) WHERE location.name = 'The North' RETURN DISTINCT father.name AS father_name, count(father) AS child_count ORDER BY child_count DESC",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Yuno Gasai'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:hasStudent]->(t:Character)-[:killedBy]->(y:Character {name: 'Yuno Gasai'}) RETURN c.name, count(t) AS teacher_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)<-[r0:hasFather]-(m0:Character {name: 'Zhao Guang'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Su Yong'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE c.hasFather->(:Character {name: 'Zhao Guang'}) OR (c.killedBy)->(:Character {name: 'Su Yong'}) RETURN COUNT(c) AS character_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character {name: 'Mu Shun'}),(n:Location)<-[r1:diedIn]-(m1:Character {name: 'Geng Ji'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c1:Character {name: 'Mu Shun'})-[:diedIn]->(l:Location), (c2:Character {name: 'Geng Ji'})-[:diedIn]->(l) RETURN DISTINCT l.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Liao Hua'}) WITH DISTINCT n WHERE 'Han' IN n.country_of_citizenship RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(k:Character) WHERE k.name = 'Liao Hua' AND c.country_of_citizenship CONTAINS 'Han' RETURN DISTINCT c.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred_cypher": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character)-[:killedBy]->(c3:Character) RETURN DISTINCT c1.birth_name AS character_name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.10869565217391304
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) RETURN COUNT(DISTINCT l) AS distinct_locations",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'X-Force'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (c:Character)-[:memberOf]->(org:Organization), (c)-[:memberOf]->(xforce:Organization {name: 'X-Force'}) RETURN DISTINCT org.name AS organization_name, count(xforce) AS x_force_member_count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Rosario + Vampire universe'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (org:Organization)-[:fromUniverse]->(universe:FictionalUniverse) WHERE universe.name = 'Rosario + Vampire' RETURN DISTINCT org.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Sun Lin'}),(n:Character)<-[r1:hasFather]-(m1:Character {name: 'Empress Quan'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (c:Character)-[:killedBy]->(killer:Character {name: 'Sun Lin'}) RETURN DISTINCT c.name, c.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Burglar'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Aunt May'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "MATCH (c:Character) WHERE (c)-[:killedBy]->(k:Character) WHERE k.name = 'Burglar' OR (c)-[:hasSpouse]->(m:Character) WHERE m.name = 'Aunt May' RETURN COUNT(DISTINCT c) AS character_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Xandar'}),(n:Character)-[r1:memberOf]->(m1:Organization {name: 'Nova Corps'}) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Xandar'}) WHERE c-[:memberOf]->(o:Organization {name: 'Nova Corps'}) RETURN COUNT(DISTINCT c.gender) AS gender_count",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character {name: 'Rhaenys Targaryen'}),(n:Location)<-[r1:bornIn]-(m1:Character {name: 'Aegon III Targaryen'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE c.birth_name IN ['Rhaenys Targaryen', 'Aegon III Targaryen'] RETURN DISTINCT l.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character {name: 'Dwight Conrad'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Hermes Conrad'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred_cypher": "MATCH (c1:Character)-[:hasMother]->(c2:Character)-[:hasSpouse]->(c3:Character) WHERE c3.name = 'Dwight Conrad' RETURN DISTINCT c2.name, c2.creator",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Twins'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location) WHERE l.name = 'Twins' RETURN DISTINCT c.birth_name AS name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Riverrun'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Petyr Baelish'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Riverrun'})-[:killedBy]->(k:Character {birth_name: 'Petyr Baelish'}) RETURN DISTINCT c.birth_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (c:Character)-[:hasFather]->(f:Character) RETURN DISTINCT c.country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Shiklah'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Mercs for Money'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (c:Character) WHERE (c)-[:hasSpouse]->(shiklah:Character {birth_name: 'Shiklah'}) OR (c)-[:memberOf]->(org:Organization {name: 'Mercs for Money'}) RETURN DISTINCT c.birth_name AS character_name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "fictional_character",
+    "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (o:Organization)-[:basedIn]->(l:Location) RETURN COUNT(DISTINCT l) AS distinct_locations",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  }
+]
