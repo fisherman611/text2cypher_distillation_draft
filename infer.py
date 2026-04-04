@@ -362,18 +362,14 @@ def main():
         schema_map=schema_map,
     )
 
-    output = {
-        "benchmark": args.benchmark,
-        "db": db_name,
-        "model": args.model,
-        "ckpt_path": args.ckpt_path,
-        "num_samples": len(subset_test_data),
-        "num_success": sum(1 for r in results if r["success"]),
-        "num_failed": len(errors),
-        "results": results,
-        "updated_samples": [r["sample"] for r in results],
-        "errors": errors,
-    }
+    output = []
+    for r in results:
+        output.append({
+            "question": r["question"],
+            "graph": r["graph"],
+            "gold_cypher": r["sample"].get("gold_cypher"),
+            "pred_cypher": r["cypher"]
+        })
 
     os.makedirs(Path(RESULTS_DIR) / args.benchmark, exist_ok=True)
     
