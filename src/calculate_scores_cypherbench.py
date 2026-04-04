@@ -134,9 +134,11 @@ def main():
             "graph": item.get("graph", ""),
             "gold_cypher": target_cypher,
             "pred_cypher": pred_cypher,
-            "executable": exec_score,
-            "execution_accuracy": ex_score,
-            "provenance_subgraph_jaccard_similarity": psjs_score,
+            "metrics": {
+                "executable": exec_score,
+                "execution_accuracy": ex_score,
+                "psjs": psjs_score
+            }
         })
 
     output_dir = os.path.dirname(os.path.abspath(args.output))
