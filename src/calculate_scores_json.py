@@ -76,7 +76,8 @@ def calculate_result(result, metrics=['execution_accuracy', 'psjs', 'executable'
     return aggregated
 
 
-with open(r"format_results/Cypherbench/qwen3/sft_4B/calculated_scores/test_result.json", "r", encoding="utf-8") as f:
+# with open(r"format_results/Cypherbench/qwen3/sft_4B/calculated_scores/test_result.json", "r", encoding="utf-8") as f:
+with open(r"format_results/Cypherbench/qwen3/sft_0.6B/calculated_scores/test_result.json", "r", encoding="utf-8") as f:
     result = json.load(f)
 
 metric_scores = calculate_result(result)
