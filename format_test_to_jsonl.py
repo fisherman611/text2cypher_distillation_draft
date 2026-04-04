@@ -21,7 +21,7 @@ def process_jsonl_response(input_file: str, output_file: str) -> None:
             total += 1
             line = line.strip()
 
-            parsed_output = ""  # default if fail
+            parsed_output = line  # default if fail
 
             if line:
                 try:

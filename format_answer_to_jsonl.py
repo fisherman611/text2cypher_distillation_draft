@@ -20,7 +20,7 @@ def process_jsonl_to_jsonl(input_file: str, output_file: str) -> None:
             total += 1
             line = line.strip()
 
-            parsed_output = ""  # default if anything fails
+            parsed_output = line  # default if anything fails
 
             if line:
                 try:

@@ -10,7 +10,10 @@ def executable(
 ) -> float:
     """Whether the predicted Cypher query is executable"""
     try:
-        neo4j_connector.run_query(pred_cypher, timeout=timeout)
+        result = neo4j_connector.run_query(pred_cypher, timeout=timeout)
+        # If run_query returns empty list, it means an error occurred
+        if not result:
+            return 0.0
     except (
         neo4j.exceptions.CypherSyntaxError,
         neo4j.exceptions.DatabaseError,

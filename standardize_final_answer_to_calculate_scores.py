@@ -11,7 +11,7 @@ def extract_cypher(record):
         if isinstance(cypher, str):
             return cypher
 
-    return ""
+    return parsed
 
 
 def load_jsonl(file_path):
