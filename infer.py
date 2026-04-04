@@ -135,7 +135,7 @@ def init_model(model_name_or_path, ckpt_path=None, device=None):
 
 def generate_response_batch(tokenizer, model, batch_messages, max_length=1024, temperature=0.5, top_p=0.95, top_k=0):
     texts = [
-        tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=False)
         for messages in batch_messages
     ]
     
@@ -374,8 +374,8 @@ def main():
     os.makedirs(Path(RESULTS_DIR) / args.benchmark, exist_ok=True)
     
     # Differentiate output file based on whether a custom ckpt was used
-    output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_Qwen3_4B_Instruct_2507.json"
-    # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_Qwen3_0.6B.json"
+    # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_Qwen3_4B_Instruct_2507.json"
+    output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_Qwen3_0.6B.json"
     
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(output, f, indent=4, ensure_ascii=False)
