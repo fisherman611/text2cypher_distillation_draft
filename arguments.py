@@ -96,7 +96,7 @@ def add_data_args(parser: argparse.ArgumentParser):
     
     group.add_argument("--only-prompt", action="store_true")
     group.add_argument("--slice-data", action="store_true", help="Use a small subset of the data for testing")
-    parser.add_argument("--split", type=str, required=True, choices=["train", "valid", "test"])
+    parser.add_argument("--split", type=str, choices=["train", "valid", "test"])
     return parser
 
 
