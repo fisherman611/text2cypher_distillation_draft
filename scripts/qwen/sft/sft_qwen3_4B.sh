@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # ── GPU config (1 GPU) ────────────────────────────────────────────────────────
-GPUS=(0)
+GPUS=(0 1)
 export CUDA_VISIBLE_DEVICES=$(IFS=,; echo "${GPUS[*]}")
 
 # ── Distributed args ──────────────────────────────────────────────────────────
@@ -32,11 +32,11 @@ CKPT="Qwen/Qwen3-4B-Instruct-2507"
 BATCH_SIZE=2
 LR=0.00001
 GRAD_ACC=8
-EVAL_BATCH_SIZE=32
-EPOCHS=3
+EVAL_BATCH_SIZE=8
+EPOCHS=5
 
 # ── Length ────────────────────────────────────────────────────────────────────
-MAX_LENGTH=768
+MAX_LENGTH=892
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
 SAVE_PATH="${BASE_PATH}/results/qwen3/sft_4B"
@@ -81,9 +81,15 @@ OPTS+=" --mid-log-num -1"
 OPTS+=" --save ${SAVE_PATH}"
 # seed
 OPTS+=" --seed ${SEED}"
+# lora
+OPTS+=" --peft lora"
+OPTS+=" --peft-lora-r 32"
+OPTS+=" --peft-lora-alpha 64"
+OPTS+=" --peft-lora-dropout 0.1"
+# OPTS+=" --peft-path results/qwen3/sft_4B/e3-bs2-lr0.0001-G8-N2-NN1-lora-32-64-0.1/78"
 # deepspeed
 OPTS+=" --deepspeed"
-OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config_bf16.json"
+OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config_fp16.json"
 # type
 OPTS+=" --type lm"
 # generation
