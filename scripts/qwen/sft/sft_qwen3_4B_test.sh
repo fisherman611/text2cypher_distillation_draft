@@ -29,14 +29,14 @@ CKPT_NAME="qwen3-4B"
 CKPT="Qwen/Qwen3-4B-Instruct-2507"
 
 # ── Hyper-parameters ──────────────────────────────────────────────────────────
-BATCH_SIZE=2
+BATCH_SIZE=1
 LR=0.00001
-GRAD_ACC=8
-EVAL_BATCH_SIZE=8
-EPOCHS=5
+GRAD_ACC=1
+EVAL_BATCH_SIZE=1
+EPOCHS=1
 
 # ── Length ────────────────────────────────────────────────────────────────────
-MAX_LENGTH=768
+MAX_LENGTH=797
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
 SAVE_PATH="${BASE_PATH}/results/qwen3/sft_4B"

@@ -31,12 +31,12 @@ CKPT="Qwen/Qwen3-0.6B"
 # ── Hyper-parameters ──────────────────────────────────────────────────────────
 BATCH_SIZE=1
 LR=0.00005
-GRAD_ACC=4
+GRAD_ACC=1
 EVAL_BATCH_SIZE=1
-EPOCHS=5
+EPOCHS=1
 
 # ── Length ────────────────────────────────────────────────────────────────────
-MAX_LENGTH=1024
+MAX_LENGTH=797
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
 SAVE_PATH="${BASE_PATH}/results/qwen3/sft_0.6B"
@@ -81,6 +81,11 @@ OPTS+=" --mid-log-num -1"
 OPTS+=" --save ${SAVE_PATH}"
 # seed
 OPTS+=" --seed ${SEED}"
+# lora
+OPTS+=" --peft lora"
+OPTS+=" --peft-lora-r 32"
+OPTS+=" --peft-lora-alpha 64"
+OPTS+=" --peft-lora-dropout 0.1"
 # deepspeed
 OPTS+=" --deepspeed"
 OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config_fp16.json"
