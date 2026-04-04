@@ -213,5 +213,16 @@ open-ed
 Qwen3-0.6B/
 Qwen3-4B-Instruct-2507/
 qwen3-4b-result.zip
-results/
-format_results/
+results/qwen3/sft_0.6B/e5-bs4-lr5e-05-G4-N2-NN1/213/
+results/qwen3/sft_0.6B/e5-bs4-lr5e-05-G4-N2-NN1/426/
+results/qwen3/sft_0.6B/e5-bs4-lr5e-05-G4-N2-NN1/639/
+results/qwen3/sft_0.6B/e5-bs4-lr5e-05-G4-N2-NN1/852/
+results/qwen3/sft_0.6B/e5-bs4-lr5e-05-G4-N2-NN1/1065/
+
+results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/213/
+results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/426/
+results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/639/
+results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/852/
+results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/1065/
+
+# format_results/
