@@ -4,7 +4,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Antonov An-12'}), (m0:AircraftModel {name: 'ATR 42'}) RETURN n.range_km - m0.range_km AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Antonov An-12'}), (m0:Aircraft {name: 'ATR 42'}) RETURN n.range_km - m0.range_km AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -14,7 +14,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'North American P-51 Mustang'}), (m0:AircraftModel {name: 'Boeing 737-500'}) RETURN CASE WHEN n.wingspan_metre > m0.wingspan_metre THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'North American P-51 Mustang'}), (m0:Aircraft {name: 'Boeing 737-500'}) RETURN CASE WHEN n.wingspan_metre > m0.wingspan_metre THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -124,7 +124,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Airbus A380'}), (m0:AircraftModel {name: 'Beechcraft 99 Airliner'}) RETURN CASE WHEN n.length_metre > m0.length_metre THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Airbus A380'}), (m0:Aircraft {name: 'Beechcraft 99 Airliner'}) RETURN CASE WHEN n.long_metre > m0.long_metre THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -164,7 +164,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'S-92'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "pred_cypher": "MATCH (n:AircraftManufacturer {name: 'S-92'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -174,7 +174,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Yinchuan Hedong International Airport'}) WITH DISTINCT n RETURN n.name, n.number_of_injuries",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'aviation accidents'}),(n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Yinchuan Hedong International Airport'}) WITH DISTINCT n RETURN n.name, n.number_of_injuries",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -184,7 +184,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport),(n:FlightAccident)-[r1:departsFrom]->(m0:Airport) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_deaths DESC",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'aviation accident'}) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_deaths DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -204,7 +204,7 @@
     "gold_cypher": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'assassination of Juvénal Habyarimana and Cyprien Ntaryamira'}) WITH DISTINCT n RETURN n.name, n.iata_code",
     "pred_cypher": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'assassination of Juvénal Habyarimana'}),(n:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'Cyprien Ntaryamira'}) WITH DISTINCT n RETURN n.name, n.iata_code",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -224,7 +224,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Douglas A-26 Invader'}), (m0:AircraftModel {name: 'Junkers Ju 52'}) RETURN n.height_metre - m0.height_metre AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Douglas A-26 Invader'}), (m0:Aircraft {name: 'Junkers Ju 52'}) RETURN n.height_metre - m0.height_metre AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -254,7 +254,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport),(n:FlightAccident)-[r1:destinedFor]->(m0:Airport) WITH DISTINCT n RETURN n.name, n.number_of_injuries",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'aviation accident'}) WITH DISTINCT n RETURN n.name, n.number_of_injuries",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -274,7 +274,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Dash 7'}), (m0:AircraftModel {name: 'Bell 206'}) RETURN n.length_metre - m0.length_metre AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Dash 7'}), (m0:Aircraft {name: 'Bell 206'}) RETURN n.length_metre - m0.length_metre AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -294,7 +294,7 @@
     "gold_cypher": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'Bombardier'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:AircraftModel)-[r0:createdBy]->(m0:AircraftManufacturer {name: 'Bombardier'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -314,7 +314,7 @@
     "gold_cypher": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident),(n:Airport)<-[r1:departsFrom]-(m0:FlightAccident) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'airport'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -334,7 +334,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'MD-80 family'}) WITH DISTINCT n RETURN n.wingspan_metre",
     "pred_cypher": "MATCH (n:AircraftModel {name: 'MD-80 family aircraft'}) WITH DISTINCT n RETURN n.wingspan_metre",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -384,7 +384,7 @@
     "gold_cypher": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'Pan Am Flight 830'}),(n:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Pacific Southwest Airlines Flight 1771'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'Panth Am Flight 830'}),(n:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'Pacific Southwest Airlines Flight 1771'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -404,7 +404,7 @@
     "gold_cypher": "MATCH (n:FlightAccident) WITH DISTINCT n WHERE n.date.year = 1988 RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'aviation'}) WITH DISTINCT n WHERE n.date.year = 1988 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -414,7 +414,7 @@
     "gold_cypher": "MATCH (n:Operator {name: 'Transair Sweden'}), (m0:Operator {name: 'LOT Polish Airlines'}) RETURN n.launch_year - m0.launch_year AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: 'Transair Sweden'}), (m0:FlightAccident {name: 'LOT Polish Airlines'}) RETURN n.launch_year - m0.launch_year AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -444,7 +444,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Austral Líneas Aéreas Flight 046'}) WITH DISTINCT n RETURN n.name, n.date",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Austral Lías Aéreas Flight 046'}) WITH DISTINCT n RETURN n.name, n.date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -454,7 +454,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Eurocopter AS350 Écureuil'}), (m0:AircraftModel {name: 'Eurocopter AS332 Super Puma'}) RETURN CASE WHEN n.first_flight > m0.first_flight THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Eurocopter AS350 Écureuil'}), (m0:Aircraft {name: 'Eurocopter AS332 Super Puma'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -484,7 +484,7 @@
     "gold_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'Atlas Air Flight 3591'}),(n:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'American Airlines Flight 383'}) WITH DISTINCT n RETURN n.name, n.location",
     "pred_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'Atlas Air Flight 3591'}),(n:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'American Airlines Flight 383'}) WITH DISTINCT n RETURN n.name, n.locations",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -544,7 +544,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer {name: 'Ulan-Ude Aviation Plant'}) WITH DISTINCT n RETURN n.country",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasCountry]-(m0:Aircraft {name: 'Ulan-Ude Aviation Plant'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -584,7 +584,7 @@
     "gold_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Dalian Zhoushuizi International Airport'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:involves]->(m1:Airport {name: 'Dalian Zhoushuizi International Airport'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -624,7 +624,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'BOAC Flight 911'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'airport'}),(n:FlightAccident)-[r1:hasFlightNumber]->(m1:FlightNumber {name: '911'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -644,7 +644,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Gregorio Luperón International Airport'}),(n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Frankfurt Airport'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Gregorio Luperón International Airport'}),(n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Frankfurt Airport'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -714,7 +714,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer {name: 'Novosibirsk Aircraft Production Association'}) WITH DISTINCT n RETURN n.country",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasCountry]-(m0:AircraftModel {name: 'Novosibirsk Aircraft Production Association'}) WITH DISTINCT n RETURN n.country",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -754,7 +754,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer {name: 'Production Corporation Polyot'}), (m0:AircraftManufacturer {name: 'Saab Group'}) RETURN n.launch_year = m0.launch_year AS answer",
     "pred_cypher": "MATCH (n:Operator {name: 'Production Corporation Polyot'}), (m0:Operator {name: 'Saab Group'}) RETURN n.date.year = m0.date.year AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -764,7 +764,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Malatya Erhaç Airport'}),(n:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'McDonnell Douglas F-4 Phantom II'}) WITH DISTINCT n RETURN n.name, n.flight_number",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Malatya Erhaç Airport'}),(n:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: ' McDonnell Douglas F-4 Phantom II'}) WITH DISTINCT n RETURN n.name, n.number_of_deaths",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -774,7 +774,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport),(n:FlightAccident)-[r1:destinedFor]->(m0:Airport) WITH DISTINCT n WHERE n.date > date('1943-08-01') RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'August 1st, 1943'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -784,7 +784,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Airbus A380'}), (m0:AircraftModel {name: 'Beechcraft 99 Airliner'}) RETURN n.length_metre - m0.length_metre AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Airbus A380'}), (m0:Aircraft {name: 'Beechcraft 99 Airliner'}) RETURN n.length_metre - m0.length_metre AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -794,7 +794,7 @@
     "gold_cypher": "MATCH (n:Operator {name: 'Transair Sweden'}), (m0:Operator {name: 'LOT Polish Airlines'}) RETURN n.launch_year = m0.launch_year AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: 'Transair Sweden'}), (m0:FlightAccident {name: 'LOT Polish Airlines'}) RETURN n.date.year = m0.date.year AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -804,7 +804,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'Korean Air'}),(n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Mactan–Cebu International Airport'}) WITH DISTINCT n RETURN n.name, n.date",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Korean Air'}),(n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Mactan–Cebu International Airport'}) WITH DISTINCT n RETURN n.name, n.date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -834,7 +834,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Boeing 720'}), (m0:AircraftModel {name: 'DC-9'}) RETURN CASE WHEN n.first_flight > m0.first_flight THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Boe 720'}), (m0:Aircraft {name: 'DC-9'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -854,7 +854,7 @@
     "gold_cypher": "MATCH (n:Operator {name: 'Líneas Aéreas Nacionales S. A.'}) WITH DISTINCT n RETURN n.launch_year",
     "pred_cypher": "MATCH (n:FlightAccident {name: 'Lías Aáreas Nacionales S. A.'}) WITH DISTINCT n RETURN n.date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -874,7 +874,7 @@
     "gold_cypher": "MATCH (n:Airport {name: 'Iwakuni Air Base'}) WITH DISTINCT n RETURN n.icao_code",
     "pred_cypher": "MATCH (n:Airfield {name: 'Iwakuni Air Base'}) WITH DISTINCT n RETURN n.icao_code",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -914,7 +914,7 @@
     "gold_cypher": "MATCH (n:Operator {name: '380th Air Expeditionary Wing'}), (m0:Operator {name: 'Air Botswana'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: '380th Air Expeditionary Wing'}), (m0:FlightAccident {name: 'Air Botswana'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -934,7 +934,7 @@
     "gold_cypher": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'assassination of Juvénal Habyarimana and Cyprien Ntaryamira'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'assassination of Juvénal Habyarimana'}),(n:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'Cyprien Ntaryamira'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -944,7 +944,7 @@
     "gold_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident),(n:Airport)<-[r1:destinedFor]-(m0:FlightAccident) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'airport'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1004,7 +1004,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer {name: 'Novosibirsk Aircraft Production Association'}) WITH DISTINCT n RETURN n.launch_year",
     "pred_cypher": "MATCH (n:Operator {name: 'Novosibirsk Aircraft Production Association'}) WITH DISTINCT n RETURN n.launch_year",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1014,7 +1014,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Winnipeg James Armstrong Richardson International Airport'}),(n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Toronto Pearson International Airport'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Wing James Armstrong Richardson International Airport'}),(n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Toronto Pearson International Airport'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1054,7 +1054,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'B-25 Mitchell'}), (m0:AircraftModel {name: 'Airbus A340'}) RETURN CASE WHEN n.range_km > m0.range_km THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'B-25 Mitchell'}), (m0:Aircraft {name: 'Airbus A340'}) RETURN CASE WHEN n.range_km > m0.range_km THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1074,7 +1074,7 @@
     "gold_cypher": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Mehrabad International Airport'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Mehabad International Airport'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1084,7 +1084,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer {name: 'Hawker Siddeley'}), (m0:AircraftManufacturer {name: 'Tupolev'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Company {name: 'Hawker Siddeley'}), (m0:Company {name: 'Tupolev'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1094,7 +1094,7 @@
     "gold_cypher": "MATCH (n:Operator {name: 'Ukraine International Airlines'}) WITH DISTINCT n RETURN n.country",
     "pred_cypher": "MATCH (n:Airport {name: 'Ukraine International Airlines'}) WITH DISTINCT n RETURN n.country",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1104,7 +1104,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'North American P-51 Mustang'}), (m0:AircraftModel {name: 'Boeing 737-500'}) RETURN n.wingspan_metre - m0.wingspan_metre AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'North American P-51 Mustang'}), (m0:Aircraft {name: 'Boeing 737-500'}) RETURN n.wingspan_metre - m0.wingspan_metre AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1114,7 +1114,7 @@
     "gold_cypher": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'Bombardier'}) WITH DISTINCT n WHERE n.first_flight.year > 1978 RETURN n.name",
     "pred_cypher": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'Bombardier'}) WITH DISTINCT n WHERE n.first_flight > date('1978-01-03') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1124,7 +1124,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Constellation'}), (m0:AircraftModel {name: 'Anson'}) RETURN CASE WHEN n.wingspan_metre > m0.wingspan_metre THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Constellation'}), (m0:Aircraft {name: 'Anson'}) RETURN CASE WHEN n.wingspan_metre > m0.wingspan_metre THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1154,7 +1154,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Antonov An-12'}), (m0:AircraftModel {name: 'ATR 42'}) RETURN CASE WHEN n.range_km > m0.range_km THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Antonov An-12'}), (m0:Aircraft {name: 'ATR 42'}) RETURN CASE WHEN n.range_km > m0.range_km THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1164,7 +1164,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Yinchuan Hedong International Airport'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'aviation accident'}),(n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Yinchuan Hedong International Airport'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1174,7 +1174,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'B-25 Mitchell'}), (m0:AircraftModel {name: 'Airbus A340'}) RETURN n.range_km - m0.range_km AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'B-25 Mitchell'}), (m0:Aircraft {name: 'Airbus A340'}) RETURN n.range_km - m0.range_km AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1184,7 +1184,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel)<-[r1:involves]-(m1:FlightAccident {name: 'Yeti Airlines Flight 103'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "pred_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel)-[r1:involves]->(m1:FlightAccident {name: 'Yeti Airlines Flight 103'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1204,7 +1204,7 @@
     "gold_cypher": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'McDonnell Douglas'}),(n:AircraftModel)<-[r1:involves]-(m1:FlightAccident {name: 'Austral Líneas Aéreas Flight 2553'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: ' McDonnell Douglas'}),(n:AircraftModel)-[r1:involves]->(m1:FlightAccident {name: 'Austral Líreas Flight 2553'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1214,7 +1214,7 @@
     "gold_cypher": "MATCH (n:FlightAccident {name: 'FedEx Express Flight 14'}), (m0:FlightAccident {name: '2021 Piedade de Caratinga Beechcraft King Air crash'}) RETURN n.number_of_deaths = m0.number_of_deaths AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: 'Fedex Express Flight 14'}), (m0:FlightAccident {name: '2021 Piedade de Caratinga Beechcraft King Air crash'}) RETURN n.number_of_deaths = m0.number_of_deaths AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1274,7 +1274,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport),(n:FlightAccident)-[r1:departsFrom]->(m0:Airport) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'aviation accident'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1294,7 +1294,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Lockheed L-1011 TriStar'}), (m0:AircraftModel {name: 'Vought A-7 Corsair II'}) RETURN CASE WHEN n.service_entry > m0.service_entry THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Lockheed L-1011 TriStar'}), (m0:Aircraft {name: 'Vought A-7 Corsair II'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1304,7 +1304,7 @@
     "gold_cypher": "MATCH (n:FlightAccident {name: 'Cougar Helicopters Flight 91'}), (m0:FlightAccident {name: 'Yemenia Flight 626'}) RETURN n.number_of_survivors - m0.number_of_survivors AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: ' Cougar Helicopters Flight 91'}), (m0:FlightAccident {name: 'Yemenia Flight 626'}) RETURN n.number_of_survivors - m0.number_of_survivors AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1314,7 +1314,7 @@
     "gold_cypher": "MATCH (n:FlightAccident {name: 'British Airways Flight 268'}), (m0:FlightAccident {name: 'Austral Líneas Aéreas Flight 2553'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: 'British Airways Flight 268'}), (m0:FlightAccident {name: 'Austral Líreas Flight 2553'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1334,7 +1334,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'B-25 Mitchell'}), (m0:AircraftModel {name: 'Fokker F28 Fellowship'}) RETURN CASE WHEN n.height_metre > m0.height_metre THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'B-25 Mitchell'}), (m0:Aircraft {name: 'Fokker F28 Fellowship'}) RETURN CASE WHEN n.height_metre > m0.height_metre THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1354,7 +1354,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'Boeing 737'}), (m0:AircraftModel {name: 'BAC One-Eleven'}) RETURN CASE WHEN n.service_entry > m0.service_entry THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'Boe 737'}), (m0:Aircraft {name: 'BAC One-Eleven'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1364,7 +1364,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Zvartnots International Airport'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Zvartnots International Airport'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1384,7 +1384,7 @@
     "gold_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident),(n:Airport)<-[r1:destinedFor]-(m0:FlightAccident) WITH DISTINCT n RETURN n.name, n.country",
     "pred_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'airport'}) WITH DISTINCT n RETURN n.name, n.country",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1404,7 +1404,7 @@
     "gold_cypher": "MATCH (n:Operator {name: 'Ukraine International Airlines'}) WITH DISTINCT n RETURN n.launch_year",
     "pred_cypher": "MATCH (n:FlightAccident {name: 'Ukraine International Airlines'}) WITH DISTINCT n RETURN n.date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1414,7 +1414,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer {name: 'Hawker Siddeley'}), (m0:AircraftManufacturer {name: 'Tupolev'}) RETURN n.launch_year - m0.launch_year AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: 'Hawker Siddeley'}), (m0:FlightAccident {name: 'Tupolev'}) RETURN n.date.year - m0.date.year AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1424,7 +1424,7 @@
     "gold_cypher": "MATCH (n:Operator {name: 'Líneas Aéreas Nacionales S. A.'}) WITH DISTINCT n RETURN n.country",
     "pred_cypher": "MATCH (n:Country {name: 'Lías Aéreas Nacionales S. A.'}) WITH DISTINCT n RETURN n.country",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1434,7 +1434,7 @@
     "gold_cypher": "CALL { MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'Lockheed L-1049 Super Constellation'}) RETURN n, m0 as m UNION MATCH (n:AircraftManufacturer)<-[r1:manufacturedBy]-(m1:AircraftModel {name: 'KC-130 Hercules'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:Aircraft {name: 'Lockheed L-1049 Super Constellation'}) RETURN n, m0 as m UNION MATCH (n:AircraftManufacturer)<-[r1:manufacturedBy]-(m1:Aircraft {name: 'KC-130 Hercules'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1444,7 +1444,7 @@
     "gold_cypher": "MATCH (n:Operator {name: '380th Air Expeditionary Wing'}), (m0:Operator {name: 'Air Botswana'}) RETURN n.launch_year - m0.launch_year AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: '380th Air Expeditionary Wing'}), (m0:FlightAccident {name: 'Air Botswana'}) RETURN n.date.year - m0.date.year AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1484,7 +1484,7 @@
     "gold_cypher": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'Swissair'}) WITH DISTINCT n RETURN n.name ORDER BY n.range_km ASC LIMIT 1",
     "pred_cypher": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident {name: 'Swissair'}) WITH DISTINCT n RETURN n.name ORDER BY n.range_km ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1534,7 +1534,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Heathrow Airport'}) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_injuries DESC",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'airplane'}),(n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Heathrow Airport'}) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_injuries DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1574,7 +1574,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Heathrow Airport'}) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_survivors ASC",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:deptsFor]->(m0:Airport {name: 'Heathrow Airport'}) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_survivors ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1594,7 +1594,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Francisco Bangoy International Airport'}),(n:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'Boeing 737'}) WITH DISTINCT n RETURN n.name, n.number_of_deaths",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Boe 737'}),(n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Francisco Bangoy International Airport'}) WITH DISTINCT n RETURN n.name, n.number_of_deaths",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1644,7 +1644,7 @@
     "gold_cypher": "CALL { MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident {name: 'Cubana de Aviación Flight 972'}) RETURN n, m0 as m UNION MATCH (n:AircraftModel)<-[r1:involves]-(m1:FlightAccident {name: 'Malaysian Airline System Flight 653'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": null,
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -1736,7 +1736,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer {name: 'Production Corporation Polyot'}), (m0:AircraftManufacturer {name: 'Saab Group'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Painting {name: 'Production Corporation Polyot'}), (m0:Painting {name: 'Saab Group'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1746,7 +1746,7 @@
     "gold_cypher": "MATCH (n:AircraftModel {name: 'B-25 Mitchell'}), (m0:AircraftModel {name: 'Fokker F28 Fellowship'}) RETURN n.height_metre - m0.height_metre AS answer",
     "pred_cypher": "MATCH (n:Aircraft {name: 'B-25 Mitchell'}), (m0:Aircraft {name: 'Fokker F28 Fellowship'}) RETURN n.height_metre - m0.height_metre AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1756,7 +1756,7 @@
     "gold_cypher": "MATCH (n:FlightAccident {name: 'Cougar Helicopters Flight 91'}), (m0:FlightAccident {name: 'Yemenia Flight 626'}) RETURN n.number_of_survivors = m0.number_of_survivors AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: ' Cougar Helicopters Flight 91'}), (m0:FlightAccident {name: 'Yemenia Flight 626'}) RETURN n.number_of_survivors = m0.number_of_survivors AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1766,7 +1766,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'B-52 Stratofortress'}),(n:AircraftManufacturer)<-[r1:manufacturedBy]-(m1:AircraftModel {name: 'Boeing 737'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:Aircraft {name: 'B-52 Stratofortress'}),(n:AircraftManufacturer)<-[r1:manufacturedBy]-(m1:Aircraft {name: 'Boe 737'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1776,7 +1776,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Samui Airport'}) WITH DISTINCT n WHERE n.date.year = 2009 RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Samui Airport'}) WITH DISTINCT n WHERE n.date.year = 2009 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1816,7 +1816,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'de Havilland Canada DHC-2 Beaver'}) WITH DISTINCT n RETURN n.name, n.country",
     "pred_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0: Aircraft {name: 'de Havilland Canada DHC-2 Beaver'}) WITH DISTINCT n RETURN n.name, n.country",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1826,7 +1826,7 @@
     "gold_cypher": "MATCH (n:FlightAccident {name: 'FedEx Express Flight 14'}), (m0:FlightAccident {name: '2021 Piedade de Caratinga Beechcraft King Air crash'}) RETURN CASE WHEN n.number_of_deaths > m0.number_of_deaths THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:FlightAccident {name: 'Fedex Express Flight 14'}), (m0:FlightAccident {name: '2021 Piedade de Caratinga Beechcraft King Air crash'}) RETURN CASE WHEN n.number_of_deaths > m0.number_of_deaths THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1846,7 +1846,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer {name: 'Ulan-Ude Aviation Plant'}) WITH DISTINCT n RETURN n.launch_year",
     "pred_cypher": "MATCH (n:AircraftModel {name: 'Ulan-Ude Aviation Plant'}) WITH DISTINCT n RETURN n.launch_year",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1856,7 +1856,7 @@
     "gold_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'South African Airways Flight 201'}) WITH DISTINCT n RETURN n.name, n.iata_code",
     "pred_cypher": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:Flight {name: 'South African Airways Flight 201'}) WITH DISTINCT n RETURN n.name, n.iata_code",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1886,7 +1886,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Avianca Flight 671'}) WITH DISTINCT n WHERE n.date > date('1975-06-24') RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Avianca Flight 671'}) WITH DISTINCT n WHERE n.date > date('1975-06-24') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }

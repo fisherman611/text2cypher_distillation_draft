@@ -14,7 +14,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany {name: 'Biograf Jan Svěrák'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Martin Bohadlo'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:Person {name: 'Biograf Jan Svŉrík'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Martin Bohadlo'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -24,7 +24,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Pirates of the Caribbean'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Pirates of the Caribbean series'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -84,7 +84,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:originatesFrom]->(m1:Country {name: 'Republic of Ireland'}) WITH DISTINCT n WHERE n.place_of_birth = 'Kilmore' RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:writeBy]-(m0:Movie)-[r1:originatesFrom]->(m1:Country {name: 'Republic of Ireland'}) WITH DISTINCT n WHERE n.place_of_birth = 'Kilmore' RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -114,7 +114,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie {name: 'Omen IV: The Awakening'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie {name: 'Omen IV: The Awakening'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -154,7 +154,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'action film'}),(n:Movie)-[r1:producedBy]->(m1:ProductionCompany {name: 'Relativity Media'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:Person {name: 'Relativity Media'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'action film'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -174,7 +174,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person)<-[r1:writtenBy]-(m1:Movie {name: 'The Lord of the Rings: The Two Towers'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)<-[r0:hasCastMember]-(m0:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'The Lord of the Rings: The Two Towers'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -194,7 +194,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie),(n:Person)<-[r1:directedBy]-(m0:Movie) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Person)<-[r0:in]->(m0:Movie) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -234,7 +234,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country {name: 'Israel'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:releaseIn]->(m0:Country {name: 'Israel'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -284,7 +284,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country),(n:Movie)-[r1:originatesFrom]->(m0:Country) WITH DISTINCT n UNWIND n.filming_location AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country)<-[r1:originatesFrom]-(m1:Movie {name: 'same country'}) WITH DISTINCT n UNWIND n.filming_location AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -544,7 +544,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'James Bond'}) OPTIONAL MATCH (n:Movie)-[r0:directedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'James Bond series'}) OPTIONAL MATCH (n:Movie)-[r0:directedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -564,7 +564,7 @@
     "gold_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Movie {name: 'The Pianist'}),(n:Award)<-[r1:receivesAward]-(m1:Movie {name: 'Apollo 13'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player {name: 'The Pianist'}),(n:Award)<-[r1:receivesAward]-(m1:Player {name: 'Apollo 13'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -574,7 +574,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person)<-[r1:writtenBy]-(m1:Movie {name: 'Dreamgirls'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)<-[r0:directedBy]-(m0:Person)<-[r1:createdBy]-(m1:Movie {name: 'Dreamgirls'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -584,7 +584,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person)<-[r1:directedBy]-(m1:Movie {name: 'Men in Black 3'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)<-[r0:directedBy]-(m0:Person)<-[r1:directedBy]-(m1:Movie {name: 'Men in Black 3'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -644,7 +644,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:releasedIn]->(m1:Country {name: 'Slovenia'}) OPTIONAL MATCH (n:Movie)-[r0:releasedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:releaseIn]->(m1:Country {name: 'Slovenia'}) OPTIONAL MATCH (n:Movie)-[r0:releaseIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -664,7 +664,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'Quantum of Solace'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person)<-[r1:playsIn]-(m1:Movie {name: 'Quantum of Solace'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -674,7 +674,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:producedBy]->(m1:ProductionCompany {name: 'Anonymous Content'}) OPTIONAL MATCH (n:Movie)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:producedBy]->(m1:Person {name: 'Anonymous Content'}) OPTIONAL MATCH (n:Movie)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -694,7 +694,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Academy Award for Best Original Song'}),(n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Peter Jackson\\'s Middle-earth film series'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Academy Award for Best Original Song'}),(n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Peter Jackson\\'s Middle-earth'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -734,7 +734,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'crossover fiction'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasCountry]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'crossover fiction'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -754,7 +754,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Batman in film'}),(n:Movie)-[r1:receivesAward]->(m1:Award {name: 'Golden Trailer Awards'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Batman in film series'}),(n:Movie)-[r1:receivesAward]->(m1:Award {name: 'Golden Trailer'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -784,7 +784,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie),(n:Person)<-[r1:hasCastMember]-(m0:Movie) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)<-[r1:hasCastMember]-(m1:Person {name: 'Ricardo'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -794,7 +794,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:producedBy]->(m1:ProductionCompany {name: 'Saturn Films'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "pred_cypher": "MATCH (n:Person)<-[r0:writer]-(m0:Movie)-[r1:producedBy]->(m1:ProductionCompany {name: 'Saturn Films'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -834,7 +834,7 @@
     "gold_cypher": "MATCH (n:ProductionCompany {name: 'Mirage Enterprises'}) WITH DISTINCT n RETURN n.country",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasCountry]-(m0:ProductionCompany {name: 'Mirage Enterprises'}) WITH DISTINCT n RETURN n.country",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -844,7 +844,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'boxing film'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Person)<-[r0:displaying]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'boxing film'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -854,7 +854,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'James Bond'}),(n:Movie)-[r1:producedBy]->(m1:ProductionCompany {name: 'United Artists Corporation'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'James Bond series'}),(n:Movie)-[r1:producedBy]->(m1:ProductionCompany {name: 'United Artists Corporation'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -914,7 +914,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:writtenBy]->(m0:Person {name: 'Josh Friedman'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'science fiction film'}) WITH DISTINCT n WHERE 'Na\\'vi' IN n.original_language RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'science fiction'}),(n:Movie)-[r1:writtenBy]->(m1:Person {name: 'Josh Friedman'}) WITH DISTINCT n WHERE 'Na\\'vi' IN n.original_language RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -934,7 +934,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Brad Beyer'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Stefania Spampinato'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)<-[r0:hasCastMember]-(m0:Person {name: 'Brad Beyer'}),(n:Movie)<-[r1:hasCastMember]-(m1:Person {name: 'Stefania Spampinato'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -944,7 +944,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:originatesFrom]->(m0:Country),(n:Movie)-[r1:releasedIn]->(m0:Country) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany {name: 'Talpa'}),(n:Movie)-[r1:releasedIn]->(m1:Country {name: 'same country'}) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -964,7 +964,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:originatesFrom]-(m0:Movie)-[r1:directedBy]->(m1:Person {name: 'Yōjirō Takita'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:playsOn]-(m0:Movie)-[r1:directedBy]->(m1:Person {name: 'Yōō Jirō Takita'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -994,7 +994,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany {name: 'Regency Enterprises'}),(n:Movie)-[r1:directedBy]->(m1:Person {name: 'Alejandro González Iñárritu'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany {name: 'Regency Enterprises'}),(n:Movie)-[r1:directedBy]->(m1:Person {name: 'Alejandro Gonzázárático Iárritu'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1004,7 +1004,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:receivesAward]->(m1:Award {name: 'Boston Society of Film Critics Award for Best Supporting Actor'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie)-[r1:receivesAward]->(m1:Award {name: 'Boston Society of Film Critics Award for Best Supporting Actor'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1024,7 +1024,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Bourne'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth ASC",
     "pred_cypher": "MATCH (n:Person)<-[r0:writer]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Boune series'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1044,7 +1044,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Walt Disney Animation Studios film'}) OPTIONAL MATCH (n:Movie)-[r0:releasedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Walt Disney Animation Studios'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1064,7 +1064,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Goosebumps'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Goosebumps series'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1074,7 +1074,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany {name: 'Spyglass Media Group'}),(n:Movie)-[r1:releasedIn]->(m1:Country {name: 'Hungary'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:Person {name: 'Spyglass Media Group'}),(n:Movie)-[r1:releasedIn]->(m1:Country {name: 'Hungary'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1094,7 +1094,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country {name: 'Argentina'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Maxence Mailfort'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country {name: 'Argentina'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'Maxence Mailfort'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1114,7 +1114,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:originatesFrom]->(m1:Country {name: 'Thailand'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie)-[r1:originatesFrom]->(m1:Country {name: 'Thailand'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1134,7 +1134,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:originatesFrom]-(m0:Movie)-[r1:producedBy]->(m1:ProductionCompany {name: 'Himenoptero'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:replacesFrom]-(m0:Movie)-[r1:producedBy]->(m1:Person {name: 'Himenoptero'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1214,7 +1214,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie {name: 'The Theory of Everything'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie {name: 'The Theory of Everything'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1234,7 +1234,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany {name: 'Aardman Animations'}),(n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:Person {name: 'Aardman Animations'}),(n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1264,7 +1264,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country {name: 'Armenia'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country {name: ' Armenia'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1284,7 +1284,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:writtenBy]->(m0:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'The Motorcycle Diaries'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:createdBy]->(m0:Person)<-[r1:playsIn]-(m1:Movie {name: 'The Motorcycle Diaries'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1304,7 +1304,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany {name: 'Columbia Pictures'}),(n:Movie)-[r1:receivesAward]->(m1:Award {name: 'Hugo Award for Best Dramatic Presentation, Long Form'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:Person {name: 'Columbia Pictures'}),(n:Movie)-[r1:receivesAward]->(m1:Award {name: 'Hugo Award for Best Dramatic Presentation, Long Form'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1314,7 +1314,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie {name: 'The Elementary School'}),(n:Person)<-[r1:writtenBy]-(m1:Movie {name: 'Kolya'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie {name: 'The Elementary School'}),(n:Person)<-[r1:writtenBy]-(m1:Movie {name: 'Kolya'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1354,7 +1354,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'science fiction film'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'M.C. Gainey'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'science fiction'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'M.C. Gainey'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1394,7 +1394,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'The Lord of the Rings: The Two Towers'}) OPTIONAL MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Person)<-[r1:castIn]-(m1:Movie {name: 'The Lord of the Rings: The Two Towers'}) OPTIONAL MATCH (n:Person)<-[r0:castIn]-(m0:Movie) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1424,7 +1424,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person),(n:Movie)-[r1:directedBy]->(m0:Person) WITH DISTINCT n WHERE NOT 'Honolulu Zoo' IN n.filming_location RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'movie'}),(n:Movie)-[r1:directedBy]->(m1:Person)<-[r4:directedBy]-(m4:Movie {name: 'Honolulu Zoo'}) WITH DISTINCT n WHERE NOT 'Honolulu Zoo' IN n.filming_location RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1434,7 +1434,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Rocky'}) OPTIONAL MATCH (n:Movie)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Rocky series'}) OPTIONAL MATCH (n:Movie)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1444,7 +1444,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:originatesFrom]-(m0:Movie {name: 'I, Tonya'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:relayedIn]-(m0:Movie {name: 'I, Tonya'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1464,7 +1464,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'Gothic romance film'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'Gothic romance'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1474,7 +1474,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:writtenBy]->(m0:Person)<-[r1:writtenBy]-(m1:Movie {name: 'Pirates of the Caribbean: The Curse of the Black Pearl'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r0:createdBy]->(m0:Person)<-[r1:createdBy]-(m1:Movie {name: 'Pirates of the Caribbean: The Curse of the Black Pearl'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1494,7 +1494,7 @@
     "gold_cypher": "CALL { MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Jon Favreau'}) RETURN n, m0 as m UNION MATCH (n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Martha Kelly'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Movie)<-[r0:hasCastMember]-(m0:Person {name: 'Jon Favreau'}) RETURN n, m0 as m UNION MATCH (n:Movie)<-[r1:hasCastMember]-(m1:Person {name: 'Martha Kelly'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1514,7 +1514,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Terminator'}),(n:Movie)-[r1:writtenBy]->(m1:Person {name: 'Billy Ray'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Terrorist series'}),(n:Movie)-[r1:writtenBy]->(m1:Person {name: 'Billy Ray'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1554,7 +1554,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country {name: 'Armenia'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country {name: 'Arma'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1584,7 +1584,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'melodrama'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'epic film'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'melodyramal'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'epic film'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1604,7 +1604,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'adventure film'}),(n:Movie)-[r1:receivesAward]->(m1:Award {name: 'BAFTA Award for Best Production Design'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'BAFTA Award for Best Production Design'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'adventure'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1684,7 +1684,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Holliday Grainger'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:writer]-(m0:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Holliday Grainger'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1694,7 +1694,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person)<-[r1:writtenBy]-(m1:Movie {name: 'Yi Yi'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "pred_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person)<-[r1:createdBy]-(m1:Movie {name: 'Yi Yi'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1764,7 +1764,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany {name: 'Jersey Group'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:Person {name: 'Jersey Group'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1814,7 +1814,7 @@
     "gold_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'romance film'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'romantic film'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1844,7 +1844,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:writtenBy]->(m1:Person {name: 'Tony Mendez'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
     "pred_cypher": "MATCH (n:Person)<-[r0:createdBy]-(m0:Movie)-[r1:createdBy]->(m1:Person {name: 'Tony Mendez'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1914,7 +1914,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country),(n:Movie)-[r1:originatesFrom]->(m0:Country) WITH DISTINCT n RETURN n.name ORDER BY n.runtime_minute ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country)<-[r1:releasedIn]-(m1:Movie {name: 'Budgie'}) WITH DISTINCT n RETURN n.name ORDER BY n.runtime_minute ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1974,7 +1974,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie),(n:Person)<-[r1:hasCastMember]-(m0:Movie) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)<-[r1:writtenBy]-(m1:Person {name: 'Barry'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2004,7 +2004,7 @@
     "gold_cypher": "MATCH (n:ProductionCompany)<-[r0:producedBy]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Spider-Verse'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:ProductionCompany)<-[r0:producedBy]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Spider-Verse series'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2024,7 +2024,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie {name: 'Life is Beautiful'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
     "pred_cypher": "MATCH (n:Person)<-[r0:writer]-(m0:Movie {name: 'Life is Beautiful'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2044,7 +2044,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Chris Parnell'}),(n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Goosebumps'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Chris Parnell'}),(n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Goosebumps series'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2084,7 +2084,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'David Warner'}) OPTIONAL MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:displayBy]->(m1:Person {name: 'David Warner'}) OPTIONAL MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2094,7 +2094,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie)-[r1:releasedIn]->(m1:Country {name: 'Canada'}) WITH DISTINCT n WHERE n.date_of_death = date('2006-11-20') RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie)-[r1:releasedIn]->(m1:Country {name: 'Canada'}) WITH DISTINCT n WHERE n.date_of_death = date('2006-11-20') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2104,7 +2104,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:writtenBy]->(m0:Person {name: 'Zdeněk Svěrák'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Pavel Taussig'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:writtenBy]->(m0:Person {name: 'ZdenŎćk SvŞćr'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Pavel Taussig'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2194,7 +2194,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Patrick Bergin'}) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Person)<-[r0:starredIn]-(m0:Movie)<-[r1:starredIn]-(m1:Person {name: 'Patrick Bergin'}) WITH DISTINCT n RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2324,7 +2324,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Gemma Arterton'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'adventure film'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'adventure'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Gemma Arterton'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2344,7 +2344,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Indiana Jones'}) OPTIONAL MATCH (n:Movie)-[r0:writtenBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Indiana Jones series'}) OPTIONAL MATCH (n:Movie)-[r0:writtenBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2354,7 +2354,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:producedBy]->(m1:ProductionCompany {name: 'Legendary Pictures'}) OPTIONAL MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:producedBy]->(m1:ProductionCompany {name: 'Legary Pictures'}) OPTIONAL MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2364,7 +2364,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:receivesAward]->(m1:Award {name: 'AACTA International Award for Best Screenplay'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie)-[r1:receivesAward]->(m1:Award {name: 'AACTA International Award for Best Screenplay'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2394,7 +2394,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie {name: 'Another Round'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
     "pred_cypher": "MATCH (n:Person)<-[r0:writer]-(m0:Movie {name: 'Another Round'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2414,7 +2414,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'animated film'}),(n:Movie)-[r1:directedBy]->(m1:Person {name: 'Joel Crawford'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'animated film'}),(n:Movie)-[r1:directedBy]->(m1:Person {name: 'Joël Crawford'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2444,7 +2444,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie),(n:Person)<-[r1:directedBy]-(m0:Movie) WITH DISTINCT n RETURN n.name, n.place_of_birth",
     "pred_cypher": "MATCH (n:Person)<-[r0:playsIn]-(m0:Movie)-[r1:directedBy]->(m1:Person {name: 'movie'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2484,7 +2484,7 @@
     "gold_cypher": "MATCH (n:Genre)<-[r0:hasGenre]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'arthouse science fiction film'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Genre)<-[r0:hasGenre]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'artouse science fiction'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2494,7 +2494,7 @@
     "gold_cypher": "MATCH (n:ProductionCompany {name: 'Wega Film'}) WITH DISTINCT n RETURN n.country",
     "pred_cypher": "MATCH (n:Country)<-[r0:relatesIn]-(m0:Movie {name: 'Wega Film'}) WITH DISTINCT n RETURN n.country",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2504,7 +2504,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:writtenBy]->(m0:Person)<-[r1:writtenBy]-(m1:Movie {name: 'Training Day'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "pred_cypher": "MATCH (n:Movie)-[r0:createdBy]->(m0:Person)<-[r1:createdBy]-(m1:Movie {name: 'Training Day'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2514,7 +2514,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie {name: 'Django Unchained'}) WITH DISTINCT n WHERE n.place_of_birth = 'Flat Creek' RETURN n.name",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.place_of_birth = 'Flat Creek' AND n.directedIn = 'Django Unchained' RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2524,7 +2524,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Alien'}) OPTIONAL MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Alien series'}) OPTIONAL MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2544,7 +2544,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'independent film'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Person)<-[r0:writingBy]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'independent film'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2554,7 +2554,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie)-[r1:directedBy]->(m1:Person {name: 'Elizabeth Chai Vasarhelyi'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:director]-(m0:Movie)-[r1:directedBy]->(m1:Person {name: 'Elizabeth Chai Vasarhelyi'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2704,7 +2704,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:writtenBy]->(m0:Person),(n:Movie)-[r1:hasCastMember]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.runtime_minute ASC",
     "pred_cypher": "MATCH (n:Movie)-[r0:writtenBy]->(m0:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'same person'}) WITH DISTINCT n RETURN n.name ORDER BY n.runtime_minute ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2774,7 +2774,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person)<-[r1:directedBy]-(m1:Movie {name: 'Hugo'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)<-[r0:hasCastMember]-(m0:Person)<-[r1:directedBy]-(m1:Movie {name: 'Hugo'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2804,7 +2804,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r1:releasedIn]-(m1:Movie {name: 'The Imitation Game'}) OPTIONAL MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:releaseIn]-(m1:Movie {name: 'The Imitation Game'}) OPTIONAL MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2824,7 +2824,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Sarah McLeod'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Sarah McLeod'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2844,7 +2844,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Gaudí a la millor actriu secundària'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Gaudí Award for Best Supporting Actress'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2854,7 +2854,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person),(n:Movie)-[r1:writtenBy]->(m0:Person) WITH DISTINCT n WHERE n.global_box_office_usd > 70000000 RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'movie'}),(n:Movie)-[r1:writtenBy]->(m1:Person)<-[r4:writtenBy]-(m4:Movie {name: '70'}) WITH DISTINCT n WHERE n.global_box_office_usd > 70 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2864,7 +2864,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person),(n:Movie)-[r1:writtenBy]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person)<-[r1:writtenBy]-(m1:Movie {name: 'same person'}) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2894,7 +2894,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person {name: 'Jan Svěrák'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Božidara Turzonovová'}) WITH DISTINCT n RETURN n.name, n.runtime_minute",
     "pred_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person {name: 'Jan Svŉidara Turzonovć'}) WITH DISTINCT n WHERE n.runtime_minute = 100 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2914,7 +2914,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'The Hobbit trilogy'}) WITH DISTINCT n WHERE n.global_box_office_usd < 960000000 RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'The Hobbit trilogy'}) WITH DISTINCT n WHERE n.global_box_office_usd < 960 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2964,7 +2964,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:hasCastMember]->(m1:Person {name: 'David Fraser'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Person)<-[r0:writer]-(m0:Movie)-[r1:hasCastMember]->(m1:Person {name: 'David Fraser'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2974,7 +2974,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Peter Jackson\\'s Middle-earth film series'}) OPTIONAL MATCH (n:Movie)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Peter Jackson\\'s Middle-earth'}) OPTIONAL MATCH (n:Movie)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2994,7 +2994,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'DreamWorks Animation feature films'}) OPTIONAL MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'DreamWorks Animation'}) OPTIONAL MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3034,7 +3034,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:directedBy]->(m1:Person {name: 'Clint Eastwood'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie)-[r1:directedBy]->(m1:Person {name: 'Clint Eastwood'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3104,7 +3104,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'New York Film Critics Circle Award for Best Screenplay'}),(n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'Italy'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'New York Film Critics Circle Award for Best Screenplay'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'Italian'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3114,7 +3114,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Spider-Verse'}) WITH DISTINCT n RETURN n.name ORDER BY n.runtime_minute ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie {name: 'Spider-Verse'}) WITH DISTINCT n RETURN n.name ORDER BY n.runtime_minute ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3124,7 +3124,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Pirates of the Caribbean'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'swashbuckler film'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Pirates of the Caribbean series'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'swashbuckler'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3214,7 +3214,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie),(n:Person)<-[r1:writtenBy]-(m0:Movie) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Person)<-[r0:in]->(m0:Movie) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3224,7 +3224,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie {name: 'The King\\'s Speech'}),(n:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'The English Patient'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:displayBy]-(m0:Movie {name: 'The King\\'s Speech'}),(n:Person)<-[r1:displayBy]-(m1:Movie {name: 'The English Patient'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3234,7 +3234,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'epic film'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'epic film'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3244,7 +3244,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Toy Story'}),(n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Toy Story series'}),(n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3264,7 +3264,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:receivesAward]->(m1:Award {name: 'Australian Film Institute International Award for Best Actress'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Person)<-[r0:writer]-(m0:Movie)-[r1:receivesAward]->(m1:Award {name: 'Australian Film Institute International Award for Best Actress'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3334,7 +3334,7 @@
     "gold_cypher": "MATCH (n:Genre)<-[r0:hasGenre]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'The Pink Panther'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Genre)<-[r0:hasGenre]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'The Pink Panther series'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3344,7 +3344,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r1:releasedIn]-(m1:Movie {name: 'Spider-Man: No Way Home'}) OPTIONAL MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:releaseIn]-(m1:Movie {name: 'Spider-Man: No Way Home'}) OPTIONAL MATCH (n:Country)<-[r0:releaseIn]-(m0:Movie) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3364,7 +3364,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'pirate film'}) OPTIONAL MATCH (n:Movie)-[r0:releasedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'pirate'}) OPTIONAL MATCH (n:Movie)-[r0:releasedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3414,7 +3414,7 @@
     "gold_cypher": "MATCH (n:Person {name: 'Diane Venora'}), (m0:Person {name: 'Jacqueline Macaulay'}) RETURN n.gender = m0.gender AS answer",
     "pred_cypher": "MATCH (n:Person {name: 'Diane Venora'}), (m0:Person {name: 'Jacquem Macaulay'}) RETURN n.gender = m0.gender AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3434,7 +3434,7 @@
     "gold_cypher": "MATCH (n:ProductionCompany)<-[r0:producedBy]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Death Trilogy'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:ProductionCompany)<-[r0:producedBy]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Death Trilogy series'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3514,7 +3514,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Dean Norris'}),(n:Movie)-[r1:receivesAward]->(m1:Award {name: 'Grand prix du Festival de Deauville'}) WITH DISTINCT n RETURN n.name, n.runtime_minute",
     "pred_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Grand Prix du Festival de Deauville'}),(n:Movie)-[r1:directedBy]->(m1:Person {name: 'Dean Norris'}) WITH DISTINCT n RETURN n.name, n.runtime_minute",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3594,7 +3594,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Spider-Verse'}) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd DESC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie {name: 'Spider-Verse'}), (m0:Movie {name: 'global box office'}) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd DESC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3644,7 +3644,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie {name: 'Django Unchained'}) WITH DISTINCT n WHERE 'Australia' IN n.country_of_citizenship RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie {name: 'Django Unchained'}),(n:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'Australian cast'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3704,7 +3704,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country {name: 'Switzerland'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'film based on a novel'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "pred_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country {name: 'Switzerland'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'novel'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3714,7 +3714,7 @@
     "gold_cypher": "MATCH (n:FilmSeries)<-[r0:partOfSeries]-(m0:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Raymond Cruz'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:FilmSeries)<-[r0:partOfSeries]-(m0:Movie)-[r1:directedBy]->(m1:Person {name: 'Raymond Cruz'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3744,7 +3744,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:releasedIn]->(m1:Country {name: 'Madagascar'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Person)<-[r0:writer]-(m0:Movie)-[r1:releasedIn]->(m1:Country {name: 'Madagascar'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3754,7 +3754,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:originatesFrom]->(m0:Country {name: 'United States of America'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'vampire film'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre {name: 'vampire film'}),(n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'United States'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3764,7 +3764,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person)<-[r1:directedBy]-(m1:Movie {name: 'Star Trek: Insurrection'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)<-[r0:playsBy]-(m0:Person)<-[r1:playsBy]-(m1:Movie {name: 'Star Trek: Insurrection'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3864,7 +3864,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person),(n:Movie)-[r1:hasCastMember]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd DESC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person)<-[r1:directedBy]-(m1:Movie {name: 'Starred'}) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd DESC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3894,7 +3894,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Gaudí a la millor actriu secundària'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "pred_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Gaudí Award for Best Supporting Actress'}) WITH DISTINCT n RETURN n.name, n.filming_location",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3924,7 +3924,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'Star Trek: First Contact'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)<-[r0:directedBy]-(m0:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'Star Trek: First Contact'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3944,7 +3944,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Alien'}) OPTIONAL MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Alien series'}) OPTIONAL MATCH (n:Movie)-[r0:hasGenre]->(m0:Genre) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3954,7 +3954,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Batman in film'}) OPTIONAL MATCH (n:Movie)-[r0:directedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Batman in film series'}) OPTIONAL MATCH (n:Movie)-[r0:directedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4004,7 +4004,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Quentin Tarantino'}) OPTIONAL MATCH (n:Movie)-[r0:writtenBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Movie)<-[r1:hasCastMember]-(m1:Person {name: 'Quentin Tarantino'}) OPTIONAL MATCH (n:Movie)<-[r0:hasCastMember]-(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }

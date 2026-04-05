@@ -174,7 +174,7 @@
     "gold_cypher": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division)-[r1:partOfConference]->(m1:Conference {name: 'Western Conference'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Team)-[r0:partOfConference]->(m0:Conference {name: 'Western Conference'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -944,7 +944,7 @@
     "gold_cypher": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player),(n:Team)<-[r1:draftedBy]-(m0:Player) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Team)-[r0:playsFor]->(m0:Player)<-[r1:draftedBy]-(m1:Team) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1374,7 +1374,7 @@
     "gold_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Utah Jazz'}) WITH DISTINCT n WHERE n.date_of_birth = date('1978-02-28') RETURN n.name",
     "pred_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Utah Jazz'}) WITH DISTINCT n WHERE n.date_of_birth = date('1978-02-28') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1444,7 +1444,7 @@
     "gold_cypher": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'Keith Booth'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team)-[r1:draftedBy]->(m1:Player {name: 'Keith Booth'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1654,7 +1654,7 @@
     "gold_cypher": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Khalid El-Amin'}) WITH DISTINCT n WHERE n.date_of_death.year < 2019 RETURN n.name",
     "pred_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Khalid El-Amin'}) WITH DISTINCT n WHERE n.date_of_death < date('2019-12-31') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1694,7 +1694,7 @@
     "gold_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'power forward'}) WITH DISTINCT n RETURN min(n.date_of_death.year)",
     "pred_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'power forward'}) WITH DISTINCT n RETURN min(n.date_of_death.year)",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1854,7 +1854,7 @@
     "gold_cypher": "MATCH (n:Division)-[r1:partOfConference]->(m1:Conference {name: 'Eastern Conference'}) OPTIONAL MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Eastern Conference'}) WITH n, count(DISTINCT (n)<-[:partOfDivision]-(m1:Team)) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.21052631578947367
     }
@@ -2084,7 +2084,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'Utah Jazz'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position)<-[r1:playsFor]-(m1:Team {name: 'Utah Jazz'}) WITH n, m0 RETURN m0.name, count(DISTINCT n)",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2394,7 +2394,7 @@
     "gold_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'Bo Erias'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team)-[r1:draftedBy]->(m1:Player {name: 'Bo Erias'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2434,7 +2434,7 @@
     "gold_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Billy Donovan'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
     "pred_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Billy Donovan'}) WITH n, min(age(n)) AS age RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -2494,7 +2494,7 @@
     "gold_cypher": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'Hy-Vee Arena'}) WITH DISTINCT n WHERE n.date_of_birth < date('1950-01-22') RETURN n.name",
     "pred_cypher": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'Hy-Vee Arena'}) WITH DISTINCT n WHERE n.date_of_birth < date('1950-01-22') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2504,7 +2504,7 @@
     "gold_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'power forward'}),(n:Player)-[r1:receivesAward]->(m1:Award {name: 'Princess of Asturias Award for Sports'}) WITH DISTINCT n WHERE 'Lausanne Collegiate School' IN n.schools_attended RETURN n.name",
     "pred_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'power forward'}),(n:Player)-[r1:receivesAward]->(m1:Award {name: 'Princess of Asturias Award for Sports'}),(n:Player)-[r2:hasHomeVenue]->(m2:Venue {name: 'Lausanne Collegiate School'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }

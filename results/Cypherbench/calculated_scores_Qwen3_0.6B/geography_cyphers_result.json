@@ -4,7 +4,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Natara'}) WITH DISTINCT n WHERE n.area_km2 < 390000 RETURN n.name",
     "pred_cypher": "MATCH (n:Lake)-[r0:locationIn]->(m0:Country)<-[r1:flowsInto]-(m1:River {name: 'Natara River'}) WITH DISTINCT n WHERE n.area_km2 < 390,000 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -34,7 +34,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Armenia'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Arma'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -44,7 +44,7 @@
     "gold_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain)-[r1:locatedIn]->(m1:Country {name: 'India'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain)-[r1:locatedIn]->(m1:Country {name: 'India'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -54,7 +54,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Arauca River'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:flowsInto]-(m1:River {name: 'Arauca River'}) OPTIONAL MATCH (n:Country)<-[r0:flowsInto]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -74,7 +74,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Spain'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:has DrainageBasin]-(m0:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Spain'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -94,7 +94,7 @@
     "gold_cypher": "CALL { MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Kazakhstan'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Irtysh basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Country {name: 'Kazakhstan'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Irtysh basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -104,7 +104,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Kula Kangri'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:locationIn]-(m1:Painting {name: 'Kula Kangri'}) OPTIONAL MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -114,7 +114,7 @@
     "gold_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Bobrovka'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)<-[r0:feeds]-(m0:River)-[r1:hasTributary]->(m1:River {name: 'Bobrovka River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -124,7 +124,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n WHERE n.length_km >= 800 RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Dongting Lake'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n WHERE n.long_km >= 800 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -134,7 +134,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km DESC",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -154,7 +154,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange {name: 'Andes'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Mountain)<-[r0:partOf]-(m0:MountainRange {name: 'Andes mountain'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -174,7 +174,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Ob Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:has]->(m0:Country)<-[r1:has]-(m1:River)-[r3:partOf]->(m3:DrainageBasin {name: 'Ob Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -194,7 +194,7 @@
     "gold_cypher": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Europe'}) OPTIONAL MATCH (n:Country)-[r0:locatedIn]->(m0:Continent) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r1:locatedIn]->(m1:Country {name: 'Europe'}) OPTIONAL MATCH (n:Country)-[r0:locatedIn]->(m0:Continent) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -204,7 +204,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Quebrada Pan de Azúcar basin'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Socompa'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationsIn]-(m0:River {name: 'Quebrada Pan de Azñcar basin'}),(n:Country)<-[r1:locationsIn]-(m1:Mountain {name: 'Socompa mountain'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -214,7 +214,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Kasba Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Lake)-[r0:partOf]->(m0:River)<-[r1:partOf]-(m1:Lake {name: 'Kasba Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -224,7 +224,7 @@
     "gold_cypher": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country {name: 'Honduras'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Continent)<-[r0:locationIn]-(m0:Country {name: 'Hondona'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -234,7 +234,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Asia'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Sickle Moon Peak'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Continent {name: 'Asia'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Continent {name: 'Sickle Moon Peak'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -264,7 +264,7 @@
     "gold_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:MountainRange {name: 'Gangotri Group'}),(n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Annapurna'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:River {name: 'Gangotri Group'}),(n:MountainRange)<-[r1:partOf]-(m1:River {name: 'Annapurna'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -274,7 +274,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Léman basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
     "pred_cypher": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Léman basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -284,7 +284,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Myanmar'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Mun River'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "pred_cypher": "MATCH (n:River)-[r0:feedsInto]->(m0:Country {name: 'Myanmar'}),(n:River)-[r1:hasTributary]->(m1:River {name: 'Mun River'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -294,7 +294,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Cameroon'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin)-[r1:locationIn]->(m1:Country {name: 'Cameroon'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -304,7 +304,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Avalanche Peak II'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Sakram'}) WITH DISTINCT n RETURN n.name, n.capital",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin {name: 'Avalanche Peak II'}),(n:Country)<-[r1:locationIn]-(m1:DrainageBasin {name: 'Sakram'}) WITH DISTINCT n RETURN n.name, n.cap",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -324,7 +324,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Bolshaya Taychinka'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Bolshaya Taychinka'}) WITH DISTINCT n RETURN n.name, n.dash_rate",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -334,7 +334,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC LIMIT 1",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasCountry]-(m0:River)-[r1:flowsInto]->(m1:Country {name: 'Pacific Ocean'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -384,7 +384,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain)-[r1:locatedIn]->(m1:Country {name: 'Peru'}) WITH DISTINCT n RETURN n.name, n.capital",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain)-[r1:locatedIn]->(m1:Country {name: 'Peru'}) WITH DISTINCT n RETURN n.name, n.cap",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -394,7 +394,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin {name: 'Abarkuh–Sirjan Basin'}), (m0:DrainageBasin {name: 'Rhône basin'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Lake {name: 'Abarkuh–Sirjan Basin'}), (m0:Lake {name: 'Rhône basin'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -404,7 +404,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -414,7 +414,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -424,7 +424,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake)<-[r1:flowsInto]-(m1:River {name: 'Yuan River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake)<-[r1:flowsInto]-(m1:River {name: 'Yuan River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -434,7 +434,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}),(n:Lake)<-[r1:flowsInto]-(m1:River {name: 'Xiang River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}),(n:Lake)<-[r1:flowsInto]-(m1:River {name: 'Xiang River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -454,7 +454,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Terich Mir'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin {name: 'Terich Mir'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -474,7 +474,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Severnyy Tanymas'}) OPTIONAL MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Severnyy Tanymas'}) OPTIONAL MATCH (n:Mountain)-[r0:locationIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -484,7 +484,7 @@
     "gold_cypher": "CALL { MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Democratic Republic of the Congo'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Tshopo River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Democratic Republic of the Congo'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Tshopo River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -494,7 +494,7 @@
     "gold_cypher": "MATCH (n:Ocean)<-[r1:flowsInto]-(m1:River {name: 'Anabar'}) OPTIONAL MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Ocean)<-[r1:flowsInto]-(m1:River {name: 'Anabar River'}) OPTIONAL MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -504,7 +504,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Dongting Lake'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -514,7 +514,7 @@
     "gold_cypher": "MATCH (n:River {name: 'Anerava'}), (m0:River {name: 'Menkere'}) RETURN n.length_km - m0.length_km AS answer",
     "pred_cypher": "MATCH (n:River {name: 'Anerava River'}), (m0:River {name: 'Menkere River'}) RETURN n.length_km - m0.length_km AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -524,7 +524,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Bug Basin'}) WITH DISTINCT n WHERE n.area_km2 > 200 RETURN n.name",
     "pred_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Bug Basin'}) WITH DISTINCT n WHERE n.area_km2 > 200 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -534,7 +534,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Chopicalqui'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Chopicalqui'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -544,7 +544,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Lac la Ronge'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Rivière du Lièvre basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locationIn]-(m0:River {name: 'Lac la Ronge'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locationIn]-(m1:River {name: 'Rivière du Lièvre basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -554,7 +554,7 @@
     "gold_cypher": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River {name: 'Amazon'}),(n:Ocean)<-[r1:flowsInto]-(m1:River {name: 'Hamza River'}) WITH DISTINCT n RETURN n.name, n.avg_vertical_depth_m",
     "pred_cypher": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River {name: 'Amazon'}),(n:Ocean)<-[r1:flowsInto]-(m1:River {name: 'Hamza River'}) WITH DISTINCT n RETURN n.name, n.avg_vertical_depth_m",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -574,7 +574,7 @@
     "gold_cypher": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Malaya Pikhtovaya'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Continent)<-[r0:locationsIn]-(m0:Country)<-[r1:flowsInto]-(m1:River {name: 'Malaya Pikhtovaya River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -584,7 +584,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Zheng River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Dongting Lake'}),(n:River)-[r1:flowsInto]->(m1:River {name: 'Zheng River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -594,7 +594,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Keret'}),(n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Prorvinskaya'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Lake Keret'}),(n:Country)<-[r1:locatedIn]-(m1:River {name: 'Prorvinskaya River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -634,7 +634,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Albert'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:locationIn]-(m1:Lake {name: 'Lake Albert'}) OPTIONAL MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -654,7 +654,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Bug Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:River {name: 'Bug Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -704,7 +704,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'Cameroon'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC",
     "pred_cypher": "MATCH (n:Country)<-[r0:locaIn]-(m0:River)-[r1:locaIn]->(m1:Country {name: 'Cameroon'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -714,7 +714,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Asia'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Nanga Parbat'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Asia'}),(n:Country)<-[r1:hasParent]-(m1:Painting {name: 'Nanga Parbat'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -734,7 +734,7 @@
     "gold_cypher": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}) RETURN n, m0 as m UNION MATCH (n:River)<-[r1:flowsInto]-(m1:River {name: 'Kyuelenke'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Atlantic Ocean'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:hasTributary]->(m1:River {name: 'Kyuelenke River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -744,7 +744,7 @@
     "gold_cypher": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River {name: 'Nile'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River {name: 'Nile River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -754,7 +754,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange {name: 'Himalayas'}),(n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Gurans Himal'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Mountain)<-[r0:partOf]-(m0:MountainRange {name: 'Himalayas'}),(n:Mountain)<-[r1:partOf]-(m1:MountainRange {name: 'Gurans Himal'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -774,7 +774,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Russia'}),(n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Irtysh basin'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Country {name: 'Russia'}),(n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Irtysh basin'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -784,7 +784,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Chinchey'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "pred_cypher": "MATCH (n:River)-[r0:has]->(m0:River {name: 'Chinchey mountain'}),(n:River)-[r1:locatedIn]->(m1:Country) WITH DISTINCT n RETURN n.name, n.length_km",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -804,7 +804,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'Tajikistan'}) OPTIONAL MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'Tajikistan'}) OPTIONAL MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -814,7 +814,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Arctic Ocean'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Arctic Ocean'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -834,7 +834,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Chaudhara'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Chaudhara'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -844,7 +844,7 @@
     "gold_cypher": "CALL { MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Vietnam'}) RETURN n, m0 as m UNION MATCH (n:River)<-[r1:flowsInto]-(m1:River {name: 'Tongdian River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Country {name: 'Vietnam'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:hasTributary]->(m1:River {name: 'Tongdian River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -854,7 +854,7 @@
     "gold_cypher": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Beloye Lake'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Continent)<-[r0:locationIn]-(m0:Country)<-[r1:containsBeloye Lake] WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -874,7 +874,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Sartlan'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Lake Sartlan'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -884,7 +884,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Lena basin'}),(n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "pred_cypher": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Lena basin'}),(n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -894,7 +894,7 @@
     "gold_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:MountainRange {name: 'Panjal Range'}),(n:MountainRange)<-[r1:partOf]-(m1:Mountain {name: 'Lapche Kang II'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:River {name: 'Panhjal Range'}),(n:MountainRange)<-[r1:partOf]-(m1:River {name: 'Lapche Kang II'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -904,7 +904,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Rwanda'}),(n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Pool Malebo'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Rwanda'}),(n:DrainageBasin)-[r1:partOf]->(m1:River {name: 'Pool Malebo'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -914,7 +914,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Africa'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Ngami'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Continent {name: 'Africa'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Ngami'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -924,7 +924,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:River {name: 'Kasai River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:River {name: 'Kasai River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -934,7 +934,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Tobol basin'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Posyrya'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "pred_cypher": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Tobol basin'}),(n:River)<-[r1:flowsInto]-(m1:Ocean {name: 'Posyrya'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -944,7 +944,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Democratic Republic of the Congo'}) OPTIONAL MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Democratic Republic of the Congo'}) OPTIONAL MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -974,7 +974,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Polsky Buerak'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:lands]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Polsky Buerak'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -994,7 +994,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Europe'}) RETURN n, m0 as m UNION MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Asia'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Continent {name: 'Europe'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Continent {name: 'Asia'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1014,7 +1014,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'South America'}),(n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Baquiá Preto River'}) WITH DISTINCT n RETURN n.name, n.capital",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationsIn]-(m0:River {name: 'Baquiá Preto River'}),(n:Country)<-[r1:locationsIn]-(m1:River {name: 'South America'}) WITH DISTINCT n RETURN n.name, n.cap",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1024,7 +1024,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Kuybyshev Reservoir'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Scherbakovka'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin {name: 'Kuybyshev Reservoir'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locationIn]-(m1:River {name: 'SchŞşKuybyshev Reservoir'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1044,7 +1044,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Sangha'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Sangiha River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1054,7 +1054,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Franklin D. Roosevelt Lake'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Ogeechee River basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:River {name: 'Franklin D. Roosevelt Lake'}),(n:Country)<-[r1:locatedIn]-(m1:River {name: 'Ogeechee River basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1064,7 +1064,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Republic of the Congo'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Country {name: 'Republic of the Congo'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1074,7 +1074,7 @@
     "gold_cypher": "CALL { MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}) RETURN n, m0 as m UNION MATCH (n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Daxue Mountains'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}) RETURN n, m0 as m UNION MATCH (n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Daxue Mountains'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1084,7 +1084,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Iguazu River'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Ampére River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Iguazu River'}),(n:River)<-[r1:feedsBy]-(m1:River {name: 'Ampére River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1104,7 +1104,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Sangha'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Sangiha River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1114,7 +1114,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC LIMIT 1",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1124,7 +1124,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Nottaway River basin'}),(n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Selwyn Lake'}) WITH DISTINCT n RETURN n.name, n.capital",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:River {name: 'Nottaway River basin'}),(n:Country)<-[r1:locationIn]-(m1:Lake {name: 'Selwyn Lake'}) WITH DISTINCT n RETURN n.name, ncapital",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1134,7 +1134,7 @@
     "gold_cypher": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'South America'}) OPTIONAL MATCH (n:Country)<-[r0:flowsThrough]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:locationIn]-(m1:River {name: 'South America'}) OPTIONAL MATCH (n:Country)<-[r0:locationIn]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1154,7 +1154,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Don basin'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Don basin'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1164,7 +1164,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'Cameroon'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasLake]-(m0:Lake)-[r1:hasLake]->(m1:Country {name: 'Cameroon'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1174,7 +1174,7 @@
     "gold_cypher": "CALL { MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Burundi'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Bangweulu'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Burundi'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)-[r1:partOf]->(m1:River {name: 'Lake Bangweulu'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1184,7 +1184,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Tagus Basin'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC LIMIT 1",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:River {name: 'Tagus Basin'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1194,7 +1194,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Kwango River'}),(n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Mai-Ndombe'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Kwango River'}),(n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Mai-Ndombe'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1204,7 +1204,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Saint Lawrence River basin'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Batiscanie'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:River {name: 'Saint Lawrence River basin'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:River {name: 'Batiscanie'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1214,7 +1214,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Don basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
     "pred_cypher": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Don basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1234,7 +1234,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Atlantic Ocean'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1244,7 +1244,7 @@
     "gold_cypher": "MATCH (n:Ocean {name: 'Pacific Ocean'}), (m0:Ocean {name: 'Indian Ocean'}) RETURN CASE WHEN n.avg_vertical_depth_m > m0.avg_vertical_depth_m THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Ocean {name: 'Pacific'}), (m0:Ocean {name: 'Indian'}) RETURN CASE WHEN n.avg_vertical_depth_m > m0.avg_vertical_depth_m THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1264,7 +1264,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin {name: 'Abarkuh–Sirjan Basin'}), (m0:DrainageBasin {name: 'Rhône basin'}) RETURN n.area_km2 - m0.area_km2 AS answer",
     "pred_cypher": "MATCH (n:River {name: 'Abarkuh–Sirjan Basin'}), (m0:River {name: 'Rhóne basin'}) RETURN n.area_km2 - m0.area_km2 AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1284,7 +1284,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Playgreen Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Playgreen Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1294,7 +1294,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Nerda'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin)-[r1:partOf]->(m1:River {name: 'Nerda'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1304,7 +1304,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locaIn]-(m0:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1324,7 +1324,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Russia'}),(n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Tayma'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Tayma River'}),(n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Russia'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1334,7 +1334,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin)-[r1:locationIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1344,7 +1344,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) OPTIONAL MATCH (n:Lake)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) OPTIONAL MATCH (n:Lake)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1354,7 +1354,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1364,7 +1364,7 @@
     "gold_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'Democratic Republic of the Congo'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)<-[r0:receivesWater]-(m0:River)-[r1:flowsInto]->(m1:Country {name: 'Democratic Republic of the Congo'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1384,7 +1384,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Terich Mir'}) WITH DISTINCT n RETURN n.name, n.capital",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin {name: 'Terich Mir'}) WITH DISTINCT n RETURN n.name, n.cap",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1394,7 +1394,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Siahkuh–Zarrin–Sorkh Basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Siahkuh–Zarrin–Sorkh Basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1404,7 +1404,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Arctic Ocean'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Arctic Ocean'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1424,7 +1424,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Orinoco basin'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Orinoco basin'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1444,7 +1444,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'Russia'}) WITH DISTINCT n WHERE n.area_km2 >= 1900000 RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:Country {name: 'Russia'}) WITH DISTINCT n WHERE n.area_km2 >= 1,900,000 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1454,7 +1454,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Mweru'}) WITH DISTINCT n RETURN n.name, n.capital",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin)-[r1:partOf]->(m1:Country {name: 'Lake Mweru'}) WITH DISTINCT n RETURN n.name, n.cap",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1464,7 +1464,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Taygusa'}),(n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Jänisjärvi'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:flowsInto]-(m0:River {name: 'Taygusa River'}),(n:Country)<-[r1:locationsIn]-(m1:Lake {name: 'Lake Jänusjärvi'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1474,7 +1474,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Vorskla River Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Vorskla River Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1484,7 +1484,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Europe'}),(n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Asia'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Continent {name: 'Europe'}),(n:Country)<-[r1:locatedIn]-(m1:Continent {name: 'Asia'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1494,7 +1494,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Sava Basin'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:locatedIn]-(m1:River {name: 'Sava Basin'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1504,7 +1504,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Armenia'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Arma'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1534,7 +1534,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Spain'}) OPTIONAL MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Spain'}) OPTIONAL MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1544,7 +1544,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Casa de Piedra Reservoir'}) WITH DISTINCT n RETURN n.name ORDER BY n.discharge_m3_s DESC",
     "pred_cypher": "MATCH (n:River)-[r0:has]->(m0:River {name: 'Casa de Piedra Reservoir'}) WITH DISTINCT n RETURN n.name ORDER BY n.discard_m3_s DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1554,7 +1554,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Zambia'}),(n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
     "pred_cypher": "MATCH (n:River)-[r0:has]->(m0:River {name: 'Zambia'}),(n:River)-[r1:has]->(m1:River {name: 'Atlantic Ocean'}) WITH DISTINCT n RETURN n.name, n.duschrate_m3_s",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1574,7 +1574,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Playgreen Lake'}) WITH DISTINCT n RETURN n.name, n.capital",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:Lake {name: 'Playgreen Lake'}) WITH DISTINCT n RETURN n.name, n.capital",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1584,7 +1584,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Antofalla'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Antofalla'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1594,7 +1594,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Gods Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Gods Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1614,7 +1614,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'India'}),(n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Panjal Range'}) WITH DISTINCT n WHERE n.elevation_m < 6300 RETURN n.name",
     "pred_cypher": "MATCH (n:Mountain)<-[r0:partOf]-(m0:MountainRange {name: 'Panhjal Range'}),(n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'India'}) WITH DISTINCT n WHERE n.elevation_m < 6300 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1624,7 +1624,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Niyap'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Niyap River'}) WITH DISTINCT n RETURN n.name, n.discard_m3_s",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1634,7 +1634,7 @@
     "gold_cypher": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Adriatic Sea'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:partOf]-(m1:River {name: 'Adriatic Sea drainage basin'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1644,7 +1644,7 @@
     "gold_cypher": "MATCH (n:Ocean {name: 'Pacific Ocean'}), (m0:Ocean {name: 'Indian Ocean'}) RETURN CASE WHEN n.max_vertical_depth_m > m0.max_vertical_depth_m THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Ocean {name: 'Pacific'}), (m0:Ocean {name: 'Indian'}) RETURN CASE WHEN n.max_vertical_depth_m > m0.max_vertical_depth_m THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1654,7 +1654,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Ecuador'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Country {name: 'Ecuador'}) OPTIONAL MATCH (n:River)-[r0:flowsInto]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1674,7 +1674,7 @@
     "gold_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain {name: 'Uja Tirche'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:MountainRange {name: 'Uja Tirche'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1684,7 +1684,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain)-[r1:locatedIn]->(m1:Country {name: 'India'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:Mountain)-[r1:locationIn]->(m1:Country {name: 'India'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1714,7 +1714,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Namcha Barwa'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Country)<-[r1:locationIn]-(m1:River {name: 'Namcha Barwa'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1734,7 +1734,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Pik Przhevalsky'}),(n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Dashui Qu'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin {name: 'Pik Przhevalsky'}),(n:Country)<-[r1:locationIn]-(m1:River {name: 'Dashui Qu'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1744,7 +1744,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Orinoco basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Country)<-[r1:flowsInto]-(m1:River {name: 'Orinoco Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1754,7 +1754,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Lake Kisale'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Lake Kisale'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1774,7 +1774,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'Argentina'}),(n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'Chile'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'Argentina'}),(n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'Chile'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1784,7 +1784,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Principal Cordillera'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Principal Cordillera'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1804,7 +1804,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Topky'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Topky'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1834,7 +1834,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Turkmenistan'}),(n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Kazakhstan'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Turkmenistan'}),(n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Kazakhstan'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1844,7 +1844,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Gulin River'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Mount Everest'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:has]->(m0:River {name: 'Gulin River'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:has]-(m1:Mountain {name: 'Mount Everest'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1864,7 +1864,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Ottawa River drainage basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Ottawa River drainage basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1884,7 +1884,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Tobol basin'}),(n:River)-[r1:flowsInto]->(m1:River {name: 'Posyrya'}) WITH DISTINCT n WHERE n.length_km >= 14 RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Tobol basin'}),(n:River)-[r1:flowsInto]->(m1:River {name: 'Posyrya'}) WITH DISTINCT n WHERE n.long_km >= 14 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1894,7 +1894,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Israel'}),(n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Tunisia'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Israel'}),(n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Tunisia'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1914,7 +1914,7 @@
     "gold_cypher": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC",
     "pred_cypher": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1924,7 +1924,7 @@
     "gold_cypher": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Africa'}) OPTIONAL MATCH (n:Country)<-[r0:flowsThrough]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:locationIn]-(m1:River {name: 'Africa'}) OPTIONAL MATCH (n:Country)<-[r0:locationIn]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2004,7 +2004,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Ucayali River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r0:feedsInto]->(m0:Country)<-[r1:feedsInto]-(m1:River {name: 'Ucayali River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2014,7 +2014,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Tobol basin'}),(n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Yemnaya'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Tobol basin'}),(n:Country)<-[r1:locatedIn]-(m1:River {name: 'Yemnaya River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2024,7 +2024,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Arctic Ocean'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Arctic Ocean'}) WITH DISTINCT n RETURN n.name, n.discard_m3_s",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2044,7 +2044,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Supung Lake'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:locationIn]-(m1:Lake {name: 'Supung Lake'}) OPTIONAL MATCH (n:Country)<-[r0:locationIn]-(m0:Mountain) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2054,7 +2054,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'South Henik Lake'}),(n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Tulemalu Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'South Henik Lake'}),(n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Tulemalu Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2064,7 +2064,7 @@
     "gold_cypher": "CALL { MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange {name: 'Kunlun Mountains'}) RETURN n, m0 as m UNION MATCH (n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Arkatag Shan'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Mountain)<-[r0:partOf]-(m0:MountainRange {name: 'Kunlun Mountains'}) RETURN n, m0 as m UNION MATCH (n:Mountain)<-[r1:partOf]-(m1:MountainRange {name: 'Arkatag Shan'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2074,7 +2074,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Lake Kisale'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Lake Kisale'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2084,7 +2084,7 @@
     "gold_cypher": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Karakoram'}),(n:MountainRange)<-[r1:partOf]-(m1:Mountain {name: 'Saser Kangri II'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Karakoram'}) WITH DISTINCT n WHERE n.elevation_m = 100 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2094,7 +2094,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)-[r1:locatedIn]->(m1:Continent {name: 'Africa'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)-[r1:locatedIn]->(m1:Continent {name: 'African continent'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2134,7 +2134,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Negro River'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Negro River'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2154,7 +2154,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Namibia'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Namibia'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2184,7 +2184,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Pangong Tso'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Lunpo Gangri'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:Painting {name: 'Pangong Tso'}),(n:Country)<-[r1:locationIn]-(m1:Painting {name: 'Lunpo Gangri'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2194,7 +2194,7 @@
     "gold_cypher": "CALL { MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Novosibirsk Reservoir'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Noska'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Novosibirsk Reservoir'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Noska River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2214,7 +2214,7 @@
     "gold_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain {name: 'Cho Polu'}),(n:MountainRange)<-[r1:partOf]-(m1:Mountain {name: 'Mount Gya'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:River {name: 'Cho Polu'}),(n:MountainRange)<-[r1:partOf]-(m1:River {name: 'Mount Gya'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2234,7 +2234,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean)<-[r1:flowsInto]-(m1:River {name: 'Nile'}) WITH DISTINCT n RETURN n.name ORDER BY n.discharge_m3_s ASC",
     "pred_cypher": "MATCH (n:River)-[r0:feedsInto]->(m0:River)<-[r1:feedsInto]-(m1:River {name: 'Nile'}) WITH DISTINCT n RETURN n.name ORDER BY n.dcharge_m3_s ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2244,7 +2244,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Ob Basin'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:partOf]->(m1:Continent {name: 'Ob Basin'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2254,7 +2254,7 @@
     "gold_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Vyazovka'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Tura'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Vyazovka'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Tura'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2264,7 +2264,7 @@
     "gold_cypher": "MATCH (n:River {name: 'Tokko'}), (m0:River {name: 'Tyukyan'}) RETURN n.discharge_m3_s - m0.discharge_m3_s AS answer",
     "pred_cypher": "MATCH (n:River {name: 'Tokko'}), (m0:River {name: 'Tyukyan rivers'}) RETURN n.discard_m3_s - m0.discard_m3_s AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2274,7 +2274,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake)<-[r1:flowsInto]-(m1:River {name: 'Yuan River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Yuan River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2284,7 +2284,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Nanbang River'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Urdok III'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:flowsInto]-(m0:River {name: 'Nanbang River'}),(n:Country)<-[r1:flowsInto]-(m1:River {name: 'Urdok III'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2294,7 +2294,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Atyus'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km DESC LIMIT 1",
     "pred_cypher": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Atyus River'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km DESC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2304,7 +2304,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Pacific Ocean'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2314,7 +2314,7 @@
     "gold_cypher": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River)-[r1:flowsInto]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2324,7 +2324,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:River {name: 'Keyzes'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:River {name: 'Keyzes River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2334,7 +2334,7 @@
     "gold_cypher": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Namtso'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Continent)<-[r0:locationIn]-(m0:Country)-[r1:hasLake]->(m1:Lake {name: 'Namtso'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2344,7 +2344,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Loenpo Gang'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Loenpo Gang'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2364,7 +2364,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Yellow River Basin'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Yellow River Basin'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2374,7 +2374,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Cajari River'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Atlantic Ocean'}),(n:River)<-[r1:feedsBy]-(m1:River {name: 'Cajari River'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2394,7 +2394,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'North America'}),(n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Texcoco'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'North America'}),(n:Country)<-[r1:hasLake]-(m1:Lake {name: 'Lake Texcoco'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2414,7 +2414,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Chipiriri River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationsIn]-(m0:River {name: 'Chipiriri River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2434,7 +2434,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Chile'}) OPTIONAL MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Chile'}) OPTIONAL MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2444,7 +2444,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:flowsInto]-(m0:River) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2464,7 +2464,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Tagus Basin'}) WITH DISTINCT n WHERE n.capital <> 'Madrid' RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin {name: 'Tagus Basin'}) WITH DISTINCT n WHERE n.capital <> 'Madrid' RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2474,7 +2474,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:traversedBy]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2484,7 +2484,7 @@
     "gold_cypher": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Europe'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:locatedIn]-(m1:River {name: 'Europe'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2494,7 +2494,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Singhi Kangri'}),(n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Zhelin Reservoir'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:River {name: 'Singhi Kangri'}),(n:Country)<-[r1:locationIn]-(m1:River {name: 'Zhelin Reservoir'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2524,7 +2524,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'South Henik Lake'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'South Henik Lake'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2534,7 +2534,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Gods Lake'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Gods Lake'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2544,7 +2544,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Kangto'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Painting {name: 'Kangto'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2554,7 +2554,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Republic of the Congo'}) WITH DISTINCT n RETURN n.name ORDER BY n.discharge_m3_s DESC",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Country {name: 'Republic of the Congo'}) WITH DISTINCT n RETURN n.name ORDER BY n.discard_m3_s DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2574,7 +2574,7 @@
     "gold_cypher": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Lei River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River)<-[r1:flowsInto]-(m1:Lake {name: 'Lei River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2584,7 +2584,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Namibia'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Namibia'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2594,7 +2594,7 @@
     "gold_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain {name: 'Tharkot'}),(n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Annapurna'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:River {name: 'Tharkot'}),(n:MountainRange)<-[r1:partOf]-(m1:River {name: 'Annapurna'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2614,7 +2614,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'Republic of the Congo'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Atlantic Ocean'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'Republic of the Congo'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2624,7 +2624,7 @@
     "gold_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2644,7 +2644,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Chipiriri River'}) WITH DISTINCT n RETURN n.name, n.capital",
     "pred_cypher": "MATCH (n:Country)<-[r0:flowsInto]-(m0:River {name: 'Chipiriri River'}) WITH DISTINCT n RETURN n.name, n.cap",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2654,7 +2654,7 @@
     "gold_cypher": "MATCH (n:Country {name: 'South Korea'}) WITH DISTINCT n RETURN n.capital",
     "pred_cypher": "MATCH (n:Country {name: 'South Korea'}) WITH DISTINCT n RETURN ncapital",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -2664,7 +2664,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Spain'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Spain'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2674,7 +2674,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)-[r1:locatedIn]->(m1:Continent {name: 'North America'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC LIMIT 1",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'North America'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2694,7 +2694,7 @@
     "gold_cypher": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Karakoram'}),(n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Gasherbrum'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Karakoram'}),(n:MountainRange)-[r1:partOf]->(m1:MountainRange {name: 'Gasherbrum'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2704,7 +2704,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Lake Kisale'}),(n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Lwama River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Lake Kisale'}),(n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Lwama River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2724,7 +2724,7 @@
     "gold_cypher": "MATCH (n:Country {name: 'Jordan'}), (m0:Country {name: 'Paraguay'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:Painting {name: 'Jordan'}), (m0:Country)<-[r1:locationIn]-(m1:Painting {name: 'Paraguay'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2744,7 +2744,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Argentina'}) OPTIONAL MATCH (n:Lake)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Argentina'}) OPTIONAL MATCH (n:Lake)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2774,7 +2774,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'South America'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Camarones basin'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'South America'}),(n:Country)<-[r1:hasBasin]-(m1:DrainageBasin {name: 'Camarones basin'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2784,7 +2784,7 @@
     "gold_cypher": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Lungser Kangri'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Continent)<-[r0:locationIn]-(m0:Country)-[r1:partOf]->(m1:Mountain {name: 'Lungser Kangri'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2804,7 +2804,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Kondinka'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'Russia'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Kondinka'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'Russia'}) WITH DISTINCT n RETURN n.name, n.discard_m3_s",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2814,7 +2814,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'People\\'s Republic of China'}),(n:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:hasParent]->(m0:Country {name: 'People\\'s Republic of China'}),(n:River)-[r1:hasParent]->(m1:Lake {name: 'Dongting Lake'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2824,7 +2824,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Achairka'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Gorky Reservoir'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:flowsInto]-(m0:River {name: 'Achairka River'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locationsIn]-(m1:Lake {name: 'Gorky Reservoir'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2844,7 +2844,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Sant\\'Ana River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:in]->(m0:Country)<-[r1:flowsInto]-(m1:River {name: 'Sant\\'Ana River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2874,7 +2874,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'India'}) OPTIONAL MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'India'}) OPTIONAL MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2884,7 +2884,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Thailand'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Country {name: 'Thailand'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2894,7 +2894,7 @@
     "gold_cypher": "CALL { MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Lena basin'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Arctic Ocean'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Lena basin'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Arctic Ocean'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2904,7 +2904,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Unini River'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Unini River'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2914,7 +2914,7 @@
     "gold_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Niyap'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Niyap River'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2984,7 +2984,7 @@
     "gold_cypher": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'South America'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country {name: 'South America'}) OPTIONAL MATCH (n:Country)<-[r1:locationIn]-(m1:River {name: 'river'}) OPTIONAL MATCH (n:Country)<-[r0:locationIn]-(m0:Mountain) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2994,7 +2994,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'Nepal'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC",
     "pred_cypher": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'Nepa'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3004,7 +3004,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}) WITH DISTINCT n WHERE n.length_km <= 1000 RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Dongting Lake'}) WITH DISTINCT n WHERE n.length_km <= 1000 RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3014,7 +3014,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'Canada'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'Canada'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3034,7 +3034,7 @@
     "gold_cypher": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River {name: 'Mekong River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River {name: 'Mekong River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3054,7 +3054,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Ojos del Salado'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Uruguay River Basin'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:River {name: 'Ojos del Salado'}),(n:Country)<-[r1:locatedIn]-(m1:River {name: 'Uruguay River Basin'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3084,7 +3084,7 @@
     "gold_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Himalayas'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:MountainRange)-[r1:partOf]->(m1:MountainRange {name: 'Himalayas'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3114,7 +3114,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}),(n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Congo basin'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Atlantic Ocean'}),(n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Congo basin'}) WITH DISTINCT n RETURN n.name, n.discard_m3_s",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3124,7 +3124,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Durnitsa'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Durnitsa'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3134,7 +3134,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC LIMIT 1",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'ocean'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3164,7 +3164,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Lac Manouane'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Painting {name: 'Lac Manouane'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3234,7 +3234,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Pacific Ocean'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3244,7 +3244,7 @@
     "gold_cypher": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Africa'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:locatedIn]-(m1:Continent {name: 'Africa'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3254,7 +3254,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Maly Turtas'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Maly Turtas'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3264,7 +3264,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'Paraguay'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:traversedBy]-(m0:River)-[r1:traversedBy]->(m1:Country {name: 'Paraguay'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3274,7 +3274,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Ethiopia'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Country {name: 'Ethopia'}) OPTIONAL MATCH (n:River)-[r0:flowsInto]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3294,7 +3294,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Mali'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Country {name: 'Mali'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3304,7 +3304,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Malyye Tugry'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Malleye Tugry River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3314,7 +3314,7 @@
     "gold_cypher": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Europe'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r1:locatedIn]-(m1:River {name: 'Europe'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3324,7 +3324,7 @@
     "gold_cypher": "MATCH (n:River {name: 'Bandeya'}), (m0:River {name: 'Sultunka'}) RETURN n.length_km - m0.length_km AS answer",
     "pred_cypher": "MATCH (n:River {name: 'Bandeya River'}), (m0:River {name: 'Sultunka River'}) RETURN n.length_km - m0.length_km AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3334,7 +3334,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:River {name: 'Madre de Dios River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:playsThrough]-(m0:River)-[r1:flowsInto]->(m1:River {name: 'Madre de Dios River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3344,7 +3344,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Congo basin'}) OPTIONAL MATCH (n:Lake)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Congo basin'}) OPTIONAL MATCH (n:Lake)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3354,7 +3354,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Belaya-Berel\\''}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Mountain)<-[r0:locatedIn]-(m0:Country)<-[r1:flowsInto]-(m1:River {name: 'Belaya-Berel\\' River'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3374,7 +3374,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Lena basin'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Lena basin'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3394,7 +3394,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC",
     "pred_cypher": "MATCH (n:Country)<-[r0:playsInto]-(m0:River) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3414,7 +3414,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3434,7 +3434,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Terek River Basin'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Mayzas'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locationsIn]-(m0:River {name: 'Terek River Basin'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locationsIn]-(m1:River {name: 'Mayzas River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3444,7 +3444,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Cameroon'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Country {name: 'Cameroon'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3454,7 +3454,7 @@
     "gold_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "pred_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN n.name, n.length_km",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3494,7 +3494,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Makalu'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Makalu'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3504,7 +3504,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Kazakhstan'}),(n:River)-[r1:flowsInto]->(m1:River {name: 'Irtysh'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
     "pred_cypher": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Kazakhstan'}),(n:River)-[r1:flowsInto]->(m1:River {name: 'Irtysh'}) WITH DISTINCT n RETURN n.name, n.discard_m3_s",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3514,7 +3514,7 @@
     "gold_cypher": "MATCH (n:River)<-[r0:flowsInto]-(m0:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Lena basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)<-[r0:feeds]-(m0:River)-[r1:partOf]->(m1:Country {name: 'Lena basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3524,7 +3524,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC LIMIT 1",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:River)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3534,7 +3534,7 @@
     "gold_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Dongting Lake'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3564,7 +3564,7 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}),(n:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Yellow River Basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
     "pred_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}),(n:Lake)-[r1:partOf]->(m1:MountainRange {name: 'Yellow River Basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3574,7 +3574,7 @@
     "gold_cypher": "MATCH (n:Ocean {name: 'Atlantic Ocean'}), (m0:Ocean {name: 'Arctic Ocean'}) RETURN CASE WHEN n.max_vertical_depth_m > m0.max_vertical_depth_m THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Ocean {name: 'Atlantic'}), (m0:Ocean {name: 'Arctic'}) RETURN CASE WHEN n.max_vertical_depth_m > m0.max_vertical_depth_m THEN n.name ELSE m0.name END AS answer",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3594,7 +3594,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Kyrtau'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Narva basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "pred_cypher": "MATCH (n:Country)<-[r0:flowsInto]-(m0:River {name: 'Kyrtau River'}),(n:Country)<-[r1:locationsIn]-(m1:DrainageBasin {name: 'Narva basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3604,7 +3604,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:locationIn]-(m0:DrainageBasin) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3624,7 +3624,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Keller Lake'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Keller Lake'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3634,7 +3634,7 @@
     "gold_cypher": "MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Saser Muztagh'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m DESC LIMIT 1",
     "pred_cypher": "MATCH (n:Mountain)<-[r0:partOf]-(m0:MountainRange)<-[r1:partOf]-(m1:Mountain {name: 'Saser Muztagh mountain'}) WITH DISTINCT n RETURN n.name ORDER BY n.height_m DESC LIMIT 1",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3644,7 +3644,7 @@
     "gold_cypher": "CALL { MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Lukaya River'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Mweru'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Lukaya River'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Mweru'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3654,7 +3654,7 @@
     "gold_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }

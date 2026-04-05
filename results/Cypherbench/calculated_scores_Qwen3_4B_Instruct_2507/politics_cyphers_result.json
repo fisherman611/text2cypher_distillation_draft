@@ -14,7 +14,7 @@
     "gold_cypher": "MATCH (n:GovernmentOrganization)-[r0:belongsTo]->(m0:Country {name: 'Iran'}),(n:GovernmentOrganization)<-[r1:leads]-(m1:Position {name: 'Foreign Affairs Minister of Iran'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:GovernmentOrganization)-[r0:belongsTo]->(m0:Country {name: 'Iran'}),(n:GovernmentOrganization)<-[r1:leads]-(m1:Position)<-[r2:holdsPosition]-(m2:Politician {name: 'Foreign Affairs Minister of Iran'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -24,7 +24,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty)-[r1:foundedBy]->(m1:Politician {name: 'François Mitterrand'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty)-[r1:foundedBy]->(m1:Politician {name: 'François Mitterrand'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -34,7 +34,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'Romania'}),(n:Politician)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'Romania'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Romania'}),(n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'Romania'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -44,7 +44,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'German Fatherland Party'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'German Fatherland Party'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -54,7 +54,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Prime Minister of Cambodia'}) RETURN n, m0 as m UNION MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Khmer Renovation'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'Cambodia'}) WITH n, m0 MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Khmer Renovation'}) RETURN n.name as name } UNION ALL CALL { MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'Cambodia'}) WITH n, m0 MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Khmer Renovation'}) RETURN n.name as name }",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -64,7 +64,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty {name: 'Central African Democratic Rally'}),(n:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'Central African Democratic Rally'}) WITH DISTINCT n RETURN n.name, n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'Central African Democratic Rally'}) WITH DISTINCT n WHERE 'foundedBy' IN relationships(n) RETURN n.name, n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -104,7 +104,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth ASC",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -114,7 +114,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'Socialist Party'}) WITH DISTINCT n UNWIND n.official_language AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)-[r1:operatesIn]->(m1:PoliticalParty {name: 'Socialist Party'}) WITH DISTINCT n UNWIND n.official_language AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -124,7 +124,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician {name: 'Nicolas Sarkozy'}),(n:PoliticalParty)-[r1:headedBy]->(m1:Politician {name: 'Alain Juppé'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:headedBy]-(m0:Politician {name: 'Nicolas Sarkozy'}),(n:PoliticalParty)<-[r1:headedBy]-(m1:Politician {name: 'Alain Juppé'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -144,7 +144,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:hasDiplomaticRelationWith]-(m0:Country {name: 'People\\'s Republic of China'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:hasDiplomaticRelationWith]-(m1:Country {name: 'Uruguay'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": null,
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -176,7 +176,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'Rwanda'}) WHERE r0.start_year <= 2000 AND (r0.end_year >= 2000 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Rwanda'}) WHERE r0.start_year <= 2000 AND (r0.end_year >= 2000 OR r0.end_year IS NULL) RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -196,7 +196,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'The Patriots'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:headedBy]->(m1:PoliticalParty {name: 'The Patriots'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -236,7 +236,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician {name: 'Joseph Stalin'}),(n:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'Igor Kurchatov'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:headedBy]-(m0:Politician {name: 'Joseph Stalin'}),(n:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'Igor Kurchatov'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -266,7 +266,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician),(n:Country)-[r1:hasHeadOfGovernment]->(m0:Politician) WITH DISTINCT n UNWIND n.official_language AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasHeadOfState]-(m0:Politician)-[r1:hasHeadOfGovernment]->(m1:Country) WITH DISTINCT n UNWIND n.official_language AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -276,7 +276,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'Christian National Union'}) WITH DISTINCT n UNWIND n.schools_attended AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country)-[r1:operatesIn]->(m1:PoliticalParty {name: 'Christian National Union'}) WITH DISTINCT n UNWIND n.schools_attended AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -306,7 +306,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'French co-prince of Andorra'}),(n:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'Popular Republican Movement'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'French co-prince of Andorra'}),(n:Politician)-[r1:foundedBy]->(m1:PoliticalParty {name: 'Popular Republican Movement'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -326,7 +326,7 @@
     "gold_cypher": "MATCH (n:GovernmentOrganization)<-[r0:leads]-(m0:Position {name: 'Foreign Affairs Minister of Iran'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:GovernmentOrganization)-[r0:leads]->(m0:Position)-[r1:holdsPosition]->(m1:Politician {name: 'Foreign Affairs Minister of Iran'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -366,7 +366,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:foundedBy]->(m0:Politician)-[r1:holdsPosition]->(m1:Position {name: 'Minister of Education and  Religions of Greece'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:foundedBy]-(m0:Politician)-[r1:holdsPosition]->(m1:Position {name: 'Minister of Education and Religions of Greece'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -376,7 +376,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Party of Regions'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Party of Regions'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -396,7 +396,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty {name: 'Rally for the Republic'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'The Republicans'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'Rally for the Republic'}) RETURN n, m0 as m UNION MATCH (n:Politician)-[r1:headedBy]->(m1:PoliticalParty {name: 'The Republicans'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -406,7 +406,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'member of the Supreme Soviet of the Russian Soviet Federative Socialist Republic'}),(n:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'Communist Party of the Soviet Union'}) WITH DISTINCT n RETURN n.name, n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position)-[r1:leads]->(m1:GovernmentOrganization {name: 'Supreme Soviet of the Russian Soviet Federative Socialist Republic'}),(n:Politician)-[r2:headedBy]->(m2:PoliticalParty {name: 'Communist Party of the Soviet Union'}) WITH DISTINCT n RETURN n.name, n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -426,7 +426,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)-[r1:foundedBy]->(m1:Politician {name: 'Lon Nol'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)-[r1:foundedBy]->(m1:Politician {name: 'Lon Nol'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -476,7 +476,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country),(n:Politician)<-[r1:hasHeadOfGovernment]-(m0:Country) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "pred_cypher": "MATCH (n:Politician)-[r1:hasHeadOfState]->(m1:Country)<-[r2:hasHeadOfGovernment]-(m2:Country) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -506,7 +506,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:memberOf]->(m0:InternationalOrganization {name: 'European Union'}),(n:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'Workers Party of Socialist Unity'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:operatesIn]->(m0:PoliticalParty {name: 'Workers Party of Socialist Unity'}) WITH DISTINCT n WHERE n.name IN ['European Union'] RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -516,7 +516,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Ion Gigurtu'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasHeadOfGovernment]-(m0:Politician {name: 'Ion Gigurtu'}) WITH DISTINCT n MATCH (n:Country)<-[r1:hasHeadOfState]-(m1:Politician) RETURN m1.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -526,7 +526,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country {name: 'Seychelles'}) WITH DISTINCT n WHERE n.founding_date > date('1784-05-12') RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country {name: 'Seychelles'}) WITH DISTINCT n WHERE n.founding_date > date('1784-05-12') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -536,7 +536,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Union of Democrats for the Republic'}),(n:Politician)-[r1:holdsPosition]->(m1:Position {name: 'president of departmental council'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Union of Democrats for the Republic'}),(n:Politician)-[r1:holdsPosition]->(m1:Position {name: 'president of a departmental council'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -546,7 +546,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'Lithuania'}) WITH DISTINCT n RETURN n.name, n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Lithuania'}) WITH DISTINCT n RETURN n.name, n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -566,7 +566,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'Rally for the Republic'}) OPTIONAL MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'Rally for the Republic'}) OPTIONAL MATCH (n:Politician)-[r1:headedBy]->(m1:PoliticalParty) WITH n, count(DISTINCT m1) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -576,7 +576,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Péyi Guyane'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'Péyi Guyane'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Péyi Guyane'}) RETURN n, m0 as m UNION MATCH (n:Politician)-[r1:foundedBy]->(m1:PoliticalParty {name: 'Péyi Guyane'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -596,7 +596,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.schools_attended",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.schools_attended",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -606,7 +606,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'United People\\'s Party'}),(n:Politician)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'Poland'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'United People\\'s Party'}),(n:Politician)-[r1:hasHeadOfGovernment]->(m1:Country {name: 'Poland'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -626,7 +626,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Donald Tusk'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:hasHeadOfGovernment]-(m1:Politician {name: 'Donald Tusk'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -646,7 +646,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty {name: 'The Republicans'}) WHERE r0.start_year <= 2015 AND (r0.end_year >= 2015 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'The Republicans'}) WHERE r0.start_year = 2015 RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -656,7 +656,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'ambassador of the Soviet Union to Canada'}),(n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Communist Party of the Soviet Union'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'ambassador of the Soviet Union to Canada'}),(n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Communist Party of the Soviet Union'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -666,7 +666,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'cardinal priest'}) WITH DISTINCT n WHERE n.date_of_birth.year < 1973 RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'cardinal priest'}) WITH DISTINCT n WHERE n.date_of_birth < date('1973-12-31') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -676,7 +676,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Kilusang Bagong Lipunan'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Kilusang Bagong Lipunan'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -686,7 +686,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty)-[r1:headedBy]->(m1:Politician {name: 'Alain Juppé'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty)<-[r1:headedBy]-(m1:Politician {name: 'Alain Juppé'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -746,7 +746,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty {name: 'Law and Justice'}) WHERE r0.start_year <= 2001 AND (r0.end_year >= 2001 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'Law and Justice'}) WHERE m0.name = 'Law and Justice' AND r0.start_year = 2001 WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -756,7 +756,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:holdsPosition]->(m1:Position {name: 'member of the National Assembly of Armenia'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:memberOf]->(m1:Country {name: 'National Assembly of Armenia'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -776,7 +776,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Mayor of Saint-Malo'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position)-[r1:leads]->(m1:GovernmentOrganization)-[r2:belongsTo]->(m2:Country {name: 'Saint-Malo'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -786,7 +786,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Stand Up.BG! We are coming!'}),(n:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'Stand Up.BG! We are coming!'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Stand Up.BG! We are coming!'}),(n:Politician)-[r1:foundedBy]->(m1:PoliticalParty {name: 'Stand Up.BG! We are coming!'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -826,7 +826,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'France'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'Socialist Party'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'France'}) RETURN n as politician UNION MATCH (n:Politician)-[r1:foundedBy]->(m1:PoliticalParty {name: 'Socialist Party'}) RETURN n as politician } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -836,7 +836,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country {name: 'Norway'}) WHERE r0.start_year <= 1989 AND (r0.end_year >= 1989 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'Norway'}) WHERE r0.start_year <= 1989 AND (r0.end_year >= 1989 OR r0.end_year IS NULL) RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -846,7 +846,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty),(n:Politician)<-[r1:headedBy]-(m0:PoliticalParty) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)-[r1:foundedBy]->(m1:Politician),(n:Politician)-[r2:headedBy]->(m2:PoliticalParty) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -856,7 +856,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'David Cameron'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:hasHeadOfGovernment]-(m1:Politician {name: 'David Cameron'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -876,7 +876,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Socialist Party'}),(n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'France'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Socialist Party'}),(n:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'France'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -886,7 +886,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'The Patriots'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician)-[r1:foundedBy]->(m1:PoliticalParty {name: 'The Patriots'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -906,7 +906,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician {name: 'Gérald Darmanin'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician {name: 'Gérald Darmanin'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -916,7 +916,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:hasDiplomaticRelationWith]-(m0:Country {name: 'Cuba'}),(n:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'All India Forward Bloc'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country {name: 'Cuba'}),(n:Country)-[r1:operatesIn]->(m1:PoliticalParty {name: 'All India Forward Bloc'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -926,7 +926,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'The Republicans'}) OPTIONAL MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'The Republicans'}) OPTIONAL MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -976,7 +976,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Party Chairman of the CDU Mecklenburg-Western Pomerania'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'Germany'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'CDU Mecklenburg-Western Pomerania'}) WITH n, m0 WHERE r0.start_year IS NOT NULL RETURN n.name as name UNION MATCH (n:Politician)-[r1:hasHeadOfGovernment]->(m1:GovernmentOrganization {name: 'Germany'}) WITH n, m1 WHERE r1.start_year IS NOT NULL RETURN n.name as name }",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -986,7 +986,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty {name: 'The Republicans'}) WITH DISTINCT n RETURN n.name, n.place_of_death",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'The Republicans'}) WITH DISTINCT n RETURN n.name, n.place_of_death",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -996,7 +996,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Mayor of Vebron'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position)-[r1:leads]->(m1:GovernmentOrganization)-[r2:belongsTo]->(m2:Country {name: 'Vebron'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1006,7 +1006,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty),(n:Politician)<-[r1:headedBy]-(m0:PoliticalParty) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:foundedBy]->(m0:PoliticalParty),(n:Politician)-[r1:headedBy]->(m1:PoliticalParty) WITH DISTINCT n RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1016,7 +1016,7 @@
     "gold_cypher": "MATCH (n:InternationalOrganization {name: 'Digital 9'}) WITH DISTINCT n RETURN n.founding_year",
     "pred_cypher": "MATCH (n:PoliticalParty {name: 'Digital 9'}) WITH DISTINCT n RETURN n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1026,7 +1026,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Abraham Lincoln'}) WITH DISTINCT n WHERE n.date_of_birth.year > 1800 RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'United States'}) WITH DISTINCT n WHERE n.date_of_birth > date('1800-12-31') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1036,7 +1036,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'Czesław Wycech'}) WITH DISTINCT n RETURN n.name, n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'Czesław Wycech'}) WITH DISTINCT n RETURN n.name, n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1076,7 +1076,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Kurt Georg Kiesinger'}),(n:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Helmut Schmidt'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasHeadOfGovernment]-(m0:Politician {name: 'Kurt Georg Kiesinger'}),(n:Country)<-[r1:hasHeadOfGovernment]-(m1:Politician {name: 'Helmut Schmidt'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1116,7 +1116,7 @@
     "gold_cypher": "MATCH (n:Position)-[r0:leads]->(m0:GovernmentOrganization {name: 'Ministry of Foreign Affairs of the Hellenic Republic of Greece'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Position)-[r0:leads]->(m0:GovernmentOrganization)-[r1:belongsTo]->(m1:Country {name: 'Ministry of Foreign Affairs of the Hellenic Republic of Greece'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1126,7 +1126,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country) WITH DISTINCT n RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1136,7 +1136,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Palma City Hall'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Palma City Hall'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1176,7 +1176,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Poland'}) OPTIONAL MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Poland'}) OPTIONAL MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty) WITH n, count(DISTINCT m1) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1186,7 +1186,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:hasDiplomaticRelationWith]-(m0:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Govern Balear'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasDiplomaticRelationWith]-(m0:Country)-[r1:belongsTo]->(m1:GovernmentOrganization {name: 'Govern Balear'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1196,7 +1196,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:belongsTo]-(m0:GovernmentOrganization {name: 'Ministry of National Economy of Greece'}),(n:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'Party of New Liberals'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:Country)-[r0:leads]->(m0:GovernmentOrganization {name: 'Ministry of National Economy of Greece'}),(n:Country)-[r1:memberOf]->(m1:PoliticalParty {name: 'Party of New Liberals'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1206,7 +1206,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Italy'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Italy'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1226,7 +1226,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty {name: 'The Republicans'}),(n:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'Rally for the Republic'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r1:headedBy]->(m1:PoliticalParty {name: 'The Republicans'}),(n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'Rally for the Republic'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1236,7 +1236,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Secretary of State for Foreign and Commonwealth Affairs'}),(n:Politician)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'United Kingdom'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Secretary of State for Foreign and Commonwealth Affairs'}),(n:Politician)-[r1:hasHeadOfGovernment]->(m1:GovernmentOrganization {name: 'United Kingdom'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1266,7 +1266,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)-[r1:hasHeadOfState]->(m1:Politician {name: 'V. V. Giri'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:hasHeadOfState]-(m1:Politician {name: 'V. V. Giri'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1286,7 +1286,7 @@
     "gold_cypher": "MATCH (n:GovernmentOrganization)<-[r0:leads]-(m0:Position {name: 'United States Ambassador to the United Nations'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:GovernmentOrganization)<-[r0:leads]-(m0:Position)<-[r1:holdsPosition]-(m1:Politician {name: 'United States Ambassador to the United Nations'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1366,7 +1366,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'Rwanda'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Rwanda'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1376,7 +1376,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country) WITH DISTINCT n RETURN n.name, n.schools_attended",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country) WITH DISTINCT n RETURN n.name, n.schools_attended",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1396,7 +1396,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country {name: 'Romania'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Romania'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Romania'}) RETURN n, m0 as m UNION MATCH (n:Politician)-[r1:hasHeadOfGovernment]->(m1:Country {name: 'Romania'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1416,7 +1416,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'The Gambia'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'The Gambia'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1426,7 +1426,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Mayor of Coti-Chiavari'}) WHERE r0.start_year <= 2001 AND (r0.end_year >= 2001 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Mayor of Coti-Chiavari'}) WITH DISTINCT n WHERE r0.start_year <= 2001 AND (r0.end_year >= 2001 OR r0.end_year IS NULL) RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -1436,7 +1436,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty {name: 'Law and Justice'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Poland'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'Law and Justice'}) RETURN n, m0 as m UNION MATCH (n:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Poland'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1446,7 +1446,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:foundedBy]->(m0:Politician {name: 'Cuauhtémoc Cárdenas Solórzano'}),(n:PoliticalParty)-[r1:operatesIn]->(m1:Country {name: 'Mexico'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician {name: 'Cuauhtémoc Cárdenas Solórzano'}),(n:PoliticalParty)-[r1:operatesIn]->(m1:Country {name: 'Mexico'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1516,7 +1516,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'Belarus'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Belarus'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1546,7 +1546,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Party of Regions'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Party of Regions'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1586,7 +1586,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'France'}) WHERE r0.start_year <= 2007 AND (r0.end_year >= 2007 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'France'}) WHERE r0.start_year <= 2007 AND (r0.end_year >= 2007 OR r0.end_year IS NULL) RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1606,7 +1606,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Donald Tusk'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:hasHeadOfGovernment]-(m1:Politician {name: 'Donald Tusk'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1626,7 +1626,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty)-[r1:foundedBy]->(m1:Politician {name: 'Tatyana Doncheva'}) WITH DISTINCT n RETURN n.name, n.place_of_death",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)<-[r1:foundedBy]-(m1:Politician {name: 'Tatyana Doncheva'}) WITH DISTINCT n RETURN n.name, n.place_of_death",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1666,7 +1666,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'Poland'}),(n:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'Law and Justice'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Poland'}),(n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Law and Justice'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1676,7 +1676,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country) WITH DISTINCT n RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1766,7 +1766,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty {name: 'Nationalist Liberal Party'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:foundedBy]->(m0:PoliticalParty {name: 'Nationalist Liberal Party'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1776,7 +1776,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Andorra'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Andorra'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1786,7 +1786,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:foundedBy]->(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Ecuadorian Roldosist Party'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:foundedBy]->(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Ecuadorian Roldosist Party'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -1806,7 +1806,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country {name: 'Canada'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'Canada'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1816,7 +1816,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'Konstantinos Mitsotakis'}) WITH DISTINCT n UNWIND n.schools_attended AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)<-[r1:headedBy]-(m1:Politician {name: 'Konstantinos Mitsotakis'}) WITH DISTINCT n UNWIND n.schools_attended AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1826,7 +1826,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:foundedBy]->(m0:PoliticalParty) WITH DISTINCT n RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1836,7 +1836,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Poland'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:memberOf]->(m0:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Poland'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1846,7 +1846,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:holdsPosition]->(m1:Position {name: 'Knesset member'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Knesset'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1866,7 +1866,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty)-[r1:headedBy]->(m1:Politician {name: 'Nicolas Sarkozy'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty)<-[r1:headedBy]-(m1:Politician {name: 'Nicolas Sarkozy'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1876,7 +1876,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'Georgios Papandreou Party'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician)-[r1:foundedBy]->(m1:PoliticalParty {name: 'Georgios Papandreou Party'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -1886,7 +1886,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Stephen Harper'}),(n:Country)-[r1:memberOf]->(m1:InternationalOrganization {name: 'World Meteorological Organization'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Stephen Harper'}) WITH DISTINCT n WHERE n.memberOf.some(x IN n.memberOf WHERE x.name = 'World Meteorological Organization') RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1966,7 +1966,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:operatesIn]-(m0:PoliticalParty {name: 'Convergence'}),(n:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Greece'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:operatesIn]->(m0:PoliticalParty {name: 'Convergence'}),(n:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Greece'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1996,7 +1996,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician {name: 'Gérald Darmanin'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician {name: 'Gérald Darmanin'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2056,7 +2056,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:belongsTo]-(m0:GovernmentOrganization {name: 'Spain. Ministerio de Obras Públicas y Transportes'}),(n:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Bulgaria'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "pred_cypher": "MATCH (n:Country)<-[r0:belongsTo]-(m0:GovernmentOrganization)<-[r1:leads]-(m1:Position {name: 'Spain Ministerio de Obras Públicas y Transportes'}) WITH DISTINCT n MATCH (n:Country)-[r2:hasDiplomaticRelationWith]->(m2:Country {name: 'Bulgaria'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2086,7 +2086,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'François Dagnaud'}) WITH DISTINCT n RETURN n.name, n.place_of_death",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'François Dagnaud'}) WITH DISTINCT n RETURN n.name, n.place_of_death",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -2106,7 +2106,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)-[r1:headedBy]->(m1:Politician {name: 'Florian Philippot'}) WITH DISTINCT n RETURN n.name, n.place_of_death",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)<-[r1:headedBy]-(m1:Politician {name: 'Florian Philippot'}) WITH DISTINCT n RETURN n.name, n.place_of_death",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2126,7 +2126,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'France'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:headedBy]-(m0:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'France'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2146,7 +2146,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'The Republicans'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'The Republicans'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2156,7 +2156,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Chamber of Deputies of Italy'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization)<-[r2:leads]-(m2:Position {name: 'Chamber of Deputies of Italy'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2166,7 +2166,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r1:headedBy]->(m1:Politician {name: 'Nicolas Sarkozy'}) OPTIONAL MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:headedBy]-(m0:Politician {name: 'Nicolas Sarkozy'}) OPTIONAL MATCH (n:PoliticalParty)<-[r1:memberOf]-(m1:Politician) WITH n, count(DISTINCT m1) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2226,7 +2226,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'Law and Justice'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Law and Justice'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2236,7 +2236,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician),(n:PoliticalParty)-[r1:foundedBy]->(m0:Politician) WITH DISTINCT n RETURN max(n.founding_date.year)",
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician)<-[r1:foundedBy]-(m1:PoliticalParty) WITH DISTINCT n RETURN max(n.founding_date.year) AS latest_founding_year",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.6780487804878049
     }
@@ -2286,7 +2286,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Cape Verde'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Cape Verde'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2346,7 +2346,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'Central African Republic'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:hasHeadOfGovernment]->(m1:Country {name: 'Central African Republic'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2356,7 +2356,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty)-[r1:operatesIn]->(m1:Country {name: 'Italy'}) WITH DISTINCT n RETURN n.name, n.schools_attended",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty)-[r1:operatesIn]->(m1:Country {name: 'Italy'}) WITH DISTINCT n RETURN n.name, n.schools_attended",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2386,7 +2386,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty) WITH DISTINCT n UNWIND n.schools_attended AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty) WITH DISTINCT n UNWIND n.schools_attended AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2436,7 +2436,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country),(n:Politician)<-[r1:hasHeadOfState]-(m0:Country) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country)<-[r1:hasHeadOfState]-(m1:Country) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2456,7 +2456,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'Social Republican Party'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:headedBy]->(m1:PoliticalParty {name: 'Social Republican Party'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2486,7 +2486,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country),(n:Politician)<-[r1:hasHeadOfState]-(m0:Country) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death ASC",
     "pred_cypher": "MATCH (n:Politician)-[r1:hasHeadOfState]->(m1:Country),(n:Politician)-[r2:hasHeadOfGovernment]->(m2:Country) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2496,7 +2496,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country {name: 'Singapore'}),(n:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Federal Ministry for Economic Affairs and Climate Action'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country {name: 'Singapore'}),(n:Country)-[r1:memberOf]->(m1:GovernmentOrganization {name: 'Federal Ministry for Economic Affairs and Climate Action'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2506,7 +2506,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'Germany'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'Germany'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Germany'}) RETURN n, m0 as m UNION MATCH (n:Politician)-[r1:hasHeadOfGovernment]->(m1:Country {name: 'Germany'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2546,7 +2546,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'Zimbabwe African National Union – Ndonga'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:foundedBy]->(m1:PoliticalParty {name: 'Zimbabwe African National Union – Ndonga'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2556,7 +2556,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country)<-[r1:hasDiplomaticRelationWith]-(m1:Country {name: 'Cape Verde'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Cape Verde'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2566,7 +2566,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty {name: 'Socialist Party'}),(n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'France'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Socialist Party'}),(n:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'France'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2676,7 +2676,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Govern Balear'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:hasHeadOfGovernment]-(m1:Politician {name: 'Govern Balear'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2716,7 +2716,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:operatesIn]->(m0:Country {name: 'United Kingdom'}),(n:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'Jim Sillars'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:operatesIn]->(m0:Country {name: 'United Kingdom'}),(n:PoliticalParty)-[r1:memberOf]->(m1:Politician {name: 'Jim Sillars'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -2726,7 +2726,7 @@
     "gold_cypher": "MATCH (n:InternationalOrganization)<-[r0:memberOf]-(m0:Country)-[r1:hasHeadOfState]->(m1:Politician {name: 'Theodor Heuss'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:InternationalOrganization)<-[r0:memberOf]-(m0:Country)<-[r1:hasHeadOfState]-(m1:Politician {name: 'Theodor Heuss'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2736,7 +2736,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country {name: 'realm of the United Kingdom'}) WITH DISTINCT n RETURN n.name, n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'United Kingdom'}) WITH DISTINCT n RETURN n.name, n.gender",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2746,7 +2746,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician),(n:Country)-[r1:hasHeadOfGovernment]->(m0:Politician) WITH DISTINCT n WHERE 'Romanian' IN n.official_language RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician)<-[r1:hasHeadOfGovernment]-(m1:Country) WHERE 'romanian' IN n.official_language RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2776,7 +2776,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)-[r1:hasHeadOfState]->(m1:Politician {name: 'Karl Carstens'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:hasHeadOfState]-(m1:Politician {name: 'Karl Carstens'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2786,7 +2786,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'France'}) WITH DISTINCT n RETURN n.name ORDER BY n.founding_date ASC",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:headedBy]-(m0:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'France'}) WITH DISTINCT n RETURN n.name ORDER BY n.founding_date ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2796,7 +2796,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:memberOf]->(m0:InternationalOrganization {name: 'Asian Development Bank'}),(n:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Willy Brandt'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:memberOf]->(m0:InternationalOrganization {name: 'Asian Development Bank'}),(n:Country)-(r1:hasHeadOfGovernment)->(m1:Politician {name: 'Willy Brandt'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2806,7 +2806,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country)-[r1:memberOf]->(m1:InternationalOrganization {name: 'Interparliamentary Union'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country)-[r1:memberOf]->(m1:InternationalOrganization {name: 'Interparliamentary Union'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2826,7 +2826,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'United States of America'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:hasHeadOfGovernment]->(m1:Country {name: 'United States of America'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2886,7 +2886,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Italy'}) OPTIONAL MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Italy'}) OPTIONAL MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty) WITH n, count(DISTINCT m1) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2896,7 +2896,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty {name: 'Centre Union'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "pred_cypher": "MATCH (n:Politician)-[r0:foundedBy]->(m0:PoliticalParty {name: 'Centre Union'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2936,7 +2936,7 @@
     "gold_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Poland'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Position)<-[r0:holdsPosition]-(m0:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Poland'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2956,7 +2956,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r1:hasDiplomaticRelationWith]-(m1:Country {name: 'São Tomé and Príncipe'}) OPTIONAL MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Sao Tome and Principe'}) OPTIONAL MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2966,7 +2966,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'minister of Italian Africa of the Kingdom of Italy'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'minister of Italian Africa in the Kingdom of Italy'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2976,7 +2976,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'The Gambia'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'The Gambia'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth ASC",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3036,7 +3036,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:belongsTo]-(m0:GovernmentOrganization {name: 'President\\'s Secretariat'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "pred_cypher": "MATCH (n:Country)<-[r0:belongsTo]-(m0:GovernmentOrganization)<-[r1:leads]-(m1:Position {name: 'President\\'s Secretariat'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3046,7 +3046,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country {name: 'realm of the United Kingdom'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'United Kingdom'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3096,7 +3096,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'member of the Chamber of Deputies of Romania'}) WHERE r0.start_year <= 2008 AND (r0.end_year >= 2008 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'member of the Chamber of Deputies of Romania'}) WITH DISTINCT n WHERE r0.start_year <= 2008 AND (r0.end_year >= 2008 OR r0.end_year IS NULL) RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -3116,7 +3116,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:operatesIn]-(m0:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'Nicolas Sarkozy'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:operatesIn]-(m0:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'Nicolas Sarkozy'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3176,7 +3176,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty {name: 'Italian Democratic Socialist Party'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'Italian Democratic Socialist Party'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3216,7 +3216,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician)-[r1:holdsPosition]->(m1:Position {name: 'Chairman of the Council of People\\'s Commissars'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:headedBy]-(m0:Politician)-[r1:holdsPosition]->(m1:Position {name: 'Chairman of the Council of People\\'s Commissars'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3226,7 +3226,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:belongsTo]-(m0:GovernmentOrganization {name: 'Ministry of Economy, Development and Tourism'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Ministry of National Defence'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Country)-[r0:leads]->(m0:GovernmentOrganization {name: 'Ministry of Economy, Development and Tourism'}) RETURN n as x WHERE n IS NOT NULL UNION MATCH (n:Country)-[r1:leads]->(m1:GovernmentOrganization {name: 'Ministry of National Defence'}) RETURN n as x WHERE n IS NOT NULL } WITH DISTINCT x RETURN count(x)",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3236,7 +3236,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country {name: 'Germany'}) WHERE r0.start_year <= 1963 AND (r0.end_year >= 1963 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'Germany'}) WHERE r0.start_year <= 1963 AND (r0.end_year >= 1963 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3246,7 +3246,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:headedBy]-(m0:PoliticalParty {name: 'Italian Democratic Socialist Party'}),(n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Italy'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'Italian Democratic Socialist Party'}),(n:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Italy'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3256,7 +3256,7 @@
     "gold_cypher": "MATCH (n:InternationalOrganization)<-[r0:memberOf]-(m0:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Diputació d\\'Alacant'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:InternationalOrganization)<-[r0:memberOf]-(m0:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Diputació d\\'Alacant'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3276,7 +3276,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'The Republicans'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician)-[r1:headedBy]->(m1:PoliticalParty {name: 'The Republicans'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3336,7 +3336,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country {name: 'Poland'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'Poland'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3346,7 +3346,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:foundedBy]->(m0:Politician),(n:PoliticalParty)-[r1:headedBy]->(m0:Politician) WITH DISTINCT n WHERE n.founding_date = date('2017-09-29') RETURN n.name",
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician)<-[r1:foundedBy]-(m1:PoliticalParty) WHERE n.founding_date = date('2017-09-29') AND m0.name = m1.name WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3356,7 +3356,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3426,7 +3426,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician {name: 'Gaël Yanno'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:memberOf]-(m0:Politician {name: 'Gaël Yanno'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3436,7 +3436,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)-[r1:operatesIn]->(m1:Country {name: 'Peru'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)-[r1:operatesIn]->(m1:Country {name: 'Peru'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -3456,7 +3456,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Ministry of National Defence'}) WITH DISTINCT n RETURN n.name, n.schools_attended",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country)-[r1:memberOf]->(m1:GovernmentOrganization {name: 'Ministry of National Defence'}) WITH DISTINCT n RETURN n.name, n.schools_attended",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3476,7 +3476,7 @@
     "gold_cypher": "MATCH (n:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'São Tomé and Príncipe'}) OPTIONAL MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Sao Tome and Principe'}) OPTIONAL MATCH (n:Country)-[r0:hasHeadOfState]->(m0:Politician) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3506,7 +3506,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Centre Union'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:headedBy]-(m0:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Centre Union'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3516,7 +3516,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country {name: 'Singapore'}),(n:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Federal Ministry for Economic Affairs and Climate Action'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country {name: 'Singapore'}),(n:Country)-[r1:memberOf]->(m1:GovernmentOrganization {name: 'Federal Ministry for Economic Affairs and Climate Action'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3576,7 +3576,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'David Cameron'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:hasHeadOfGovernment]-(m1:Politician {name: 'David Cameron'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3596,7 +3596,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Socialist Party of Chile'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Chile'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Socialist Party of Chile'}) RETURN n as Politician, m0 as party UNION MATCH (n:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Chile'}) RETURN n as Politician, m1 as country } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3606,7 +3606,7 @@
     "gold_cypher": "MATCH (n:InternationalOrganization)<-[r0:memberOf]-(m0:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Jan P. Syse'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:InternationalOrganization)<-[r0:memberOf]-(m0:Country)<-[r1:hasHeadOfGovernment]-(m1:Politician {name: 'Jan P. Syse'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3646,7 +3646,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'Andorra'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'The Republicans'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Andorra'}) RETURN n as politician UNION MATCH (n:Politician)-[r1:headedBy]->(m1:PoliticalParty {name: 'The Republicans'}) RETURN n as politician } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3696,7 +3696,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Vice President of Rwanda'}),(n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Rwanda'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Vice President of Rwanda'}),(n:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Rwanda'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3796,7 +3796,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)-[r1:hasHeadOfState]->(m1:Politician {name: 'Karl Carstens'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Country)-[r0:hasDiplomaticRelationWith]->(m0:Country)<-[r1:hasHeadOfState]-(m1:Politician {name: 'Karl Carstens'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3806,7 +3806,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:foundedBy]->(m0:Politician {name: 'François Mitterrand'}),(n:PoliticalParty)<-[r1:memberOf]-(m1:Politician {name: 'François Dagnaud'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:foundedBy]->(m0:Politician {name: 'François Mitterrand'}),(n:PoliticalParty)-[r1:memberOf]->(m1:Politician {name: 'François Dagnaud'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 1.0,
       "psjs": 0.0
     }
@@ -3856,7 +3856,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'The Republicans'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "pred_cypher": "MATCH (n:PoliticalParty)<-[r0:headedBy]-(m0:Politician)-[r1:headedBy]->(m1:PoliticalParty {name: 'The Republicans'}) WITH DISTINCT n RETURN n.name, n.founding_date",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3866,7 +3866,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Donald Tusk'}),(n:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'United People\\'s Party'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasHeadOfGovernment]-(m0:Politician {name: 'Donald Tusk'}),(n:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'United People''s Party'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3896,7 +3896,7 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:operatesIn]->(m0:Country)-[r1:hasHeadOfState]->(m1:Politician {name: 'Sandro Pertini'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:operatesIn]->(m0:Country)<-[r1:hasHeadOfState]-(m1:Politician {name: 'Sandro Pertini'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
+      "executable": 1.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
