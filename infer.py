@@ -80,9 +80,11 @@ def init_model(model_name_or_path, ckpt_path=None, device=None):
     if ckpt_path:
         if os.path.exists(os.path.join(ckpt_path, "adapter_config.json")):
             is_peft = True
+            print("This is LoRA finetune")
         elif os.path.exists(os.path.join(ckpt_path, "config.json")):
             # If it's a full HF checkpoint we should just load directly from it
             model_name_or_path = ckpt_path
+            print("This is a full finetune")
 
     logger.info(f"Loading tokenizer from {model_name_or_path}")
     print(f"Loading tokenizer from {model_name_or_path}")
@@ -374,8 +376,7 @@ def main():
     os.makedirs(Path(RESULTS_DIR) / args.benchmark, exist_ok=True)
     
     # Differentiate output file based on whether a custom ckpt was used
-    # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_Qwen3_4B_Instruct_2507.json"
-    output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_Qwen3_0.6B.json"
+    output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}.json"
     
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(output, f, indent=4, ensure_ascii=False)
