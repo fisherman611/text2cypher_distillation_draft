@@ -32,7 +32,8 @@ def main():
         help="Path to input final_results.json"
     )
     parser.add_argument(
-        "--output",
+        "--output_dir",
+        default="results/Cypherbench/calculatd_scores_Qwen3_0.6B/",
         required=True,
         help="Path to output JSON file"
     )
@@ -141,14 +142,15 @@ def main():
             }
         })
 
-    output_dir = os.path.dirname(os.path.abspath(args.output))
+    output_dir = args.output_dir
+    output_path = Path(output_dir) / f"{args.subset}_cyphers_result.json"
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
 
-    with open(args.output, "w", encoding="utf-8") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(output_results, f, ensure_ascii=False, indent=2)
 
-    print(f"Saved {len(output_results)} results to {args.output}")
+    print(f"Saved {len(output_results)} results to {output_path}")
 
 
 if __name__ == "__main__":

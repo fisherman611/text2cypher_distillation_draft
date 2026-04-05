@@ -12,11 +12,11 @@
   {
     "graph": "nba",
     "gold_cypher": "CALL { MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'shooting guard'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
-    "pred_cypher": "CALL { MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'shooting guard'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swimman'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'shooting guard'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "metrics": {
       "executable": 1.0,
       "execution_accuracy": 1.0,
-      "psjs": 0.9990892531876139
+      "psjs": 1.0
     }
   },
   {
@@ -212,11 +212,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
-    "pred_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'swinger'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 0.0,
-      "execution_accuracy": 0.0,
-      "psjs": 0.0
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
     }
   },
   {
@@ -422,11 +422,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player {name: 'Bulbs Ehlers'}),(n:Position)<-[r1:playsPosition]-(m1:Player {name: 'Derek Anderson'}) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player {name: 'Bulks Ehlers'}),(n:Position)<-[r1:playsPosition]-(m1:Player {name: 'Derek Anderson'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player {name: 'Bulbs Ehlers'}),(n:Position)<-[r1:playsPosition]-(m1:Player {name: 'Derek Anderson'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
-      "execution_accuracy": 0.0,
-      "psjs": 0.0
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
     }
   },
   {
@@ -492,7 +492,7 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Western Conference'}) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Division)-[r0:partOfDivision]->(m0:Division {name: 'Western Conference'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team {name: 'Western Conference'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
       "executable": 0.0,
       "execution_accuracy": 0.0,
@@ -602,11 +602,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Toronto Raptors'}) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player {name: 'Toronto Raptors'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Toronto Raptors'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
-      "execution_accuracy": 0.0,
-      "psjs": 0.0
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
     }
   },
   {
@@ -622,11 +622,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team {name: 'Philadelphia 76ers'}) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Club {name: 'Philadelphia 76ers'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team {name: 'Philadelphia 76ers'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
-      "execution_accuracy": 0.0,
-      "psjs": 0.0
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
     }
   },
   {
@@ -782,10 +782,10 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'Chris Whitney'}) WITH DISTINCT n RETURN max(n.date_of_birth)",
-    "pred_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'Chris Whitney'}) WITH DISTINCT n RETURN max(n.date_of_birthdate)",
+    "pred_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'Chris Whitney'}) WITH DISTINCT n RETURN max(n.date_of_birth)",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 0.0,
+      "execution_accuracy": 1.0,
       "psjs": 1.0
     }
   },
@@ -932,17 +932,17 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'San Antonio Spurs'}) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:draftedBy]->(m1:Club {name: 'San Antonio Spurs'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'San Antonio Spurs'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
-      "execution_accuracy": 0.0,
-      "psjs": 0.0
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
     }
   },
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player),(n:Team)<-[r1:draftedBy]-(m0:Player) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'nba'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'team'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
       "executable": 0.0,
       "execution_accuracy": 0.0,
@@ -1142,11 +1142,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Pacific Division'}),(n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Derek Fisher'}) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Pacific Division'}),(n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Derek Fisher'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Pacific Division'}),(n:Team)<-[r1:DraftedBy]-(m1:Player {name: 'Derek Fisher'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
-      "psjs": 1.0
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
     }
   },
   {
@@ -1492,7 +1492,7 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Conference)<-[r0:partOfConference]-(m0:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Memphis Grizzlies'}) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Conference)<-[r0:partOfConference]-(m0:Club {name: 'Memphis Grizzlies'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Conference)<-[r0:partOfConference]-(m0:Division {name: 'Memphis Grizzlies'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
       "executable": 0.0,
       "execution_accuracy": 0.0,
@@ -1592,11 +1592,11 @@
   {
     "graph": "nba",
     "gold_cypher": "CALL { MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team {name: 'Atlanta Hawks'}) RETURN n, m0 as m UNION MATCH (n:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Washington Wizards'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "CALL { MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team {name: 'Atlanta Hawks'}) RETURN n, m0 as m UNION MATCH (n:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Washington Wizards'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Division)<-[r0:partOfDivision]-(m0:Club {name: 'Atlanta Hawks'}) RETURN n, m0 as m UNION MATCH (n:Division)<-[r1:partOfDivision]-(m1:Club {name: 'Washington Wizards'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
-      "psjs": 1.0
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
     }
   },
   {
@@ -1652,7 +1652,7 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Khalid El-Amin'}) WITH DISTINCT n WHERE n.date_of_death.year < 2019 RETURN n.name",
-    "pred_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Khalid El-Amin'}) WITH DISTINCT n WHERE n.date_of_death < date('2019-05-05') RETURN n.name",
+    "pred_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Khalid El-Amin'}) WITH DISTINCT n WHERE n.date_of_death < date('2019-05-12') RETURN n.name",
     "metrics": {
       "executable": 0.0,
       "execution_accuracy": 1.0,
@@ -1662,11 +1662,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Fred Jones'}),(n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Rik Smits'}) WITH DISTINCT n RETURN n.name, n.inception_year",
-    "pred_cypher": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Fred Jones'}),(n:Team)<-[r1:playsFor]-(m1:Player {name: 'Rik Smits'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred_cypher": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Fred Jones'}) WITH DISTINCT n WHERE n.inception_year = 10 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
-      "psjs": 1.0
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
     }
   },
   {
@@ -1832,11 +1832,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Brooklyn Nets'}) WHERE r0.start_year <= 1972 AND (r0.end_year >= 1972 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Club {name: 'Brooklyn Nets'}) WHERE r0.start_year <= 1972 AND (r0.end_year >= 1972 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Brooklyn Nets'}) WHERE r0.start_year <= 1972 AND (r0.end_year >= 1972 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
-      "execution_accuracy": 0.0,
-      "psjs": 0.0
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
     }
   },
   {
@@ -1952,7 +1952,7 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Western Conference'}),(n:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Sacramento Kings'}) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Division)-[r0:partOfDivision]->(m0:Division {name: 'Western Conference'}),(n:Division)<-[r1:partOfDivision]-(m1:Club {name: 'Sacramento Kings'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Division)-[r0:partOfDivision]->(m0:Division {name: 'Western Conference'}),(n:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Sacramento Kings'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
       "executable": 0.0,
       "execution_accuracy": 0.0,
@@ -2042,7 +2042,7 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position)<-[r1:playsPosition]-(m1:Player {name: 'Joel Kramer'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
-    "pred_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position)<-[r1:playsPosition]-(m1:Player {name: 'Joãl Kramer'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position)<-[r1:playsPosition]-(m1:Player {name: 'Joãlm Kramer'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
       "executable": 0.0,
       "execution_accuracy": 0.0,
@@ -2242,11 +2242,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Atlanta Hawks'}) WHERE r0.start_year <= 1946 AND (r0.end_year >= 1946 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Club {name: 'Atlanta Hawks'}) WHERE r0.start_year <= 1946 AND (r0.end_year >= 1946 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Atlanta Hawks'}) WHERE r0.start_year <= 1946 AND (r0.end_year >= 1946 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 0.0,
-      "execution_accuracy": 0.0,
-      "psjs": 0.0
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
     }
   },
   {
@@ -2392,7 +2392,7 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'Bo Erias'}) WITH DISTINCT n RETURN n.name",
-    "pred_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team)<-[r1:draftedBo Erias]-(m1:Player {name: 'Bo Erias'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team)-[r1:draftedBo Erias]->(m1:Player {name: 'Bo Erias'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
       "executable": 0.0,
       "execution_accuracy": 0.0,
@@ -2502,11 +2502,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'power forward'}),(n:Player)-[r1:receivesAward]->(m1:Award {name: 'Princess of Asturias Award for Sports'}) WITH DISTINCT n WHERE 'Lausanne Collegiate School' IN n.schools_attended RETURN n.name",
-    "pred_cypher": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'Princess of Asturias Award for Sports'}),(n:Player)-[r1:playsPosition]->(m1:Position {name: 'power forward'}) WITH DISTINCT n WHERE n.place_of_birth = 'Lausanne Collegiate School' RETURN n.name",
+    "pred_cypher": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'Princess of Asturias Award for Sports'}),(n:Player)-[r1:playsPosition]->(m1:Position {name: 'power forward'}) WITH DISTINCT n WHERE 'Lausanne Collegiate School' IN n.schools_attended RETURN n.name",
     "metrics": {
-      "executable": 0.0,
-      "execution_accuracy": 0.0,
-      "psjs": 0.0
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
     }
   },
   {
@@ -2672,11 +2672,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
-    "pred_cypher": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swinger'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
-      "psjs": 1.0
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
     }
   },
   {
@@ -2692,11 +2692,11 @@
   {
     "graph": "nba",
     "gold_cypher": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
-    "pred_cypher": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swinger'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
-      "psjs": 1.0
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
     }
   }
 ]
