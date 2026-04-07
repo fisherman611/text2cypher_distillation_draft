@@ -180,17 +180,17 @@ def prepare_dataset(args, tokenizer):
             if hasattr(full_dev, 'answers'):
                 data["dev"].answers = [full_dev.answers[i] for i in data["dev"].indices]
 
-    if not args.slice_data:
-        # Full data
-        data["test"] = LMTrainDataset(args, tokenizer, args.data_dir, "test", args.dev_num, args.dev_ratio, rng_sample)
-    else:
-        # Sliced data
-        full_test = LMTrainDataset(args, tokenizer, args.data_dir, "test", args.dev_num, args.dev_ratio, rng_sample)
-        data["test"] = Subset(full_test, range(min(20, len(full_test))))
-        data["test"].collate = full_test.collate
-        data["test"].move_to_device = full_test.move_to_device
-        if hasattr(full_test, 'answers'):
-            data["test"].answers = [full_test.answers[i] for i in data["test"].indices]
+    # if not args.slice_data:
+    #     # Full data
+    #     data["test"] = LMTrainDataset(args, tokenizer, args.data_dir, "test", args.dev_num, args.dev_ratio, rng_sample)
+    # else:
+    #     # Sliced data
+    #     full_test = LMTrainDataset(args, tokenizer, args.data_dir, "test", args.dev_num, args.dev_ratio, rng_sample)
+    #     data["test"] = Subset(full_test, range(min(20, len(full_test))))
+    #     data["test"].collate = full_test.collate
+    #     data["test"].move_to_device = full_test.move_to_device
+    #     if hasattr(full_test, 'answers'):
+    #         data["test"].answers = [full_test.answers[i] for i in data["test"].indices]
         
     # pre-trained dataset
     if args.do_train and args.lm_data_dir is not None:
@@ -458,7 +458,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                         adaptive_threshold = min(adaptive_threshold, 1.0)
                         prev_avg_loss = curr_avg_loss
 
-                evaluate(args, tokenizer, model, dataset["test"], "test", epoch, device)
+                # evaluate(args, tokenizer, model, dataset["test"], "test", epoch, device)
                     
                 model.train()
                 
@@ -652,7 +652,8 @@ def main():
         model = finetune(args, tokenizer, model, optimizer, lr_scheduler, dataset, device, teacher_model=teacher_model)
    
     if args.do_eval:
-        evaluate(args, tokenizer, model, dataset["test"], "test", 0, device)
+        # evaluate(args, tokenizer, model, dataset["test"], "test", 0, device)
+        pass
         
     
 if __name__ == "__main__":

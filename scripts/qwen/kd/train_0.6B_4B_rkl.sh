@@ -27,7 +27,7 @@ DATA_DIR="${BASE_PATH}/processed_data/benchmarks/Cypherbench/qwen/"
 BATCH_SIZE=2
 LR=0.0001
 GRAD_ACC=8
-EVAL_BATCH_SIZE=32
+EVAL_BATCH_SIZE=8
 EPOCHS=5
 # length
 MAX_LENGTH=892

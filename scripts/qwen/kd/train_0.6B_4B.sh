@@ -27,12 +27,12 @@ DATA_DIR="${BASE_PATH}/processed_data/benchmarks/Cypherbench/qwen/"
 BATCH_SIZE=2
 LR=0.0001
 GRAD_ACC=8
-EVAL_BATCH_SIZE=32
+EVAL_BATCH_SIZE=8
 EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_Cypherbench_kd"
+SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_Cypherbench_fkl"
 # seed
 SEED=42
 
@@ -52,6 +52,7 @@ OPTS+=" --n-gpu ${GPUS_PER_NODE}"
 OPTS+=" --data-dir ${DATA_DIR}"
 OPTS+=" --num-workers 1"
 OPTS+=" --dev-num -1"
+# OPTS+=" --slice-data"
 # hp
 OPTS+=" --lr ${LR}"
 OPTS+=" --batch-size ${BATCH_SIZE}"
