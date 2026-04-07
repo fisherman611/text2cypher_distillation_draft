@@ -22,7 +22,7 @@ CKPT="Qwen/Qwen3-0.6B"
 TEACHER_CKPT_NAME="qwen3-4B"
 TEACHER_CKPT="Qwen/Qwen3-4B-Instruct-2507"
 # data
-DATA_DIR="${BASE_PATH}/processed_data/benchmarks/Cypherbench/qwen"
+DATA_DIR="${BASE_PATH}/processed_data/benchmarks/Cypherbench/qwen/"
 # hp
 BATCH_SIZE=2
 LR=0.0001
