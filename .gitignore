@@ -225,6 +225,18 @@ results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/639/
 results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/852/
 results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/1065/
 
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl/213/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl/426/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl/639/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl/852/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl/1065/
+
+results/qwen3/distillm_0.6B_4B_Cypherbench_rkl/213/
+results/qwen3/distillm_0.6B_4B_Cypherbench_rkl/426/
+results/qwen3/distillm_0.6B_4B_Cypherbench_rkl/639/
+results/qwen3/distillm_0.6B_4B_Cypherbench_rkl/852/
+results/qwen3/distillm_0.6B_4B_Cypherbench_rkl/1065/
+
 benchmarks.zip
 results.zip
 # format_results/
