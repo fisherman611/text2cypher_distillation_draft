@@ -243,11 +243,11 @@ results/qwen3/distillm_0.6B_4B_Cypherbench_fdd/639/
 results/qwen3/distillm_0.6B_4B_Cypherbench_fdd/852/
 results/qwen3/distillm_0.6B_4B_Cypherbench_fdd/1065/
 
-results/qwen3/distillm_0.6B_4B_Cypherbench_srkl/213/
-results/qwen3/distillm_0.6B_4B_Cypherbench_srkl/426/
-results/qwen3/distillm_0.6B_4B_Cypherbench_srkl/639/
-results/qwen3/distillm_0.6B_4B_Cypherbench_srkl/852/
-results/qwen3/distillm_0.6B_4B_Cypherbench_srkl/1065/
+results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/213/
+results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/426/
+results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/639/
+results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/852/
+results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/1065/
 
 benchmarks.zip
 results.zip
