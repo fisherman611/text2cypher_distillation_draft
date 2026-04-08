@@ -243,6 +243,12 @@ results/qwen3/distillm_0.6B_4B_Cypherbench_fdd_sfkl/639/
 results/qwen3/distillm_0.6B_4B_Cypherbench_fdd_sfkl/852/
 results/qwen3/distillm_0.6B_4B_Cypherbench_fdd_sfkl/1065/
 
+results/qwen3/distillm_0.6B_4B_Cypherbench_fdd_sfkl_kd_ratio_0.8/213/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fdd_sfkl_kd_ratio_0.8/426/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fdd_sfkl_kd_ratio_0.8/639/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fdd_sfkl_kd_ratio_0.8/852/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fdd_sfkl_kd_ratio_0.8/1065/
+
 results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/213/
 results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/426/
 results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/639/
