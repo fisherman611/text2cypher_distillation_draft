@@ -32,7 +32,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_ace_csd"
+SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_Cypherbench_csd"
 # seed
 SEED=42
 
@@ -45,7 +45,7 @@ OPTS+=" --teacher-model-path ${TEACHER_CKPT}"
 OPTS+=" --ckpt-name ${CKPT_NAME}"
 OPTS+=" --teacher-ckpt-name ${TEACHER_CKPT_NAME}"
 OPTS+=" --teacher-model-fp16"
-OPTS+=" --teacher-peft-path results/qwen3/sft_4B_ace/e5-bs2-lr0.0001-G8-N2-NN1-lora-32-64-0.05/490"
+OPTS+=" --teacher-peft-path results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/1065"
 OPTS+=" --model-type qwen"
 OPTS+=" --n-gpu ${GPUS_PER_NODE}"
 # data
@@ -65,7 +65,7 @@ OPTS+=" --epochs ${EPOCHS}"
 OPTS+=" --kd-ratio 0.7"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
-OPTS+=" --max-prompt-length 460"
+OPTS+=" --max-prompt-length 797"
 # runtime
 OPTS+=" --do-train"
 OPTS+=" --do-valid"

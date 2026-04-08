@@ -249,6 +249,12 @@ results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/639/
 results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/852/
 results/qwen3/distillm_0.6B_4B_Cypherbench_sfkl/1065/
 
+results/qwen3/distillm_0.6B_4B_Cypherbench_csd/213/
+results/qwen3/distillm_0.6B_4B_Cypherbench_csd/426/
+results/qwen3/distillm_0.6B_4B_Cypherbench_csd/639/
+results/qwen3/distillm_0.6B_4B_Cypherbench_csd/852/
+results/qwen3/distillm_0.6B_4B_Cypherbench_csd/1065/
+
 benchmarks.zip
 results.zip
 # format_results/
