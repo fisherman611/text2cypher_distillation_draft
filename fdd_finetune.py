@@ -352,7 +352,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 if args.fdd_weight is None:
                     loss = (1 - args.kd_ratio) * lm_loss + args.kd_ratio * (distil_loss + fdd_loss)
                 else:
-                    loss = (1 - args.kd_ratio) * lm_loss + args.kd_ratio * ((1 - args.fdd_weight) * distil_loss + args.fdd_weight * fdd_loss)
+                    loss = (1 - args.kd_ratio) * lm_loss + args.kd_ratio * 2 * ((1 - args.fdd_weight) * distil_loss + args.fdd_weight * fdd_loss)
             else:
                 loss = lm_loss
                 
