@@ -349,8 +349,10 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
 
                 fdd_loss = get_fdd_loss(args, teacher_outputs.hidden_states, student_captured_hidden, 
                                         model_batch['attention_mask'], model, teacher_model)
-                
-                loss = (1 - args.kd_ratio) * lm_loss + args.kd_ratio * (distil_loss + fdd_loss)
+                if args.fdd_weight is None:
+                    loss = (1 - args.kd_ratio) * lm_loss + args.kd_ratio * (distil_loss + fdd_loss)
+                else:
+                    loss = (1 - args.kd_ratio) * lm_loss + args.kd_ratio * ((1 - args.fdd_weight) * distil_loss + args.fdd_weight * fdd_loss)
             else:
                 loss = lm_loss
                 
