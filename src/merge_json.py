@@ -8,29 +8,29 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 import json
-with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_fdd_srkl/company_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/company_cyphers_result.json", "r", encoding="utf-8") as f:
     company = json.load(f)
 
-with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_fdd_srkl/fictional_character_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/fictional_character_cyphers_result.json", "r", encoding="utf-8") as f:
     fictional_character = json.load(f)
     
-with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_fdd_srkl_updated_1/flight_accident_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/flight_accident_cyphers_result.json", "r", encoding="utf-8") as f:
     flight_accident = json.load(f)
     
-with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_fdd_srkl_updated_1/geography_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/geography_cyphers_result.json", "r", encoding="utf-8") as f:
     geography = json.load(f)
     
-with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_fdd_srkl_updated_1/movie_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/movie_cyphers_result.json", "r", encoding="utf-8") as f:
     movie = json.load(f)
     
-with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_fdd_srkl_updated_1/nba_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/nba_cyphers_result.json", "r", encoding="utf-8") as f:
     nba = json.load(f)
     
-with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_fdd_srkl_updated_1/politics_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/politics_cyphers_result.json", "r", encoding="utf-8") as f:
     politics = json.load(f)
 
 test = company + fictional_character + flight_accident + geography + movie + nba + politics
-with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_fdd_srkl_updated_1/test_result.json", "w", encoding="utf-8") as f:
+with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/test_result.json", "w", encoding="utf-8") as f:
     json.dump(test, f, ensure_ascii=False, indent=2)
 
 # with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_fkl/bloom50_cyphers_result.json", "r", encoding="utf-8") as f:
