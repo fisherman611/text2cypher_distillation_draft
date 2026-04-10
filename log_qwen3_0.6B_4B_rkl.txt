@@ -11768,3 +11768,102 @@ ValueError: Failed to parse JSON or missing 'cypher' key
 Running Cypherbench/full: 100%|██████████| 2348/2348 [04:26<00:00,  9.13it/s]2026-04-07 11:05:49 - __main__ - INFO - [run_batch_inference] - Finished. Success: 2346, Failed: 2
 Running Cypherbench/full: 100%|██████████| 2348/2348 [04:26<00:00,  8.82it/s]
 Saved results to: results/Cypherbench/full_cyphers_result_Qwen3-0.6B_distill_rkl.json
+/workspace/text2cypher_distillation_draft/src/schema.py:19: UserWarning: Field name "schema" in "Nl2CypherSample" shadows an attribute in parent "BaseModel"
+  class Nl2CypherSample(BaseModel):
+This is LoRA finetune
+2026-04-10 07:36:34 - __main__ - INFO - [init_model] - Loading tokenizer from Qwen/Qwen3-0.6B
+Loading tokenizer from Qwen/Qwen3-0.6B
+Traceback (most recent call last):
+  File "/workspace/text2cypher_distillation_draft/infer.py", line 395, in <module>
+    main()
+  File "/workspace/text2cypher_distillation_draft/infer.py", line 347, in main
+    tokenizer, model = init_model(args.model, args.ckpt_path, device=args.device)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/infer.py", line 92, in init_model
+    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, padding_side="left", trust_remote_code=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/transformers/models/auto/tokenization_auto.py", line 685, in from_pretrained
+    config = AutoConfig.from_pretrained(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/transformers/models/auto/configuration_auto.py", line 1483, in from_pretrained
+    config_dict, unused_kwargs = PreTrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 670, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/transformers/configuration_utils.py", line 725, in _get_config_dict
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 278, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 422, in cached_files
+    hf_hub_download(
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 997, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1072, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, xet_file_data, head_call_error) = _get_metadata_or_catch_error(
+                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1669, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1591, in get_hf_file_metadata
+    response = _httpx_follow_relative_redirects_with_backoff(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 685, in _httpx_follow_relative_redirects_with_backoff
+    response = http_backoff(
+               ^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 559, in http_backoff
+    return next(
+           ^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 467, in _http_backoff_base
+    response = client.request(method=method, url=url, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+    raise exc
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+    stream = self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/text2cypher_distillation_draft/.venv/lib/python3.12/site-packages/httpcore/_backends/sync.py", line 208, in connect_tcp
+    sock = socket.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 828, in create_connection
+    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 963, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
