@@ -2,4 +2,4 @@
 
 mkdir -p logs
 
-bash scripts/qwen/fdd/train_0.6B_4B_srkl.sh >> log_qwen3_0.6B_4B_fdd_srkl.txt 2>&1
+bash scripts/qwen/fdd/train_0.6B_4B_srkl_0.05.sh >> log_qwen3_0.6B_4B_fdd_srkl_0.05.txt 2>&1
