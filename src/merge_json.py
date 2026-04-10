@@ -33,15 +33,15 @@ import json
 # with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/test_result.json", "w", encoding="utf-8") as f:
 #     json.dump(test, f, ensure_ascii=False, indent=2)
 
-with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_fkl/bloom50_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_rkl/bloom50_cyphers_result.json", "r", encoding="utf-8") as f:
     bloom50 = json.load(f)
 
-with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_fkl/healthcare_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_rkl/healthcare_cyphers_result.json", "r", encoding="utf-8") as f:
     healthcare = json.load(f)
 
-with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_fkl/wwc_cyphers_result.json", "r", encoding="utf-8") as f:
+with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_rkl/wwc_cyphers_result.json", "r", encoding="utf-8") as f:
     wwc = json.load(f)
 
 test = bloom50 + healthcare + wwc
-with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_fkl/test_result.json", "w", encoding="utf-8") as f:
+with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_rkl/test_result.json", "w", encoding="utf-8") as f:
     json.dump(test, f, ensure_ascii=False, indent=2)
