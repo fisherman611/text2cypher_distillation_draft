@@ -530,7 +530,7 @@ def main():
 
     with open(test_json_path, 'r', encoding='utf-8') as f:
         all_test_data = json.load(f)
-    all_test_data = all_test_data[:1]
+        
     os.makedirs(args.output_dir, exist_ok=True)
 
     for graph in args.graphs:
