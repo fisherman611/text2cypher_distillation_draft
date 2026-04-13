@@ -61,7 +61,7 @@ class Neo4jConnector:
         except Exception as e:
             # Log lỗi để trace
             logger.error(f"ERROR when executing Cypher!: '{cypher}'")
-            return []
+            raise e
         if self.debug:
             logger.info("Query finished in %.2fs", time.time() - t0)
         return result
