@@ -8,6 +8,8 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 import argparse
+import ast
+import re
 from time import time, sleep
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dotenv import load_dotenv
@@ -28,15 +30,15 @@ MODEL_CONFIGS = {
     "qwen2.5-coder-7b": {
         "model_id": "qwen/qwen2.5-coder-7b-instruct",
         "api_type": "chat",
-        "temperature": 0.1,
+        "temperature": 0.2,
         "top_p": 0.7,
         "max_tokens": 1024,
     },
     "mamba-codestral-7b": {
         "model_id": "mistralai/mamba-codestral-7b-v0.1",
         "api_type": "chat",
-        "temperature": 0.1,
-        "top_p": 0.7,
+        "temperature": 0.5,
+        "top_p": 1,
         "max_tokens": 1024,
     },
     "mixtral-8x22b":{
@@ -49,47 +51,47 @@ MODEL_CONFIGS = {
     "qwen2.5-coder-32b": {
         "model_id": "qwen/qwen2.5-coder-32b-instruct",
         "api_type": "chat",
-        "temperature": 0.1,
+        "temperature": 0.2,
         "top_p": 0.7,
         "max_tokens": 1024,
     },
     "llama3.3-70b": {
         "model_id": "meta/llama-3.3-70b-instruct",
         "api_type": "chat",
-        "temperature": 0.1,
+        "temperature": 0.2,
         "top_p": 0.7,
         "max_tokens": 1024,
     },
     "devstral-2-123b": {
         "model_id": "mistralai/devstral-2-123b-instruct-2512",
         "api_type": "chat",
-        "temperature": 0.1,
-        "top_p": 0.7,
-        "max_tokens": 1024,
+        "temperature": 0.15,
+        "top_p": 0.95,
+        "max_tokens": 8192,
         "extra_body": {"seed": 42},
     },
     "minimax-m2.5": {
         "model_id":"minimaxai/minimax-m2.5",
         "api_type": "chat",
-        "temperature": 0.1,
-        "top_p": 0.7,
-        "max_tokens": 1024,
+        "temperature": 1,
+        "top_p": 0.95,
+        "max_tokens": 8192,
     },
     # ──────────────────────────────── general / reasoning ─────────────────
     "deepseek-v3": {
         "model_id": "deepseek-ai/deepseek-v3.1",
         "api_type": "chat",
-        "temperature": 0.1,
+        "temperature": 0.2,
         "top_p": 0.7,
-        "max_tokens": 1024,
+        "max_tokens": 8192,
         "extra_body": {"chat_template_kwargs": {"thinking": True}},
     },
     "glm4.7": {
         "model_id": "z-ai/glm4.7",
         "api_type": "chat",
-        "temperature": 0.1,
-        "top_p": 0.7,
-        "max_tokens": 1024,
+        "temperature": 1,
+        "top_p": 1,
+        "max_tokens": 16384,
         "extra_body":{"chat_template_kwargs":{"enable_thinking":True,"clear_thinking":False}},
 
     }
@@ -161,21 +163,195 @@ def call_nvidia_completion(client, cfg: dict, prompt: str) -> str:
     return response.choices[0].text or ""
 
 
+_CYPHER_KEYS = (
+    "cypher",
+    "final_cypher",
+    "pred_cypher",
+    "query",
+    "cypher_query",
+    "answer",
+    "final_answer",
+)
+
+_CYPHER_START_RE = re.compile(
+    r"\b(OPTIONAL\s+MATCH|MATCH|CALL|WITH|UNWIND|RETURN|CREATE|MERGE)\b",
+    flags=re.IGNORECASE,
+)
+
+
+def _strip_reasoning_and_special_tokens(text: str) -> str:
+    """Remove common model reasoning wrappers and chat template tokens."""
+    text = re.sub(r"<think\s*>.*?</think\s*>", "", text, flags=re.IGNORECASE | re.DOTALL)
+    text = re.sub(r"<thinking\s*>.*?</thinking\s*>", "", text, flags=re.IGNORECASE | re.DOTALL)
+    text = re.sub(r"<reasoning\s*>.*?</reasoning\s*>", "", text, flags=re.IGNORECASE | re.DOTALL)
+    text = re.sub(
+        r"(<\|eot_id\|>|<\|endoftext\|>|<end_of_turn>|</s>|<s>)",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+    return text.strip()
+
+
+def _iter_balanced_json_objects(text: str):
+    """Yield balanced {...} candidates while respecting quoted strings."""
+    start = None
+    depth = 0
+    quote = None
+    escaped = False
+
+    for idx, char in enumerate(text):
+        if quote:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = None
+            continue
+
+        if char in ("'", '"'):
+            quote = char
+            continue
+
+        if char == "{":
+            if depth == 0:
+                start = idx
+            depth += 1
+        elif char == "}" and depth:
+            depth -= 1
+            if depth == 0 and start is not None:
+                yield text[start : idx + 1]
+                start = None
+
+
+def _parse_json_like(block: str):
+    block = block.strip()
+
+    try:
+        return json.loads(block)
+    except json.JSONDecodeError:
+        pass
+
+    try:
+        return ast.literal_eval(block)
+    except (SyntaxError, ValueError):
+        pass
+
+    normalised = block.replace("True", "true").replace("False", "false").replace("None", "null")
+    try:
+        return json.loads(normalised)
+    except json.JSONDecodeError:
+        return None
+
+
+def _find_cypher_value(value) -> str:
+    if isinstance(value, dict):
+        for key in _CYPHER_KEYS:
+            candidate = value.get(key)
+            if isinstance(candidate, str) and candidate.strip():
+                return _cleanup_cypher_text(candidate)
+
+        for candidate in value.values():
+            found = _find_cypher_value(candidate)
+            if found:
+                return found
+
+    if isinstance(value, list):
+        for item in value:
+            found = _find_cypher_value(item)
+            if found:
+                return found
+
+    return ""
+
+
+def _cleanup_cypher_text(text: str) -> str:
+    text = _strip_reasoning_and_special_tokens(str(text))
+    text = re.sub(r"^```(?:json|cypher|sql)?\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s*```$", "", text)
+    text = text.strip().strip("`").strip()
+
+    text = re.sub(
+        r"^(?:final\s+)?(?:cypher|query|answer|output)\s*(?:query)?\s*[:=-]\s*",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    ).strip()
+
+    lines = []
+    for line in text.splitlines():
+        if lines and re.match(
+            r"^\s*(explanation|note|notes|reasoning|schema|question)\s*:",
+            line,
+            flags=re.IGNORECASE,
+        ):
+            break
+        lines.append(line)
+
+    return "\n".join(lines).strip()
+
+
+def _extract_from_fenced_blocks(text: str) -> str:
+    fence_re = re.compile(r"```(?P<lang>[a-zA-Z0-9_-]*)\s*\n?(?P<body>.*?)```", re.DOTALL)
+    blocks = list(fence_re.finditer(text))
+
+    for block in blocks:
+        lang = block.group("lang").lower()
+        body = block.group("body").strip()
+        if lang == "json":
+            parsed = _parse_json_like(body)
+            found = _find_cypher_value(parsed)
+            if found:
+                return found
+        if lang == "cypher":
+            return _cleanup_cypher_text(body)
+
+    for block in blocks:
+        body = block.group("body").strip()
+        if _CYPHER_START_RE.search(body):
+            return _cleanup_cypher_text(body)
+
+    return ""
+
+
+def _extract_query_from_text(text: str) -> str:
+    text = _cleanup_cypher_text(text)
+    match = _CYPHER_START_RE.search(text)
+    if not match:
+        return ""
+
+    query = text[match.start() :]
+    query = re.split(
+        r"\n\s*(?:explanation|note|notes|reasoning|schema|question)\s*:",
+        query,
+        maxsplit=1,
+        flags=re.IGNORECASE,
+    )[0]
+    return _cleanup_cypher_text(query)
+
+
 def extract_cypher(raw_text: str) -> str:
-    import re
-    # Try JSON block first
-    match = re.search(r'\{.*\}', raw_text, re.DOTALL)
-    if match:
-        try:
-            block = match.group(0)
-            block = block.replace("True", "true").replace("False", "false").replace("None", "null")
-            parsed = json.loads(block)
-            return parsed.get("cypher", "").strip()
-        except (json.JSONDecodeError, KeyError):
-            pass
-    # Fallback: return the raw text stripped of markdown fences
-    raw_text = re.sub(r"```(?:cypher)?", "", raw_text, flags=re.IGNORECASE).strip()
-    return raw_text.strip("`").strip()
+    if not raw_text or not isinstance(raw_text, str):
+        return ""
+
+    raw_text = _strip_reasoning_and_special_tokens(raw_text)
+
+    fenced = _extract_from_fenced_blocks(raw_text)
+    if fenced:
+        return fenced
+
+    for block in _iter_balanced_json_objects(raw_text):
+        parsed = _parse_json_like(block)
+        found = _find_cypher_value(parsed)
+        if found:
+            return found
+
+    query = _extract_query_from_text(raw_text)
+    if query:
+        return query
+
+    return _cleanup_cypher_text(raw_text)
 
 
 # ======================================================
@@ -254,7 +430,7 @@ def pipeline(sample, schema, client, model_cfg):
 
         # Sleep to keep requests under NVIDIA NIM free-tier limit (40 RPM/1000 requests per day)
         # With max_workers=4, a 6s sleep ensures it averages <1 request per 1.5s
-        sleep(6)
+        sleep(10)
 
         return {
             "question": question,
