@@ -44,7 +44,7 @@
     "gold_cypher": "MATCH (c:Case {reporterOccupation: 'Physician'})-[r:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN r.route AS route, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug)-[r1:route]->(m1:node {name: 'route'}) WITH DISTINCT n WHERE n.reporterOccupation = 'Physician' RETURN N.orderBy(n.route).limit(3)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -74,7 +74,7 @@
     "gold_cypher": "MATCH (c:Case {reporterOccupation: 'Pharmacist'})-[:RESULTED_IN]->(o:Outcome) RETURN c.gender AS gender, o.outcome AS outcome, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Pharmacist'}) OPTIONAL MATCH (n:Case)-[r1:RESULTED_IN]->(m1:Outcome) WITH n, n.gender, n.outcome GROUP BY n.gender, n.outcome COUNT(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -124,7 +124,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Wrong product administered'}) WHERE c.gender IS NOT NULL RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Wrong product administered'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -154,7 +154,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Health Professional'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}), (c)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN r.indication AS indication, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}),(n:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Hospitalization - Initial or Prolonged'}) WITH DISTINCT n RETURN avg(n.age) GROUP BY n.Drug.indication",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -174,7 +174,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}), (c)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE r.route = 'Oral' RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Hospitalization - Initial or Prolonged'}),(n:Case)-[r1:IS_PRIMARY_SUSPECT]->(m1:Drug)-[r2:IS_CONCOMITANT]->(m2:Drug)-[r3:IS_ORAL_ROUTE]->(m3:Drug) WITH DISTINCT n RETURN avg(n.age) AS answer WHERE n.reporterOccupation IS NOT NULL",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -194,7 +194,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Demyelinating polyneuropathy'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Demyelinating polyneuropathy'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -214,7 +214,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Congenital Anomaly'}),(n:Case)-[r1:FALLS_UNDER]->(m1:AgeGroup) WITH DISTINCT n RETURN avg(n.age) FOR n in n MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Congenital Anomaly'})",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -244,7 +244,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:RESULTED_IN]->(o:Outcome) RETURN m.manufacturerName AS manufacturer, o.outcome AS outcome, AVG(c.age) AS averageAge, COUNT(c) AS totalCases",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r0:REGISTERED]-(m0:Case) WITH n, count(DISTINCT m0) AS num RETURN n.name, num, num AS num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -254,7 +254,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}) WHERE c.gender IS NOT NULL RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Hospitalization - Initial or Prolonged'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -274,7 +274,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}) RETURN AVG(c.age) AS averageAge, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age), count(DISTINCT n.OUTCOME {name: 'Hospitalization - Initial or Prolonged'})",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.4718969555035129
     }
@@ -334,7 +334,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Spina bifida'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, COUNT(c) AS caseCount, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Spina bifida'}) OPTIONAL MATCH (n:Case)-[r0:FALLS_UNDER]->(m0:AgeGroup) WITH n, n.age, n.ageUnit RETURN n.ageGroup, avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -344,7 +344,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) WITH m, COUNT(c) AS caseCount, AVG(c.age) AS avgAge WHERE caseCount > 1 RETURN m.manufacturerName AS manufacturerName, caseCount, avgAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:REGISTERED]-(m0:Manufacturer) WITH DISTINCT n WHERE count(DISTINCT n) > 1 RETURN n.number_of_cases, avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -354,7 +354,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[:HAS_REACTION]->(re:Reaction) RETURN re.description AS reaction, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:HAS_REACTION]->(m1:Reaction) WITH n, m1, (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}) RETURN n.count, avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.8256527322014553
     }
@@ -364,7 +364,7 @@
     "gold_cypher": "MATCH (c:Case)-[rel:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'GENOTROPIN'}) RETURN rel.route AS route, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Drug)-[r1:IS_PRIMARY_SUSPECT]->(m1:Case {name: 'GENOTROPIN'}) WITH DISTINCT n RETURN N.name ORDER BY n.route DESC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -404,7 +404,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) RETURN m.manufacturerName AS manufacturer, c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:REGISTERED]-(m0:Manufacturer) WITH DISTINCT n RETURN avg(n.age) FOR n IN n CASES WHERE n.gender IN ['Male', 'Female']}",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -444,7 +444,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -464,7 +464,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Consumer'}), (c)-[:HAS_REACTION]->(r:Reaction {description: 'Appendicitis'}) RETURN COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}),(n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Appendicitis'}) WITH DISTINCT n RETURN count(DISTINCT n) AND avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -504,7 +504,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Company Representative'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}) WITH c, rs, o WHERE c.age IS NOT NULL RETURN AVG(c.age) AS averageAge, COUNT(c) AS totalCases",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Company Representative'}),(n:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Death'}) WITH n, count(DISTINCT n) AS num RETURN avg(n.age) NULLIF(num, 0, 'number')",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -534,7 +534,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[:RESULTED_IN]->(o:Outcome) RETURN o.outcome AS outcome, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) OPTIONAL MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome) WITH DISTINCT n RETURN avg(n.age) BY n.outcome",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.7254844392248972
     }
@@ -564,7 +564,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Pain in extremity'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Pain in extremity'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -584,7 +584,7 @@
     "gold_cypher": "MATCH (c:Case)-[r:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'Dolutegravir'}) RETURN r.indication AS indication, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Case)-[r0:IS_PRIMARY_SUSPECT]->(m0:Drug {name: 'Dolutegravir'}) WITH DISTINCT n RETURN N.order BY n.indication ORDER LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -664,7 +664,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource), (c)-[:HAS_REACTION]->(r:Reaction {description: 'Cardiac stress test abnormal'}) RETURN rs.name AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:HAS_REACTION]-(m0:Reaction {name: 'Cardiac stress test abnormal'}) WITH DISTINCT n RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -674,7 +674,7 @@
     "gold_cypher": "MATCH (m:Manufacturer {manufacturerName: 'TOLMAR'})-[:REGISTERED]->(c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}) RETURN COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REGISTERED BY]->(m1:Manufacturer {name: 'TOLMAR'}) WITH DISTINCT n RETURN count(DISTINCT n)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Congenital Anomaly'}) AS num, avg(n.age) AS avg_age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -684,7 +684,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Nausea'}), (c)-[:REPORTED_BY]->(rs:ReportSource {name: 'Health Professional'}) WITH c.gender AS gender, c.age AS age RETURN gender, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Nausea'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -724,7 +724,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}), (c)-[rel:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN rel.route AS route, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Drug)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Congenital Anomaly'}) WITH DISTINCT n RETURN N ORDER BY n.route ASC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -764,7 +764,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}), (c)-[:FALLS_UNDER]->(a:AgeGroup) RETURN a.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Disability'}),(n:Case)-[r1:FALLS_UNDER]->(m1:AgeGroup) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop RETURN prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -824,7 +824,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Hyperparathyroidism secondary'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Hyperparathyroidism secondary'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -844,7 +844,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}), (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug {primarySubstabce: 'EMICIZUMAB-KXWH'}) RETURN c.gender AS gender, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}) WITH DISTINCT n WHERE n.has('Drug') AND n.has('primarySubstabce') = 'EMICIZUMAB-KXWH' AND n.has('gender') RETURN count(DISTINCT n.gender)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -864,7 +864,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Stevens-Johnson syndrome'}) WHERE c.age IS NOT NULL RETURN c.gender AS Gender, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:HAS_REACTION]-(m0:Reaction {name: 'Stevens-Johnson syndrome'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -894,7 +894,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Hospitalization - Initial or Prolonged'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -914,7 +914,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}) RETURN c.reporterOccupation AS reporterOccupation, COUNT(c) AS caseCount ORDER BY caseCount DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}) WITH DISTINCT n RETURN N.top(3 'reporterOccupation')",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -954,7 +954,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Blood lactate dehydrogenase increased'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Blood lactate dehydrogenase increased'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -964,7 +964,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Weight decreased'}) RETURN c.reporterOccupation AS ReporterOccupation, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Weight decreased'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -974,7 +974,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Consumer'}), (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug {primarySubstabce: 'LENALIDOMIDE'}), (c)-[:RESULTED_IN]->(o:Outcome) RETURN AVG(c.age) AS AverageAge, COLLECT(DISTINCT o.outcome) AS DistinctOutcomes",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}),(n:Case)-[r1:PRESCRIBED]->(m1:Drug {name: 'LENALIDOMIDE'}) WITH DISTINCT n RETURN avg(n.age), DISTINCT n.outcome",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -984,7 +984,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN m.manufacturerName AS Manufacturer, ag.ageGroup AS AgeGroup, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r0:REGISTERED]-(m0:Case)-[r1:FALLS_UNDER]->(m1:AgeGroup) WITH DISTINCT n RETURN avg(n.age) FOR n IN n MATCH (n:Manufacturer) WITH n, n.age GROUP BY n.ageGroup",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1014,7 +1014,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Throat cancer'}) RETURN m.manufacturerName AS manufacturer, c.gender AS gender, COUNT(c) AS totalCases",
     "pred_cypher": "MATCH (n:Case)-[r1:REGISTERED]->(m1:Manufacturer)<-[r0:HAS_REACTION]-(m0:Reaction {name: 'Throat cancer'}) WITH n, n.gender RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1024,7 +1024,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}) RETURN rs.name AS ReportSource, AVG(c.age) AS AverageAge ORDER BY AverageAge DESC",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource) WITH DISTINCT n WHERE n.Outcome = 'Disability' RETURN n.age AVG(n.age) ORDER BY n.age DESC",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1034,7 +1034,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Kidney fibrosis'}) RETURN c.gender AS Gender, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Kidney fibrosis'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1064,7 +1064,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1074,7 +1074,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Depression'}), (c)-[:FALLS_UNDER]->(a:AgeGroup) RETURN a.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Depression'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop GROUP BY prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1084,7 +1084,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}), (c)-[rel:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN rel.indication AS indication, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug)-[r1:IS_PRIMARY_SUSPECT]->(m1:Case {name: 'Consumer'}) WITH DISTINCT n RETURN N.order BY n.indication DESC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1094,7 +1094,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}) RETURN m.manufacturerName AS manufacturerName, COUNT(c) AS caseCount, AVG(c.age) AS averageAge",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -1106,7 +1106,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Cardiac hypertrophy'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Cardiac hypertrophy'}),(n:Case)-[r0:FALLS_UNDER]->(m0:AgeGroup) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop FROM n RETURN prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1126,7 +1126,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1146,7 +1146,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Azotaemia'}) RETURN c.reporterOccupation AS reporterOccupation, COUNT(c) AS caseCount ORDER BY caseCount DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Azotaemia'}) WITH DISTINCT n RETURN ORDER BY n.reporterOccupation DESC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1156,7 +1156,7 @@
     "gold_cypher": "MATCH (c:Case)-[:FALLS_UNDER]->(ag:AgeGroup), (c)-[:REPORTED_BY]->(rs:ReportSource {name: 'Consumer'}) RETURN ag.ageGroup AS ageGroup, COUNT(c) AS caseCount, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN count(DISTINCT n)-[r0:CASE]->(m0:AgeGroup) AS num, avg(n.age) AS avg_age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.9941724941724942
     }
@@ -1176,7 +1176,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Carbon dioxide decreased'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Carbon dioxide decreased'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop RETURN avg(prop)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1206,7 +1206,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}), (c)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN r.route AS route, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Drug)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Other Serious (Important Medical Event)'}) WITH DISTINCT n RETURN N.RESULTS ORDER BY n.count(Drug) ASC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1246,7 +1246,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}), (c)-[:HAS_REACTION]->(re:Reaction {description: 'C-reactive protein increased'}) WITH c.gender AS gender, c.age AS age WHERE c.age IS NOT NULL RETURN gender, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}),(n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'C-reactive protein increased'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1266,7 +1266,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RECEIVED]->(t:Therapy), (c)-[:FALLS_UNDER]->(a:AgeGroup), (c)-[:RESULTED_IN]->(o:Outcome) WITH a.ageGroup AS ageGroup, o.outcome AS outcome, c.age AS age WHERE c.age IS NOT NULL RETURN ageGroup, outcome, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:Therapy]->(m0:Drug)-[r1:Drug]->(m1:Drug) WITH DISTINCT n RETURN avg(n.age) FOR n.ageGroup IN ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1336,7 +1336,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}),(n:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Life-Threatening'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1346,7 +1346,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'User Facility'}), (c)-[:RESULTED_IN]->(o:Outcome) RETURN o.outcome AS outcome, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:RESULTED_IN]->(m1:Outcome) WITH n, m1 AS m RETURN count(DISTINCT m1), avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.003803486529318542
     }
@@ -1376,7 +1376,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Anoplasty'}), (c)-[:FALLS_UNDER]->(a:AgeGroup) RETURN a.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Anoplasty'}) WITH DISTINCT n RETURN avg(n.age) AS answer FOR n IN nodes (Case)-[r0:FALLS_UNDER]->(m0:AgeGroup)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1446,7 +1446,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Disability'}),(n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Drug'}) WITH n, n.ageGroup DISTINCT RETURN count(DISTINCT n) FOR EACH n IN (CASES)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1456,7 +1456,7 @@
     "gold_cypher": "MATCH (c:Case)<-[:REGISTERED]-(m:Manufacturer {manufacturerName: 'HIKMA'}), (c)-[:RESULTED_IN]->(o:Outcome) RETURN o.outcome AS outcome, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REGISTERED]->(m0:Manufacturer {name: 'HIKMA'}) WITH DISTINCT n RETURN avg(n.age) GROUP BY n.Outcome",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1466,7 +1466,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Disability'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1476,7 +1476,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {primarySubstabce: 'LEVOTHYROXINE SODIUM'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug {name: 'LEVOTHYROXINE SODIUM'}) WITH DISTINCT n RETURN avg(n.age) AS answer FROM n.AgeGroup",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1496,7 +1496,7 @@
     "gold_cypher": "MATCH (m:Manufacturer {manufacturerName: 'PRINSTON PHARMACEUTICAL'})-[:REGISTERED]->(c:Case) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REPORTED_BY]->(m1:Manufacturer {name: 'PRINSTON PHARMACEUTICAL'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1546,7 +1546,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Decreased appetite'}), (c)-[:REPORTED_BY]->(rs:ReportSource {name: 'Consumer'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Decreased appetite'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1556,7 +1556,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Extradural haematoma'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Extradural haematoma'}) WITH n, n.AgeGroup RETURN count(DISTINCT n) FOR EACH n IN n MATCH (n:Case)-[r1:FALLS_UNDER]->(m1:AgeGroup)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1566,7 +1566,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Inflammation'}) WHERE c.age IS NOT NULL RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Inflammation'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1596,7 +1596,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) WHERE c.age IS NOT NULL RETURN m.manufacturerName AS manufacturer, c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r0:REGISTERED]-(m0:Case) WITH DISTINCT n RETURN avg(n.manufacturerName) OVER (WITH n, m0 AS m GROUP BY m0.gender)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1626,7 +1626,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) WITH c.gender AS gender, ag.ageGroup AS ageGroup, c.age AS age WHERE c.age IS NOT NULL RETURN ageGroup, gender, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.ageGroup, n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1716,7 +1716,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}) , (c)-[:REPORTED_BY]->(r:ReportSource) RETURN r.name AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Hospitalization - Initial or Prolonged'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1736,7 +1736,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[:HAS_REACTION]->(re:Reaction {description: 'Fatigue'}) RETURN COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}),(n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Fatigue'}) WITH DISTINCT n RETURN count(DISTINCT n) AND avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1756,7 +1756,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[rel:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN rel.route AS route, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}),(n:Case)-[r0:IS_PRIMARY_SUSPECT]->(m0:Drug) WITH n, count(DISTINCT m0) AS num RETURN num, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -1826,7 +1826,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Eyelid ptosis'}) WHERE c.gender IS NOT NULL RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Eyelid ptosis'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1836,7 +1836,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Hypercapnia'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Hypercapnia'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1876,7 +1876,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) WHERE r.name = 'Health Professional' WITH c.ageUnit AS ageUnit, c.age AS age RETURN ageUnit, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageUnit AS prop RETURN avg(prop)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -1886,7 +1886,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) WITH m.manufacturerName AS manufacturerName, c.reporterOccupation AS reporterOccupation, c.age AS age RETURN manufacturerName, reporterOccupation, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:REGISTERED]-(m0:Manufacturer) WITH DISTINCT n RETURN avg(n.age) AS answer FOR n IN n.nodes ORDER BY n.reporterOccupation ORDER BY n.age ASC",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -1926,7 +1926,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RECEIVED]->(t:Therapy)-[:PRESCRIBED]->(d:Drug {name: 'YERVOY'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:Therapy]->(m0:Drug {name: 'YERVOY'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1976,7 +1976,7 @@
     "gold_cypher": "MATCH (m:Manufacturer {manufacturerName: 'ELI LILLY AND CO'})-[:REGISTERED]->(c:Case)-[:HAS_REACTION]->(r:Reaction) RETURN r.description AS reaction, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r1:HAS_REACTION]->(m1:Reaction) WITH DISTINCT n WHERE n.reporterOccupation = 'ELI LILLY AND CO' RETURN count(DISTINCT n) FOR EACH (m1:Reaction)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1996,7 +1996,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Burning sensation'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Burning sensation'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2016,7 +2016,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2036,7 +2036,7 @@
     "gold_cypher": "MATCH (c:Case)-[:FALLS_UNDER]->(a:AgeGroup {ageGroup: 'Elderly'}), (c)-[:HAS_REACTION]->(r:Reaction {description: 'Incorrect dose administered'}) WITH c, a, r, date(c.eventDate).year AS eventYear RETURN eventYear, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:AgeGroup]->(m0:AgeGroup {name: 'Elderly'}),(n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Incorrect dose administered'}) WITH DISTINCT n RETURN avg(n.age) BY n.eventDate",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2056,7 +2056,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}) RETURN m.manufacturerName AS manufacturer, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REGISTERED]->(m1:Manufacturer) WITH n, n.age AS prop RETURN count(DISTINCT n)-[r0:CASE]->(m0:Case) AS num, avg(prop) AS avg_age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2076,7 +2076,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:Outcome]->(m0:Outcome {name: 'Hospitalization - Initial or Prolonged'}) WITH DISTINCT n RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2166,7 +2166,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Liver injury'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Liver injury'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop FROM n.FALLS_UNDER RETURN avg(prop)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2186,7 +2186,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'User Facility'}), (c)-[:RESULTED_IN]->(o:Outcome) RETURN o.outcome AS outcome, COUNT(c) AS totalCases, AVG(c.age) AS averageAge ORDER BY totalCases DESC",
     "pred_cypher": "MATCH (n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'User Facility'}) OPTIONAL MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome) WITH n, count(DISTINCT n) AS num, avg(n.age) AS avg RETURN num, avg SET num AS num, avg SET avg AS avg ORDER BY num DESC",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.8125
     }
@@ -2226,7 +2226,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Disability'}) WITH DISTINCT n RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2256,7 +2256,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[rel:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN rel.indication AS indication, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN N.orderBy(n.indication).count().limit(3) ORDER BY count ORDER BY n.indication ASC",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2276,7 +2276,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Malabsorption'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Malabsorption'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2286,7 +2286,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Health Professional'}), (c)-[:RESULTED_IN]->(o:Outcome) RETURN o.outcome AS outcome, COUNT(c) AS caseCount, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:RESULTED_IN]->(m1:Outcome)<-[r0:RESULTED_IN]-(m0:Case {name: 'Health Professional'}) WITH n, count(DISTINCT m1) AS num, avg(n.age) AS avg RETURN num, avg RETURN num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2326,7 +2326,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}) WHERE r.name = 'Health Professional' AND o.outcome = 'Life-Threatening' RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Life-Threatening'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2376,7 +2376,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}), (c)-[:RECEIVED]->(t:Therapy)-[:PRESCRIBED]->(d:Drug) WITH c, t MATCH (c)-[rel:IS_PRIMARY_SUSPECT|IS_SECONDARY_SUSPECT|IS_CONCOMITANT]->(d) RETURN rel.indication AS indication, COUNT(c) AS caseCount ORDER BY caseCount DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Drug)<-[r0:PRESCRIBED]-(m0:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN n.name ORDER BY count(DISTINCT m0) DESC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2396,7 +2396,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}) WITH c.gender AS gender, c.age AS age WHERE r.name = 'Consumer' RETURN gender, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2426,7 +2426,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Congenital Anomaly'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'User'}) WITH DISTINCT n RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2446,7 +2446,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'REVLIMID'}) RETURN c.reporterOccupation AS reporterOccupation, COUNT(c) AS caseCount ORDER BY caseCount DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug {name: 'REVLIMID'}) WITH DISTINCT n RETURN ORDER BY n.reporterOccupation DESC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2496,7 +2496,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) RETURN m.manufacturerName AS manufacturer, AVG(c.age) AS averageAge, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)<-[r0:REGISTERED]-(m0:Manufacturer) WITH n, count(DISTINCT m0) AS num RETURN n.age AVG(n.age) AS avg_age, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -2516,7 +2516,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Aortic thrombosis'}) RETURN c.gender AS Gender, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Aortic thrombosis'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2566,7 +2566,7 @@
     "gold_cypher": "MATCH (c:Case)-[:FALLS_UNDER]->(ag:AgeGroup {ageGroup: 'Infant'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}), (m:Manufacturer)-[:REGISTERED]->(c) RETURN COUNT(c) AS TotalCases",
     "pred_cypher": "MATCH (n:Case)-[r0:Manufacturer]->(m0:Manufacturer)<-[r1:REGISTERED]-(m1:Case {name: 'cases with manufacturers where age group is 'Infant' and outcome is 'Disability'}) WITH DISTINCT n RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2606,7 +2606,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2636,7 +2636,7 @@
     "gold_cypher": "MATCH (m:Manufacturer {manufacturerName: 'EISAI'})-[:REGISTERED]->(c:Case)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REGISTERED]->(m1:Manufacturer {name: 'EISAI'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop GROUP BY prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2656,7 +2656,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}), (c)-[:HAS_REACTION]->(re:Reaction {description: 'Maternal exposure during breast feeding'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}),(n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Maternal exposure during breast feeding'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop RETURN prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2676,7 +2676,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Congenital Anomaly'}),(n:Case)-[r1:FALLS_UNDER]->(m1:AgeGroup) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS key",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2716,7 +2716,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}) WHERE c.gender IS NOT NULL RETURN c.gender AS Gender, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Congenital Anomaly'}) WITH DISTINCT n RETURN avg(n.age) AS answer GROUP BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2736,7 +2736,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'DYSPORT'}), (c)-[:REPORTED_BY]->(rs:ReportSource) RETURN c.reporterOccupation AS ReporterOccupation, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug {name: 'DYSPORT'}) WITH DISTINCT n RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2746,7 +2746,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS AgeGroup, COUNT(c) AS CaseCount ORDER BY CaseCount DESC LIMIT 2",
     "pred_cypher": "MATCH (n:AgeGroup)<-[r0:FALLS_UNDER]-(m0:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Congenital Anomaly'}) WITH DISTINCT n RETURN n.name ORDER BY n.age ORDER LIMIT 2",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2756,7 +2756,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}) RETURN c.reporterOccupation AS occupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2806,7 +2806,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Immune-mediated hepatitis'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Immune-mediated hepatitis'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.gender AS prop RETURN avg(prop)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2826,7 +2826,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'User Facility'}), (c)-[:RECEIVED]->(t:Therapy)-[:PRESCRIBED]->(d:Drug) RETURN COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'User Facility'}),(n:Case)-[r1:IS_PRIMARY_SUSPECT]->(m1:Drug)-[r2:PRESCRIBED]->(m2:Therapy) WITH DISTINCT n RETURN count(DISTINCT n) AND avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2876,7 +2876,7 @@
     "gold_cypher": "MATCH (c:Case)-[:FALLS_UNDER]->(ag:AgeGroup), (c)-[:RECEIVED]->(t:Therapy)-[:PRESCRIBED]->(d:Drug) RETURN ag.ageGroup AS AgeGroup, AVG(c.age) AS AverageAge, COLLECT(DISTINCT d.name) AS PrescribedDrugs",
     "pred_cypher": "MATCH (n:Case)-[r0:Therapy]->(m0:Drug) WITH DISTINCT n RETURN avg(n.age) AS average_age, DISTINCT n.name AS distinct_names",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2886,7 +2886,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Underdose'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Underdose'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2896,7 +2896,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'User Facility'}), (c)-[:HAS_REACTION]->(r:Reaction) RETURN COUNT(DISTINCT r.description) AS distinctReactions, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:HAS_REACTION]->(m1:Reaction) WITH DISTINCT n RETURN count(DISTINCT m1), avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.013696675702667999
     }
@@ -2906,7 +2906,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) RETURN m.manufacturerName AS manufacturerName, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r1:REGISTERED]-(m1:Case) WITH n, count(DISTINCT m1) AS num, avg(m1.age) AS avg RETURN num, avg(?)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3056,7 +3056,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE c.reporterOccupation = 'Hospital' WITH d.name AS drugName, AVG(c.age) AS averageAge, COUNT(c) AS caseCount RETURN drugName, averageAge, caseCount",
     "pred_cypher": "MATCH (n:Case)-[r0:IS_PRIMARY_SUSPECT]->(m0:Drug) WITH DISTINCT n WHERE n.reporterOccupation = 'Hospital' RETURN avg(n.age), count(DISTINCT m0)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -3076,7 +3076,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Disability'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3186,7 +3186,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}), (c)-[rel:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN rel.route AS Route, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Life-Threatening'}),(n:Case)-[r1:IS_PRIMARY_SUSPECT]->(m1:Drug)-[r2:IS_CONCOMITANT]->(m2:Case) WITH DISTINCT n RETURN avg(n.age) BY n.routeOfAdministration",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3196,7 +3196,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}) RETURN m.manufacturerName AS Manufacturer, COUNT(c) AS TotalCases, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REGISTERED]->(m0:Manufacturer) WITH DISTINCT n RETURN count(DISTINCT n)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Life-Threatening'}) AS num, avg(n.age) AS avg_age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3206,7 +3206,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'DEXAMETHASONE ORAL'}), (c)-[:FALLS_UNDER]->(a:AgeGroup) RETURN a.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:IS_PRIMARY_SUSPECT]->(m0:Drug {name: 'DEXAMETHASONE ORAL'}) WITH DISTINCT n RETURN avg(n.age) AS answer FROM n. AgeGroup",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.6666666666666666
     }
@@ -3216,7 +3216,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) RETURN m.manufacturerName AS manufacturer, c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:REGISTERED]-(m0:Manufacturer) WITH DISTINCT n RETURN avg(n.age) FOR n IN n CASES WHERE n.gender IN ['male', 'female']",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -3226,7 +3226,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Hepatocellular carcinoma'}), (c)-[:REPORTED_BY]->(rs:ReportSource {name: 'Consumer'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Hepatocellular carcinoma'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3246,7 +3246,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:RECEIVED]->(t:Therapy) WHERE c.gender = 'M' RETURN m.manufacturerName AS manufacturerName, COUNT(c) AS totalCases",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r0:REGISTERED]-(m0:Case)-[r1:RECEIVED]->(m1:Therapy) WITH DISTINCT n RETURN count(DISTINCT n) WHERE n.property('gender') = 'M'",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3326,7 +3326,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RECEIVED]->(t:Therapy) WHERE c.gender IS NOT NULL RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:Therapy]-(m0:Case) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3336,7 +3336,7 @@
     "gold_cypher": "MATCH (c:Case)-[r:IS_PRIMARY_SUSPECT]->(d:Drug), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}) RETURN r.route AS route, COUNT(c) AS totalCases",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Life-Threatening'}),(n:Case)-[r1:IS_PRIMARY_SUSPECT]->(m1:Drug)-[r2:CASE]->(m2:Route of administration) WITH DISTINCT n RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3356,7 +3356,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3396,7 +3396,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}) RETURN c.reporterOccupation AS occupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}) WITH DISTINCT n RETURN avg(n.age) AS answer GROUP BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3416,7 +3416,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}), (c)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN r.route AS route, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Drug)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Hospitalization - Initial or Prolonged'}) WITH DISTINCT n RETURN N.TOP_3 (n.name)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3426,7 +3426,7 @@
     "gold_cypher": "MATCH (m:Manufacturer {manufacturerName: 'AMNEAL'})-[:REGISTERED]->(c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}) WHERE c.age <= 60 RETURN COUNT(c) AS totalCases",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'AMNEAL'}),(n:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Death'}) WITH DISTINCT n WHERE n.ageGroup IN ['ageGroup': '60 or less'] RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3446,7 +3446,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Neurotoxicity'}), (c)-[:FALLS_UNDER]->(a:AgeGroup) RETURN a.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Neurotoxicity'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop FROM n WHERE n.ageGroup IS NOT NULL",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3566,7 +3566,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) WITH c.age AS age, c.ageUnit AS ageUnit RETURN ageUnit, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageUnit AS prop RETURN avg(prop)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -3596,7 +3596,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Bilirubin conjugated increased'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Bilirubin conjugated increased'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3636,7 +3636,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}) RETURN c.reporterOccupation AS occupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3646,7 +3646,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Meningitis'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Meningitis'}),(n:Case)-[r1:FALLS_UNDER]->(m1:AgeGroup) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop RETURN avg(prop)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3676,7 +3676,7 @@
     "gold_cypher": "MATCH (c:Case)-[:FALLS_UNDER]->(ag:AgeGroup), (c)-[:HAS_REACTION]->(r:Reaction {description: 'Abdominal pain'}) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Abdominal pain'}),(n:Case)-[r1:FALLS_UNDER]->(m1:AgeGroup) WITH DISTINCT n RETURN avg(n.age) FOR n IN n MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Abdominal pain'})",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3686,7 +3686,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Consumer'}), (c)-[rel:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN rel.route AS route, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Drug)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN N ORDER BY n.route DESC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -3696,7 +3696,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Product dose omission in error'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Product dose omission in error'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop FROM n.FALLS_UNDER RETURN prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3716,7 +3716,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}), (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'CLOZAPINE'}) RETURN COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Congenital Anomaly'}),(n:Case)-[r1:IS_PRIMARY_SUSPECT]->(m1:Drug {name: 'CLOZAPINE'}) WITH DISTINCT n RETURN count(DISTINCT n) AND avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3726,7 +3726,7 @@
     "gold_cypher": "MATCH (c:Case)-[r:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'CLOZAPINE'}) RETURN r.route AS route, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Drug {name: 'CLOZAPINE'}) WITH DISTINCT n RETURN ORDER BY n.route DESC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.14285714285714285
     }
@@ -3746,7 +3746,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource), (c)-[:HAS_REACTION]->(r:Reaction {description: 'Weight decreased'}) RETURN rs.name AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Weight decreased'}) WITH DISTINCT n RETURN avg(n.age) FOR EACH (n:Case) IN (n:Case)-[r1:REPORTED_BY]->(m1:ReportSource) WHERE m1.code IN ['reporter']",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3756,7 +3756,7 @@
     "gold_cypher": "MATCH (c:Case)-[:FALLS_UNDER]->(ag:AgeGroup), (c)-[:RECEIVED]->(t:Therapy) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:Therapy]->(m0:Drug) WITH DISTINCT n RETURN avg(n.age) FOR n in n.ageGroup",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3776,7 +3776,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) RETURN c.gender AS Gender, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3806,7 +3806,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) RETURN m.manufacturerName AS Manufacturer, COUNT(c) AS TotalCases, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r1:REGISTERED]-(m1:Case) WITH n, count(DISTINCT m1) AS num, avg(m1.age) AS avg RETURN num, avg (m1.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3816,7 +3816,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource) WHERE r.name IN ['Health Professional', 'Company Representative'] MATCH (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}), (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'FORTEO'}) RETURN c.gender AS Gender, COUNT(c) AS TotalCases",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -3828,7 +3828,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3858,7 +3858,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Lung neoplasm malignant'}), (c)-[:FALLS_UNDER]->(a:AgeGroup) RETURN a.ageGroup AS ageGroup, COUNT(c) AS caseCount, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Lung neoplasm malignant'}) OPTIONAL MATCH (n:Case)-[r0:FALLS_UNDER]->(m0:AgeGroup) WITH n, n.age, n.ageUnit RETURN n.ageGroup, avg(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3888,7 +3888,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Foreign'}), (c)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN r.route AS route, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug)-[r1:IS_PRIMARY_SUSPECT]->(m1:Case {name: 'Foreign'}) WITH DISTINCT n RETURN ORDER BY n.route DESC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3898,7 +3898,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[:HAS_REACTION]->(re:Reaction {description: 'Anxiety'}) WHERE r.name = 'Health Professional' WITH c.gender AS gender, c.age AS age RETURN gender, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Anxiety'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3928,7 +3928,7 @@
     "gold_cypher": "MATCH (c:Case)-[rel:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'LYRICA'}) RETURN rel.route AS route, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Drug)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Case {name: 'LYRICA'}) WITH DISTINCT n RETURN N.RESULTS ORDER BY n.route DESC LIMIT 3",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3938,7 +3938,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'POLYETHYLENE GLYCOL 3350'}) RETURN c.reporterOccupation AS reporterOccupation, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:IS_PRIMARY_SUSPECT]->(m0:Drug {name: 'POLYETHYLENE GLYCOL 3350'}) WITH DISTINCT n RETURN count(DISTINCT n), avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -3988,7 +3988,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Product adhesion issue'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Product adhesion issue'}) WITH DISTINCT n RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3998,7 +3998,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}) WHERE c.reporterOccupation = 'Consumer' RETURN c.gender AS gender, AVG(c.age) AS averageAge;",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4008,7 +4008,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}), (c)-[:HAS_REACTION]->(re:Reaction) RETURN c.ageUnit AS ageUnit, COUNT(DISTINCT re) AS distinctReactions, AVG(c.age) AS averageAge;",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN count(DISTINCT n.Reaction), avg(n.age) AS avg_age GROUP BY n.ageUnit",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.403691433980123
     }
@@ -4028,7 +4028,7 @@
     "gold_cypher": "MATCH (c:Case)-[:FALLS_UNDER]->(a:AgeGroup {ageGroup: 'Adult'}), (c)-[:RESULTED_IN]->(o:Outcome), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}) RETURN o.outcome AS outcome, AVG(c.age) AS averageAge;",
     "pred_cypher": "MATCH (n:Case)-[r0:FALLS_UNDER]->(m0:AgeGroup {name: 'Adult'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age) WITH n.outcome AS prop RETURN prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4038,7 +4038,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}), (c)-[:REPORTED_BY]->(r:ReportSource) WHERE date(c.reportDate) > date('2021-07-01') RETURN r.name AS reporterOccupation, AVG(c.age) AS averageAge;",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Life-Threatening'}) WITH DISTINCT n WHERE n.reportDate > date('2021-07-01') RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4048,7 +4048,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Confusional state'}) RETURN m.manufacturerName AS manufacturer, COUNT(c) AS totalCases, AVG(c.age) AS averageAge;",
     "pred_cypher": "MATCH (n:Case)-[r1:REGISTERED]->(m1:Manufacturer) WITH DISTINCT n WHERE n.reaction.description = 'Confusional state' RETURN n.count, n.age AVG(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4078,7 +4078,7 @@
     "gold_cypher": "MATCH (c:Case {reporterOccupation: 'Consumer'})-[:FALLS_UNDER]->(a:AgeGroup) RETURN a.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:REPORTED_BY]-(m0:ReportSource {name: 'patient'}) WITH DISTINCT n WHERE n.reporterOccupation = 'Consumer' RETURN avg(n.age) WITH n.ageGroup AS prop GROUP BY prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4098,7 +4098,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}), (c)-[:HAS_REACTION]->(r:Reaction {description: 'Procedural haemorrhage'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Other Serious (Important Medical Event)'}),(n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Procedural haemorrhage'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4128,7 +4128,7 @@
     "gold_cypher": "MATCH (c:Case {reporterOccupation: 'Consumer'}) WHERE c.eventDate IS NOT NULL RETURN c.eventDate.year AS eventYear, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age) GROUP BY n.eventDate",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.1402524544179523
     }
@@ -4148,7 +4148,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN m.manufacturerName AS manufacturer, ag.ageGroup AS ageGroup, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r1:REGISTERED]-(m1:Manufacturer) WITH n, m1, (n.age / (n.ageUnit = 'year')) AS avg_age RETURN n.count, avg_age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.9988758992805755
     }
@@ -4168,7 +4168,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Health Professional'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS AgeGroup, AVG(c.age) AS AverageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.ageGroup FROM n AS m0 RETURN avg(n.age) AS answer",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.9985315712187959
     }
@@ -4198,7 +4198,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}), (c)-[:REPORTED_BY]->(r:ReportSource) WHERE r.name <> 'Health Professional' RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Hospitalization - Initial or Prolonged'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'other than Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4208,7 +4208,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'METHOTREXATE'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:IS_PRIMARY_SUSPECT]->(m0:Drug {name: 'METHOTREXATE'}) WITH DISTINCT n RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -4258,7 +4258,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) WHERE c.age > 65 WITH m.manufacturerName AS manufacturer, COUNT(c) AS caseCount RETURN manufacturer, caseCount",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r0:REGISTERED]-(m0:Case)-[r1:CASE]->(m1:Case {name: 'patient'}) WITH DISTINCT n RETURN count(DISTINCT n) WHERE n.age > 65",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4358,7 +4358,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Consumer'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}), (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN d.primarySubstabce AS primarySubstance, COUNT(c) AS caseCount, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}),(n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}) WITH DISTINCT n RETURN count(DISTINCT n) AS num, avg(n.age) AS avg_age FROM n MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}) WITH n, avg(n.age) AS avg_age FROM n MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'})",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4368,7 +4368,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Blood pressure decreased'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Blood pressure decreased'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.AgeGroup AS prop RETURN avg(prop)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4398,7 +4398,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4438,7 +4438,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Disability'}) WITH DISTINCT n RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4478,7 +4478,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Respiratory arrest'}) WHERE c.gender IS NOT NULL RETURN c.gender AS gender, AVG(c.age) AS averageAge, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Respiratory arrest'}) OPTIONAL MATCH (n:Case)-[r0:AGEGROUP]->(m0:AgeGroup) WITH n, count(DISTINCT m0) AS num RETURN num, (num / count(DISTINCT m0)) AS avg_age, (num / count(DISTINCT m0)) AS prop_1, (num / count(DISTINCT m0)) AS prop_2",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4518,7 +4518,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'Ponatinib'}), (c)-[:REPORTED_BY]->(r:ReportSource) RETURN r.name AS reporter, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:IS_PRIMARY_SUSPECT]->(m1:Drug {name: 'Ponatinib'}) OPTIONAL MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction) WITH n, n.reporterOccupation, n.age AS age RETURN n.count(DISTINCT n.reporterOccupation), AVG(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.1111111111111111
     }
@@ -4528,7 +4528,7 @@
     "gold_cypher": "MATCH (c:Case)-[r:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'Ponatinib'}) WITH r.route AS route, c.age AS age WHERE c.age IS NOT NULL RETURN route, AVG(age) AS averageAge, COUNT(*) AS frequency ORDER BY frequency DESC LIMIT 3",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug {name: 'Ponatinib'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num, (SELECT AVG(n.age) FROM n WHERE n.route IN ['route1', 'route2', 'route3'])",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4538,7 +4538,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Near death experience'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Near death experience'}),(n:Case)-[r1:FALLS_UNDER]->(m1:AgeGroup) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop RETURN prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4558,7 +4558,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource) WHERE r.name IN ['Health Professional', 'Consumer'] WITH c MATCH (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Other Serious (Important Medical Event)'}) RETURN AVG(c.age) AS AverageAge, COUNT(c) AS TotalCases",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age), count(DISTINCT n.OUTCOME) WHERE n.OUTCOME = 'Other Serious (Important Medical Event)'}",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4568,7 +4568,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) RETURN o.outcome AS outcome, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}),(n:Case)-[r0:RESULTED_IN]->(m0:Outcome) WITH DISTINCT n RETURN avg(n.age) FOR n IN CASES WHERE n.reporterOccupation = 'Health Professional'",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -4598,7 +4598,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN m.manufacturerName AS manufacturer, ag.ageGroup AS ageGroup, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r1:REGISTERED]->(m1:Manufacturer) WITH n, m1, n.ageGroup AS prop RETURN count(DISTINCT n) BY prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4618,7 +4618,7 @@
     "gold_cypher": "MATCH (c:Case)-[:FALLS_UNDER]->(ag:AgeGroup {ageGroup: 'Adult'}), (c)-[:HAS_REACTION]->(r:Reaction {description: 'Learning disability'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:CASE]->(m0:AgeGroup {name: 'Adult'}),(n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Learning disability'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4628,7 +4628,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:RESULTED_IN]->(o:Outcome) RETURN m.manufacturerName AS manufacturer, o.outcome AS outcome, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:REGISTERED]-(m0:Manufacturer) WITH DISTINCT n RETURN avg(n.age) FOR n.OUTCOME IN ['success', 'failure']",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.732748932344347
     }
@@ -4728,7 +4728,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}) WHERE r.name = 'Consumer' AND o.outcome = 'Hospitalization - Initial or Prolonged' RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}),(n:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Hospitalization - Initial or Prolonged'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4758,7 +4758,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}), (c)-[:FALLS_UNDER]->(a:AgeGroup {ageGroup: 'Adult'}), (c)-[:IS_CONCOMITANT]->(d:Drug {name: 'LEVAQUIN'}) RETURN COUNT(c) AS totalCases",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Hospitalization - Initial or Prolonged'}),(n:Case)-[r1:AGEGROUP]->(m1:AgeGroup {name: 'Adult'}) WITH DISTINCT n WHERE n:Drug.name = 'LEVAQUIN' AND n:Drug.isConcomitant = true RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4778,7 +4778,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Upper respiratory tract congestion'}), (c)-[:FALLS_UNDER]->(a:AgeGroup) RETURN a.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Upper respiratory tract congestion'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop FROM n.FALLS_UNDER RETURN prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4798,7 +4798,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[:RESULTED_IN]->(o:Outcome) RETURN o.outcome AS outcome, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) FOR EACH n IN n MATCH (n:Case)-[r1:RESULTED_IN]->(m1:Outcome)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.7237228420434527
     }
@@ -4818,7 +4818,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) RETURN m.manufacturerName AS manufacturer, c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r0:REGISTERED]-(m0:Case) WITH DISTINCT n RETURN avg(n.manufacturerName) AS answer FOR n, m0 IN (m0:Case) RETURN avg(n.manufacturerName) AS answer FOR n, m0 IN (m0:Case) RETURN avg(n.manufacturerName) AS answer",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4838,7 +4838,7 @@
     "gold_cypher": "MATCH (m:Manufacturer {manufacturerName: 'GLOBAL BLOOD THERAPEUTICS'})-[:REGISTERED]->(c:Case)-[:RESULTED_IN]->(o:Outcome) RETURN o.outcome AS outcome, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'GLOBAL BLOOD THERAPEUTICS'}) WITH DISTINCT n RETURN avg(n.age) GROUP BY n.Outcome",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4848,7 +4848,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Foreign'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Foreign'}),(n:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Hospitalization - Initial or Prolonged'}) WITH DISTINCT n RETURN count(DISTINCT n)-[r0:REPORTED_BY]->(m0:ReportSource), avg(n.age) BY n.AgeGroup",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4858,7 +4858,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'ALUNBRIG'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r1:IS_PRIMARY_SUSPECT]->(m1:Drug {name: 'ALUNBRIG'}),(n:Case)-[r0:FALLS_UNDER]->(m0:AgeGroup) WITH n, count(DISTINCT n) AS num, avg(n.age) AS avg RETURN num, avg}",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -4878,7 +4878,7 @@
     "gold_cypher": "MATCH (c:Case)-[r:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'REVLIMID'}) RETURN r.route AS route, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:IS_PRIMARY_SUSPECT]->(m0:Drug {name: 'REVLIMID'}) WITH DISTINCT n RETURN avg(n.age) BY n.route_of_administration",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -4908,7 +4908,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Blood test abnormal'}), (c)-[:RESULTED_IN]->(o:Outcome) RETURN c.gender AS gender, o.outcome AS outcome, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:HAS_REACTION]-(m0:Reaction {name: 'Blood test abnormal'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender, n.outcome",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4918,7 +4918,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Disability'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4958,7 +4958,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}), (c)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[rel:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN rel.route AS route, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Disability'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.route_of_administration",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4978,7 +4978,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}), (c)-[:HAS_REACTION]->(re:Reaction {description: 'Peripheral sensory neuropathy'}), (c)-[:FALLS_UNDER]->(a:AgeGroup) RETURN a.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Peripheral sensory neuropathy'}),(n:Case)-[r1:FALLS_UNDER]->(m1:AgeGroup) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4998,7 +4998,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Headache'}) RETURN c.reporterOccupation AS reporterOccupation, COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Headache'}) OPTIONAL MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource) WITH n, n.reporterOccupation RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5038,7 +5038,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:Outcome]->(m0:Outcome {name: 'Life-Threatening'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.AgeGroup AS prop RETURN avg(prop)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5058,7 +5058,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}), (c)-[:RESULTED_IN]->(o:Outcome) RETURN o.outcome AS outcome, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN avg(n.age) FOR EACH n IN n MATCH (n:Case)-[r1:RESULTED_IN]->(m1:Outcome)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.7494172494172494
     }
@@ -5078,7 +5078,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Tumour haemorrhage'}) RETURN c.reporterOccupation AS reporterOccupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Tumour haemorrhage'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5088,7 +5088,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Asthenopia'}) RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Asthenopia'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5108,7 +5108,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Health Professional'}), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}) WHERE rs.name = 'Health Professional' AND o.outcome = 'Congenital Anomaly' RETURN c.gender AS gender, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}),(n:Case)-[r1:RESULTED_IN]->(m1:Outcome {name: 'Congenital Anomaly'}) WITH DISTINCT n RETURN avg(n.age) BY n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5118,7 +5118,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Pancreatitis'}) RETURN c.reporterOccupation AS reporterOccupation, COUNT(c) AS totalCases, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Pancreatitis'}) WITH DISTINCT n RETURN count(DISTINCT n)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'healthcare'}) AS num, avg(n.age) AS avg_age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5148,7 +5148,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource {name: 'Consumer'}), (c)-[:IS_CONCOMITANT]->(d:Drug {name: 'CLONAZEPAM'}), (c)-[:FALLS_UNDER]->(ag:AgeGroup) RETURN ag.ageGroup AS ageGroup, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}),(n:Case)-[r1:IS_CONCOMITANT]->(m1:Drug {name: 'CLONAZEPAM'}) WITH DISTINCT n RETURN avg(n.age) WITH n.ageGroup AS prop RETURN prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.6666666666666666
     }
@@ -5188,7 +5188,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Diarrhoea'}) WITH c.gender AS gender, c.age AS age WHERE c.age IS NOT NULL RETURN gender, AVG(age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Diarrhoea'}) WITH DISTINCT n RETURN avg(n.age) WITH DISTINCT n.gender AS prop RETURN avg(prop)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5218,7 +5218,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}), (c)-[:REPORTED_BY]->(r:ReportSource) WHERE r.name IN ['Health Professional', 'Consumer'] RETURN c.reporterOccupation AS occupation, AVG(c.age) AS averageAge",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Death'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN avg(n.age) BY n.reporterOccupation",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5228,7 +5228,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug), (c)-[:RESULTED_IN]->(o:Outcome {outcome: 'Death'}) WHERE d.name STARTS WITH 'A' RETURN m.manufacturerName AS manufacturer, COUNT(c) AS totalCases",
     "pred_cypher": "MATCH (n:Case)<-[r0:REGISTERED]-(m0:Manufacturer) WITH DISTINCT n WHERE n.OUTCOME = 'Death' AND n.OUTCOME = 'Death' AND n.Drug IN (m0:Drug) AND (n.Drug.primarySuspect.name STARTS WITH 'A') RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5258,7 +5258,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Foreign body in respiratory tract'}), (c)-[:REPORTED_BY]->(rs:ReportSource {name: 'Health Professional'}) RETURN c.primaryid AS caseId, rs.name AS reportSourceName",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Foreign body in respiratory tract'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Health Professional'}) WITH DISTINCT n RETURN n.primaryid, n.name, m0.name, m1.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5508,7 +5508,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}) MATCH (c)-[:RECEIVED]->(t:Therapy)-[:PRESCRIBED]->(d:Drug) RETURN DISTINCT d.name AS drugName",
     "pred_cypher": "MATCH (n:Case)<-[r0:Therapy]-(m0:Drug)-[r1:IS_PRIMARY_SUSPECT]->(m1:Drug {name: 'Drug'}) WITH DISTINCT n WHERE n.reporterOccupation = 'Consumer' AND n.there is a relationship where n.there is a relationship [r0:Therapy]-(m0:Drug) RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5628,7 +5628,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Hypokalaemia'}) WHERE c.age > 70 WITH c MATCH (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN c.primaryid AS caseId, d.name AS drugName",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug) WITH DISTINCT n WHERE n.age > 70 AND n.reaction = 'Hypokalaemia' RETURN n.name, n Drug",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5668,7 +5668,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Eating disorder'}), (c)-[:REPORTED_BY]->(s:ReportSource) WHERE s.name <> 'Consumer' RETURN DISTINCT c.primaryid AS caseId, s.name AS reportSourceName",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction {name: 'Eating disorder'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN n.primaryid, n.name, m1.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5848,7 +5848,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}) WHERE c.age > 50 MATCH (c)-[:HAS_REACTION]->(re:Reaction {description: 'Agitation'}) RETURN c.primaryid AS caseId, c.age AS caseAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}) WITH DISTINCT n WHERE n.age > 50 AND n.has_reaction('Agitation') RETURN n.primaryid, n.age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6118,7 +6118,7 @@
     "gold_cypher": "MATCH (c:Case)-[:FALLS_UNDER]->(a:AgeGroup {ageGroup: 'Elderly'}) WHERE c.age > 60 MATCH (c)-[:HAS_REACTION]->(r:Reaction) RETURN c.primaryid AS caseId, r.description AS reactionDescription",
     "pred_cypher": "MATCH (n:Case)-[r0:HAS_REACTION]->(m0:Reaction) WITH DISTINCT n WHERE n.age > 60 AND n.ageGroup = 'Elderly' RETURN n.name, m0.description",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6148,7 +6148,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}) WHERE c.age > 60 WITH c MATCH (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN c.primaryid AS caseId, d.name AS drugName",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug) WITH DISTINCT n WHERE n.age > 60 AND n.outcome = 'Disability' RETURN n.name, m0.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6358,7 +6358,7 @@
     "gold_cypher": "MATCH (c:Case) WHERE date(c.eventDate) < date('2020-01-01') AND c.reporterOccupation <> 'Consumer' MATCH (c)-[:HAS_REACTION]->(r:Reaction) RETURN c.primaryid AS caseId, c.eventDate AS eventDate, c.reporterOccupation AS reporterOccupation, r.description AS reactionDescription",
     "pred_cypher": "MATCH (n:Case)<-[r0:HAS_REACTION]-(m0:Reaction) WITH DISTINCT n WHERE n.eventDate < date('2020-01-01') AND n.reporterOccupation <> 'Consumer' RETURN n.id, n.eventDate, n.reporterOccupation, m0.description",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6438,7 +6438,7 @@
     "gold_cypher": "MATCH (c:Case {reporterOccupation: 'Consumer'})-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}) WITH c MATCH (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN c.primaryid AS caseId, d.name AS drugName",
     "pred_cypher": "MATCH (n:Case)-[r0:IS_PRIMARY_SUSPECT]->(m0:Drug) WITH DISTINCT n WHERE n.reporterOccupation = 'Consumer' AND n.outcome = 'Hospitalization - Initial or Prolonged' RETURN n.name, m0.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6468,7 +6468,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Vitamin D deficiency'}) WHERE c.age >= 70 AND c.age <= 80 RETURN c.primaryid AS caseId, c.age AS patientAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:HAS_REACTION]-(m0:Reaction {name: 'Vitamin D deficiency'}) WITH DISTINCT n WHERE n.age BETWEEN 70 AND 80 RETURN n.primaryid, n.age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6538,7 +6538,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Disability'}) WHERE c.age > 70 WITH c MATCH (c)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE r.route = 'Oral' RETURN c.primaryid AS caseId, d.name AS drugName",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -6650,7 +6650,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}) WHERE c.age >= 70 AND c.age <= 80 RETURN c.primaryid AS caseId, c.age AS patientAge",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Consumer'}) WITH DISTINCT n WHERE n.age BETWEEN 70 AND 80 RETURN n.primaryid, n.age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6840,7 +6840,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}), (c)-[:FALLS_UNDER]->(a:AgeGroup) WHERE a.ageGroup <> 'Adolescent' WITH c MATCH (c)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE r.route = 'Oral' RETURN DISTINCT c.primaryid AS caseId, d.name AS drugName;",
     "pred_cypher": "MATCH (n:Case)-[r0:Outcome]->(m0:Outcome {name: 'Life-Threatening'}),(n:Case)-[r1:AgeGroup]->(m1:AgeGroup {name: 'not Adolescent'}) WITH DISTINCT n RETURN n.id, n.Drug.name WHERE n.Drug.primarySubstabce = 'Primary Suspect' AND n.Drug.route = 'Oral'",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6880,7 +6880,7 @@
     "gold_cypher": "MATCH (c:Case {reporterOccupation: 'Lawyer'})-[:RECEIVED]->(t:Therapy)-[:PRESCRIBED]->(d:Drug) RETURN t.primaryid AS therapyId, c.primaryid AS caseId",
     "pred_cypher": "MATCH (n:Therapy)<-[r0:PRESCRIBED]-(m0:Drug)<-[r1:RECEIVED]-(m1:Case)-[r2:REPORTED_BY]->(m2:ReportSource {name: 'Lawyer'}) WITH DISTINCT n RETURN n.id, n.primaryid, m1.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6890,7 +6890,7 @@
     "gold_cypher": "MATCH (c:Case {reporterOccupation: 'Pharmacist'})-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}) MATCH (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN d.name AS DrugName, c.primaryid AS CaseID",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Life-Threatening'}),(n:Case)-[r1:IS_PRIMARY_SUSPECT]->(m1:Drug) WITH DISTINCT n RETURN n.name, n.primaryid, m1.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7110,7 +7110,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'REVLIMID'}) WITH c, d MATCH (c)-[:RECEIVED]->(t:Therapy)-[:PRESCRIBED]->(d) RETURN DISTINCT c.primaryid AS caseId",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug {name: 'REVLIMID'}) WITH DISTINCT n WHERE EXISTS (n:<-[r1:IS_CONCOMITANT]-(m1:Therapy) ) RETURN n.primaryid",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7250,7 +7250,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) WHERE c.age < 20 AND date(c.eventDate) > date('2021-01-01') RETURN m.manufacturerName AS manufacturerName",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r0:REGISTERED]-(m0:Case) WITH DISTINCT n WHERE n.manufacturerName IS NOT NULL AND m0.eventDate > date('2021-01-01') AND m0.age < 20 RETURN n.manufacturerName",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7260,7 +7260,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) WHERE c.gender = 'F' WITH c MATCH (c)-[:HAS_REACTION]->(re:Reaction {description: 'Jaw fracture'}) RETURN c.primaryid AS caseId",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}) WITH DISTINCT n WHERE n.gender = 'F' AND n.has_reaction('Jaw fracture') RETURN n.primaryid",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7280,7 +7280,7 @@
     "gold_cypher": "MATCH (m:Manufacturer {manufacturerName: 'GLAXOSMITHKLINE'})-[:REGISTERED]->(c:Case) WHERE c.eventDate.month = 2 AND c.eventDate.year = 2021 RETURN c.primaryid AS caseId",
     "pred_cypher": "MATCH (n:Case)-[r0:Manufacturer]->(m0:Manufacturer {name: 'GLAXOSMITHKLINE'}) WITH DISTINCT n WHERE n.eventDate.year = 2021 AND n.eventDate.month = 2 (February) RETURN n.primaryid",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7350,7 +7350,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}) MATCH (c)-[:FALLS_UNDER]->(a:AgeGroup {ageGroup: 'Elderly'}) MATCH (c)-[:RECEIVED]->(t:Therapy)-[:PRESCRIBED]->(d:Drug) RETURN c.primaryid AS caseId, d.name AS drugName",
     "pred_cypher": "MATCH (n:Case)-[r0:Outcome]->(m0:Outcome {name: 'Hospitalization - Initial or Prolonged'}),(n:Case)-[r1:CASE_FALLS_UNDER]->(m1:AgeGroup {name: 'Elderly'}) WITH DISTINCT n RETURN n.primaryid, n.name, n.drugs (n.therefore:Therapy).",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7430,7 +7430,7 @@
     "gold_cypher": "MATCH (c:Case)-[:HAS_REACTION]->(r:Reaction {description: 'Body temperature abnormal'}) WHERE c.age >= 60 AND c.age <= 80 RETURN c.primaryid AS caseId, c.age AS patientAge",
     "pred_cypher": "MATCH (n:Case)<-[r0:HAS_REACTION]-(m0:Reaction {name: 'Body temperature abnormal'}) WITH DISTINCT n WHERE n.age BETWEEN 60 AND 80 RETURN n.primaryid, n.age",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7750,7 +7750,7 @@
     "gold_cypher": "MATCH (c:Case {gender: 'F'})-[:RESULTED_IN]->(o:Outcome {outcome: 'Hospitalization - Initial or Prolonged'}) RETURN c.primaryid AS caseID, c.eventDate AS eventDate",
     "pred_cypher": "MATCH (n:Case)-[r0:RESULTED_IN]->(m0:Outcome {name: 'Hospitalization - Initial or Prolonged'}),(n:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'Patient'}) WITH DISTINCT n WHERE n.property('gender') = 'female' RETURN n.caseId, n.eventDate",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7920,7 +7920,7 @@
     "gold_cypher": "MATCH (c:Case)-[r:IS_PRIMARY_SUSPECT]->(d:Drug {name: 'IMBRUVICA'}) WHERE r.route = 'Oral' AND r.doseAmount = '140' RETURN c.primaryid AS CaseID",
     "pred_cypher": "MATCH (n:Case)-[r0:IS_PRIMARY_SUSPECT]->(m0:Drug {name: 'IMBRUVICA'}) WITH DISTINCT n WHERE n.property('route of administration') = 'Oral' AND n.property('dose amount') = '140' RETURN n.primaryid",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -8240,7 +8240,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Life-Threatening'}) WHERE c.age > 60 WITH c MATCH (c)-[:IS_PRIMARY_SUSPECT]->(d:Drug) RETURN c.primaryid AS caseId, c.age AS patientAge, d.name AS drugName;",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug) WITH DISTINCT n WHERE n.age > 60 AND n.Outcome = 'Life-Threatening' RETURN n.caseId, n.age, m0.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -8270,7 +8270,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Health Professional'}) WHERE c.age >= 70 AND c.age <= 80 WITH c MATCH (c)-[:HAS_REACTION]->(re:Reaction) WHERE re.description CONTAINS 'Gangrene' RETURN c.primaryid AS caseId, re.description AS reactionDescription",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource {name: 'Health Professional'}),(n:Case)-[r1:HAS_REACTION]->(m1:Reaction {name: 'Gangrene'}) WITH DISTINCT n WHERE n.age BETWEEN 70 AND 80 RETURN n.primaryid, n.reaction.description",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9100,7 +9100,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(rs:ReportSource) WHERE date(c.eventDate) = date('2020-12-30') RETURN rs.name AS reportSourceName",
     "pred_cypher": "MATCH (n:ReportSource)<-[r0:REPORTED_BY]-(m0:Case) WITH DISTINCT n WHERE m0.eventDate = '2020-12-30' RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9240,7 +9240,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE c.reporterOccupation = 'Physician' AND c.primaryid = 194752923 RETURN d.name AS drugName;",
     "pred_cypher": "MATCH (n:Drug)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Case) WITH DISTINCT n WHERE m0.reporterOccupation = 'Physician' AND m0.primaryid = 194752923 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -10190,7 +10190,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome) WHERE c.age = 57 AND c.reporterOccupation = 'Lawyer' RETURN o.outcome AS caseOutcome;",
     "pred_cypher": "MATCH (n:Outcome)<-[r0:RESULTED_IN]-(m0:Case) WITH DISTINCT n WHERE n.outcome = 'outcome' AND m0.case.reporterOccupation = 'Lawyer' AND m0.case.patient.age = 57 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -11830,7 +11830,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE date(c.eventDate) = date('2021-07-01') RETURN d.name AS drugName;",
     "pred_cypher": "MATCH (n:Drug)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Case) WITH DISTINCT n WHERE m0.eventDate = DATE('2021-07-01') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -12170,7 +12170,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug), (m:Manufacturer)-[:REGISTERED]->(c) WHERE c.primaryid = 1784153710 RETURN m.manufacturerName AS manufacturerName, d.name AS drugName;",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r0:REGISTERED]-(m0:Case {primaryid: 1784153710}) WITH DISTINCT n RETURN n.name, n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -12830,7 +12830,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome) WHERE c.age = 69 AND c.reporterOccupation = 'Consumer' RETURN o.outcome AS caseOutcome",
     "pred_cypher": "MATCH (n:Outcome)<-[r0:RESULTED_IN]-(m0:Case) WITH DISTINCT n WHERE n.outcome = 'outcome' AND m0.case.reporterOccupation = 'Consumer' AND m0.case.patient.age = 69 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -13890,7 +13890,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE c.reporterOccupation = 'Lawyer' RETURN d.name AS drugName",
     "pred_cypher": "MATCH (n:Drug)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Case)-[r1:REPORTED_BY]->(m1:ReportSource {name: 'reporter'}) WITH DISTINCT n WHERE m0.case.reporterOccupation = 'Lawyer' RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -14610,7 +14610,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE c.reporterOccupation = 'Consumer' RETURN d.name AS drugName",
     "pred_cypher": "MATCH (n:Drug)-[r0:IS_PRIMARY_SUSPECT]->(m0:Case) WITH DISTINCT n WHERE m0.reporterOccupation = 'Consumer' RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -15080,7 +15080,7 @@
     "gold_cypher": "MATCH (c:Case)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE c.primaryid = 181621002 AND d.name = 'DUPIXENT' AND r.route = 'Subcutaneous' RETURN r.doseAmount AS doseAmount",
     "pred_cypher": "MATCH (n:Drug {name: 'DUPIXENT'}), (m0:Case {primaryid: 181621002}) WITH DISTINCT n RETURN n.doseAmount WHERE n.route = 'Subcutaneous'",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -18130,7 +18130,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE c.reportDate.year = 2021 RETURN COUNT(DISTINCT d) AS drugCount",
     "pred_cypher": "MATCH (n:Drug)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Case) WITH DISTINCT n WHERE m0.eventDate.year = 2021 RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.5388261851015801
     }
@@ -18540,7 +18540,7 @@
     "gold_cypher": "MATCH (t:Therapy)-[r:PRESCRIBED]->(d:Drug) WHERE r.startYear = '2021' RETURN COUNT(d) AS drugCount;",
     "pred_cypher": "MATCH (n:Drug)-[r0:PRESCRIBED]->(m0:Therapy) WITH DISTINCT n WHERE r0.startYear = '2021' RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18600,7 +18600,7 @@
     "gold_cypher": "MATCH (c:Case) WHERE c.gender = 'F' RETURN COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)-[r0:ReportSource]->(m0:Manufacturer {name: 'Drug'}) WITH DISTINCT n RETURN count(DISTINCT n.where('gender' = 'Female'))",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18850,7 +18850,7 @@
     "gold_cypher": "MATCH (c:Case)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE r.route = 'Oral' RETURN COUNT(DISTINCT d) AS drugCount",
     "pred_cypher": "MATCH (n:Drug)-[r0:IS_PRIMARY_SUSPECT]->(m0:Case) WITH DISTINCT n WHERE m0.route OF n IS 'Oral' RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18970,7 +18970,7 @@
     "gold_cypher": "MATCH (c:Case)-[:REPORTED_BY]->(r:ReportSource {name: 'Consumer'}) RETURN MIN(c.age) AS MinimumAgeReportedByConsumer;",
     "pred_cypher": "MATCH (n:Case)-[r0:REPORTED_BY]->(m0:ReportSource)-[r1:NAME]->(m1:name 'Consumer') WITH DISTINCT n RETURN min(n.age)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19650,7 +19650,7 @@
     "gold_cypher": "MATCH (c:Case) WHERE c.gender = 'F' AND c.reporterOccupation = 'Consumer' RETURN COUNT(c) AS caseCount;",
     "pred_cypher": "MATCH (n:Case)-[r0:Case]->(m0:ReportSource {name: 'reporter'}),(n:Case)-[r1:ReportSource]->(m1:ReportSource {name: 'Consumer'}) WITH DISTINCT n RETURN count(DISTINCT n) WHERE n.gender = 'F'",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19690,7 +19690,7 @@
     "gold_cypher": "MATCH (c:Case)-[r:IS_PRIMARY_SUSPECT]->(d:Drug) WHERE c.reportDate.year = 2021 AND r.route = 'Unknown' RETURN COUNT(c) AS caseCount",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -19982,7 +19982,7 @@
     "gold_cypher": "MATCH (c:Case)-[:IS_PRIMARY_SUSPECT]->(d:Drug {primarySubstabce: 'ENALAPRIL\\HYDROCHLOROTHIAZIDE'}) RETURN COUNT(c) AS caseCount",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -20424,7 +20424,7 @@
     "gold_cypher": "MATCH (c:Case)-[:RESULTED_IN]->(o:Outcome {outcome: 'Congenital Anomaly'}) RETURN AVG(c.age) AS averageAge",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -20446,7 +20446,7 @@
     "gold_cypher": "MATCH (c:Case {reporterOccupation: 'Consumer'}) RETURN MIN(c.age) AS minAge",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -20478,7 +20478,7 @@
     "gold_cypher": "MATCH (c:Case)-[]->(d:Drug {primarySubstabce: 'POTASSIUM'}) RETURN COUNT(c) AS caseCount",
     "pred_cypher": "MATCH (n:Case)<-[r0:IS_PRIMARY_SUSPECT]-(m0:Drug)-[r1:IS_CONCOMITANT]->(m1:Case {name: 'drug with primary substance 'POTASSIUM'}) WITH DISTINCT n RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21028,7 +21028,7 @@
     "gold_cypher": "MATCH (d:Drug) WHERE d.primarySubstabce = 'HYDROCHLOROTHIAZIDE\\VALSARTAN' RETURN d.name AS drugName;",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -21520,7 +21520,7 @@
     "gold_cypher": "MATCH (d:Drug) WHERE d.primarySubstabce = 'SODIUM CHLORIDE' RETURN d.name AS drugName;",
     "pred_cypher": "MATCH (n:Drug)-[r0:IS_PRIMARY_SUSPECT]->(m0:Case {name: 'PRIMARY SUBSTABCE': 'SODIUM CHLORIDE'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21770,7 +21770,7 @@
     "gold_cypher": "MATCH (d:Drug) WHERE d.primarySubstabce = 'EMTRICITABINE\\TENOFOVIR DISOPROXIL FUMARATE' RETURN d.name AS drugName;",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -22172,7 +22172,7 @@
     "gold_cypher": "MATCH (d:Drug) WHERE d.primarySubstabce = 'AMOXICILLIN\\CLAVULANIC ACID' RETURN d.name AS drugName;",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -22454,7 +22454,7 @@
     "gold_cypher": "MATCH (d:Drug) WHERE d.primarySubstabce = 'ENALAPRIL MALEATE\\HYDROCHLOROTHIAZIDE' RETURN d.name AS drugName;",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -22816,7 +22816,7 @@
     "gold_cypher": "MATCH (d:Drug) WHERE d.primarySubstabce = 'CYCLOSPORINE' RETURN d.name AS drugName, d.primarySubstabce AS primarySubstance;",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -23288,7 +23288,7 @@
     "gold_cypher": "MATCH (d:Drug) WHERE d.primarySubstabce = 'CALCIUM\\VITAMIN D' RETURN d.name AS drugName;",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -23730,7 +23730,7 @@
     "gold_cypher": "MATCH (d:Drug) WHERE d.primarySubstabce = 'EZETIMIBE' RETURN d.name AS drugName;",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -25472,7 +25472,7 @@
     "gold_cypher": "MATCH (m:Manufacturer)-[:REGISTERED]->(c:Case) WHERE date(c.reportDate) = date('2021-09-04') RETURN m.manufacturerName AS manufacturerName;",
     "pred_cypher": "MATCH (n:Manufacturer)<-[r0:REGISTERED]-(m0:Case) WITH DISTINCT n WHERE n.manufacturerName IS NOT NULL AND m0.reportDate = date('2021-09-04') RETURN n.manufacturerName",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }

@@ -74,7 +74,7 @@
     "gold_cypher": "MATCH (tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match)<-[sg:SCORED_GOAL]-(p:Person) WITH tour, m, COUNT(sg) AS goalsPerMatch WITH tour, SUM(goalsPerMatch) AS totalGoals, COUNT(DISTINCT m) AS totalMatches RETURN tour.name AS tournamentName, totalGoals, totalMatches, CASE WHEN totalMatches > 0 THEN toFloat(totalGoals) / totalMatches ELSE 0 END AS avgGoalsPerMatch",
     "pred_cypher": "MATCH (n:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.011940298507462687
     }
@@ -164,7 +164,7 @@
     "gold_cypher": "MATCH (team:Team)-[:NAMED]->(s:Squad)<-[:IN_SQUAD]-(p:Person)-[:PLAYED_IN]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament) WITH team, s, COUNT(DISTINCT p) AS squadSize WITH team, AVG(squadSize) AS avgSquadSize RETURN team.name AS teamName, avgSquadSize",
     "pred_cypher": "MATCH (n:Team)<-[r0:playsIn]-(m0:Tournament) WITH DISTINCT n RETURN n.name, n.Squad size",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -184,7 +184,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'Germany 2011'})\nMATCH (t)-[:NAMED]->(s:Squad)-[:FOR]->(tour)\nOPTIONAL MATCH (p:Person)-[:IN_SQUAD]->(s)-[:FOR]->(tour)\nOPTIONAL MATCH (p)-[sg:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(tour)\nWITH t, COUNT(DISTINCT p) AS squadSize, COUNT(sg) AS goalsScored\nRETURN t.name AS teamName, AVG(squadSize) AS avgSquadSize, SUM(goalsScored) AS totalGoalsScored",
     "pred_cypher": "MATCH (n:Team)-[r0:participatedIn]->(m0:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN avg(n.number_of_players) WITH DISTINCT n RETURN n.number_of_players + n.SCORED_GOAL",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -204,7 +204,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PLAYED_IN]->(m:Match)-[:IN_TOURNAMENT]->(tour:Tournament {name: 'Germany 2011'})\nOPTIONAL MATCH (p:Person)-[sg:SCORED_GOAL]->(m)\nWHERE (p)-[:REPRESENTS]->(t)\nWITH t, COUNT(sg) AS goalsScored\nRETURN t.name AS teamName, AVG(goalsScored) AS avgGoalsScored",
     "pred_cypher": "MATCH (n:Team)<-[r0:playsIn]-(m0:Match)-[r1:in_Tournament]->(m1:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN avg(n.SCORED_GOAL) WITH DISTINCT n RETURN n.number_of_yellow_cards",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -284,7 +284,7 @@
     "gold_cypher": "MATCH (tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match)<-[:SCORED_GOAL]-(p:Person)\nWITH tour, COUNT(p) AS totalGoals, m\nMATCH (tour)<-[:FOR]-(s:Squad)<-[:IN_SQUAD]-(player:Person)\nWITH tour, totalGoals, COUNT(DISTINCT player) AS squadSize\nRETURN tour.name AS tournamentName, SUM(totalGoals) AS totalGoalsScored, AVG(squadSize) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.011940298507462687
     }
@@ -544,7 +544,7 @@
     "gold_cypher": "MATCH (tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match)<-[sg:SCORED_GOAL]-(p:Person) WITH tour, m, COUNT(DISTINCT p) AS scorers, COUNT(sg) AS goalsPerMatch WITH tour, SUM(goalsPerMatch) AS totalGoals, AVG(scorers) AS avgScorersPerMatch RETURN tour.name AS tournamentName, totalGoals, avgScorersPerMatch",
     "pred_cypher": "MATCH (n:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.011940298507462687
     }
@@ -734,7 +734,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament) WITH tour.year AS tournamentYear, tour, t MATCH (t)-[:PLAYED_IN]->(m:Match)-[:IN_TOURNAMENT]->(tour) WITH tournamentYear, COUNT(DISTINCT t) AS teamCount, COUNT(DISTINCT m) AS totalMatches RETURN tournamentYear, AVG(teamCount) AS avgTeamsParticipating, totalMatches",
     "pred_cypher": "MATCH (n:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.18181818181818182
     }
@@ -884,7 +884,7 @@
     "gold_cypher": "MATCH (tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match)<-[sg:SCORED_GOAL]-(p:Person)-[:REPRESENTS]->(t:Team {name: 'Australia'}) WITH tour, COUNT(sg) AS ausGoals MATCH (tour)<-[:IN_TOURNAMENT]-(match:Match)<-[scored:SCORED_GOAL]-(player:Person) WITH tour, ausGoals, COUNT(scored) AS totalGoals RETURN tour.name AS tournamentName, totalGoals, AVG(ausGoals)",
     "pred_cypher": "MATCH (n:Tournament)<-[r0:match]-(m0:Player)-[r1:REPresents]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name, n SCORED_GOAL, n.avg_goals",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1274,7 +1274,7 @@
     "gold_cypher": "MATCH (s:Squad)<-[:IN_SQUAD]-(p:Person)-[r:PLAYED_IN]->(m:Match) WHERE r.minuteOn IS NOT NULL WITH s, p, toInteger(r.minuteOn) AS minutesPlayed WITH s, p, AVG(minutesPlayed) AS avgMinutesPerPlayer OPTIONAL MATCH (s)<-[:IN_SQUAD]-(player:Person) WITH s, COUNT(DISTINCT player) AS totalPlayers, AVG(avgMinutesPerPlayer) AS avgMinutesPlayed RETURN s.id AS squadId, totalPlayers, avgMinutesPlayed;",
     "pred_cypher": "MATCH (n:Squad)<-[r1:playsOn]-(m1:Match) WITH DISTINCT n RETURN n.name, n.number_of_players, n.avg_minutes played",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1284,7 +1284,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament) OPTIONAL MATCH (m:Match)-[:IN_TOURNAMENT]->(tour)<-[sg:SCORED_GOAL]-(p:Person) WITH tour, COUNT(DISTINCT t) AS totalTeams, COUNT(sg) AS totalGoals, COUNT(DISTINCT m) AS totalMatches WHERE tour.year IS NOT NULL WITH tour.year AS tournamentYear, totalTeams, totalGoals, totalMatches RETURN tournamentYear, CASE WHEN totalMatches > 0 THEN toFloat(totalGoals) / totalMatches ELSE 0 END AS avgGoalsPerMatch, totalTeams;",
     "pred_cypher": "MATCH (n:Tournament year)<-[r1:match]-(m1:Match) WITH n, count(DISTINCT m1) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1404,7 +1404,7 @@
     "gold_cypher": "MATCH (p:Person)-[r:PLAYED_IN]->(m:Match)-[:IN_TOURNAMENT]->(tour:Tournament) WITH p, r, m, tour OPTIONAL MATCH (p)-[sg:SCORED_GOAL]->(m) WHERE r.type = 'Subbed On' WITH tour, COUNT(sg) AS subbedOnGoals, r.type AS type OPTIONAL MATCH (p)-[r2:PLAYED_IN]->(m:Match)-[:IN_TOURNAMENT]->(tour) OPTIONAL MATCH (p)-[sg2:SCORED_GOAL]->(m) WHERE r2.type = 'Started' WITH tour, subbedOnGoals, COUNT(sg2) AS startedGoals RETURN tour.name AS tournamentName, subbedOnGoals, startedGoals",
     "pred_cypher": "MATCH (n:Tournament)<-[r0:start]-(m0:Player)-[r1:Subbed On]->(m1:Painting {name: 'Subbed On'}) WITH DISTINCT n RETURN n.name, n.SCORED_GOAL",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1464,7 +1464,7 @@
     "gold_cypher": "MATCH (p:Person)-[:PLAYED_IN]->(m:Match) WITH p, COUNT(m) AS totalMatches OPTIONAL MATCH (p)-[sg:SCORED_GOAL]->(m) WITH p, totalMatches, COUNT(sg) AS totalGoals WHERE totalMatches > 0 RETURN p.name AS personName, totalMatches, CASE WHEN totalMatches > 0 THEN toFloat(totalGoals) / totalMatches ELSE 0 END AS avgGoalsPerMatch",
     "pred_cypher": "MATCH (n:Person)<-[r0:playsAt]-(m0:Match) WITH DISTINCT n RETURN n.name, n.SUM MATCH (n:Person)<-[r1:playsAt]-(m1:Match {name: 'match'}) WITH DISTINCT n RETURN n.name, n.SUM MATCH (n:Person)<-[r4:playsAt]-(m4:Match {name: 'match'}) WITH DISTINCT n RETURN n.name, n.SUM",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1644,7 +1644,7 @@
     "gold_cypher": "MATCH (p:Person)-[sg:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(tour:Tournament) WITH p, COUNT(sg) AS totalGoals, COLLECT(DISTINCT tour) AS tournamentsParticipated RETURN p.name AS personName, totalGoals, SIZE(tournamentsParticipated) AS numberOfTournaments",
     "pred_cypher": "MATCH (n:Person)-[r1:SCORED_GOAL]->(m1:INTEGER) OPTIONAL MATCH (n:Person)-[r0:participatedIn]->(m0:Tournament) WITH DISTINCT n RETURN n.name, n.SCORED_GOAL, n.avg tournaments",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1854,7 +1854,7 @@
     "gold_cypher": "MATCH (t:Team)-[r:PLAYED_IN]->(m:Match)-[:IN_TOURNAMENT]->(tour:Tournament {name: 'China PR 1991'}) WHERE r.score IS NOT NULL WITH t, COUNT(m) AS matchCount, AVG(r.score) AS avgScore RETURN t.name AS teamName, matchCount AS totalMatches, avgScore",
     "pred_cypher": "MATCH (n:Team)-[r0:participatedIn]->(m0:Tournament {name: 'China PR 1991'}) WITH n, avg(score) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2014,7 +2014,7 @@
     "gold_cypher": "MATCH (m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'China PR 1991'}) OPTIONAL MATCH (p:Person)-[sg:SCORED_GOAL]->(m) WITH t, m, COUNT(sg) AS goalsPerMatch WITH t, SUM(goalsPerMatch) AS totalGoals, COUNT(m) AS totalMatches RETURN t.name AS tournamentName, toFloat(totalGoals) / totalMatches AS avgGoalsPerMatch, totalMatches",
     "pred_cypher": "MATCH (n:Tournament {name: 'China PR 1991'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.013888888888888888
     }
@@ -2074,7 +2074,7 @@
     "gold_cypher": "MATCH (tour:Tournament {name: 'Canada 2015'})<-[:IN_TOURNAMENT]-(m:Match)<-[sg:SCORED_GOAL]-(p:Person) WITH tour, m, COUNT(sg) AS goalsPerMatch, p WITH tour, m, goalsPerMatch, COLLECT(DISTINCT p) AS playersPerMatch WITH tour, AVG(goalsPerMatch) AS avgGoalsPerMatch, SIZE(COLLECT(DISTINCT playersPerMatch)) AS totalPlayers RETURN tour.name AS tournamentName, avgGoalsPerMatch, totalPlayers",
     "pred_cypher": "MATCH (n:Tournament {name: 'Canada 2015'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0070921985815602835
     }
@@ -2314,7 +2314,7 @@
     "gold_cypher": "MATCH (t:Tournament {name: 'USA 1999'})<-[:IN_TOURNAMENT]-(m:Match)<-[r:SCORED_GOAL]-(:Person) WITH t, m, COUNT(r) AS goalsPerMatch WITH t, AVG(goalsPerMatch) AS avgGoalsPerMatch RETURN t.name AS tournamentName, avgGoalsPerMatch",
     "pred_cypher": "MATCH (n:Tournament {name: 'USA 1999'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.009900990099009901
     }
@@ -2444,7 +2444,7 @@
     "gold_cypher": "MATCH (m:Match)-[:IN_TOURNAMENT]->(tour:Tournament) OPTIONAL MATCH (:Person)-[sg:SCORED_GOAL]->(m) WITH tour, m, COUNT(sg) AS matchGoals WITH tour, SUM(matchGoals) AS totalGoals, COUNT(m) AS totalMatches RETURN tour.name AS tournamentName, totalGoals, totalMatches, CASE WHEN totalMatches > 0 THEN toFloat(totalGoals) / totalMatches ELSE 0 END AS avgGoalsPerMatch;",
     "pred_cypher": "MATCH (n:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.011799410029498525
     }
@@ -2594,7 +2594,7 @@
     "gold_cypher": "MATCH (p:Person)-[r:PLAYED_IN]->(m:Match) WHERE r.minuteOn IS NOT NULL WITH p, m, r.minuteOn AS minutesPlayed, r OPTIONAL MATCH (p)-[sg:SCORED_GOAL]->(m) WITH p, m, minutesPlayed, COUNT(sg) AS goalsScoredPerMatch WITH p, SUM(goalsScoredPerMatch) AS totalGoals, AVG(toFloat(minutesPlayed)) AS avgMinutesPlayed RETURN p.name AS personName, totalGoals, avgMinutesPlayed",
     "pred_cypher": "MATCH (n:Person)<-[r0:SCORED_GOAL]-(m0:Match) WITH DISTINCT n RETURN n.name, n.SCORED_GOAL, n.ROW minutesOn",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3065,7 +3065,9 @@
     "pred_cypher": "MATCH (n:Tournament)<-[r0:match]-(m0:Match) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.SyntaxError} {message: Unknown function 'apoc.coll.toSet' (line 1, column 252 (offset: 251))\r\n\"MATCH (tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match) OPTIONAL MATCH (p:Person)-[sg:SCORED_GOAL]->(m) WITH tour, m, COUNT(sg) AS matchGoals, COLLECT(DISTINCT p) AS playersPerMatch WITH tour, SUM(matchGoals) AS totalGoals, COUNT(m) AS totalMatches, SIZE(apoc.coll.toSet(REDUCE (s = [], p IN playersPerMatch | s + p.id))) AS totalScoringPlayers RETURN tour.name AS tournamentName, CASE WHEN totalMatches > 0 THEN toFloat(totalGoals) / totalMatches ELSE 0 END AS avgGoalsPerMatch, totalScoringPlayers\"\r\n                                                                                                                                                                                                                                                            ^} {gql_status: 42001} {gql_status_description: error: syntax error or access rule violation - invalid syntax}"
+      },
       "psjs": 0.0
     }
   },
@@ -3114,7 +3116,7 @@
     "gold_cypher": "MATCH (s:Squad)<-[:IN_SQUAD]-(p:Person) WHERE p.dob IS NOT NULL WITH s, p, p.dob AS birthDate MATCH (s:Squad)<-[:IN_SQUAD]-(p:Person)-[:PLAYED_IN]->(m:Match) WITH s, avg(date().year - birthDate.year) AS avgAge, count(m) AS totalMatches RETURN s.id AS squadId, avgAge, totalMatches",
     "pred_cypher": "MATCH (n:Squad)<-[r1:playsIn]-(m1:Player) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3244,7 +3246,7 @@
     "gold_cypher": "MATCH (tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match)<-[:PLAYED_IN]-(t:Team) WITH tour, m, COUNT(DISTINCT t) AS teamsPerMatch WITH tour, COUNT(DISTINCT m) AS totalMatches, AVG(teamsPerMatch) AS avgTeamsPerMatch RETURN tour.name AS tournamentName, totalMatches, avgTeamsPerMatch",
     "pred_cypher": "MATCH (n:Tournament) OPTIONAL MATCH (n:Tournament)<-[r1:match]-(m1:Match) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.024390243902439025
     }
@@ -3364,7 +3366,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'Sweden 1995'}) MATCH (t)-[:NAMED]->(s:Squad)<-[:IN_SQUAD]-(p:Person) OPTIONAL MATCH (p)-[sg:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(tour) WITH t, s, p, COUNT(sg) AS goalsPerPlayer WITH t, s, COUNT(DISTINCT p) AS squadSize, SUM(goalsPerPlayer) AS totalGoalsPerSquad RETURN t.name AS teamName, avg(squadSize) AS avgSquadSize, sum(totalGoalsPerSquad) AS totalGoalsScored",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament {name: 'Sweden 1995'}) WITH DISTINCT n RETURN n.name, n.Squad size, n.ScoresD_GOAL",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3464,7 +3466,7 @@
     "gold_cypher": "MATCH (m:Match) OPTIONAL MATCH (p:Person)-[sg:SCORED_GOAL]->(m) WITH m.date.year AS matchYear, m, COUNT(sg) AS goalsPerMatch WITH matchYear, COUNT(m) AS totalMatches, AVG(goalsPerMatch) AS avgGoalsPerMatch RETURN matchYear, totalMatches, avgGoalsPerMatch ORDER BY matchYear",
     "pred_cypher": "MATCH (n:Match) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.42388059701492536
     }
@@ -3764,7 +3766,7 @@
     "gold_cypher": "MATCH (t:Team)-[r:PLAYED_IN]->(m:Match) WHERE r.score IS NOT NULL WITH t, COUNT(m) AS totalMatches, SUM(r.score) AS totalGoals RETURN t.name AS teamName, totalGoals, totalMatches, CASE WHEN totalMatches = 0 THEN 0 ELSE toFloat(totalGoals) / totalMatches END AS avgGoalsPerMatch",
     "pred_cypher": "MATCH (n:Team) WITH DISTINCT n RETURN n.name, n.SCORED_GOAL, n.SCORED_GOAL",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.1125
     }
@@ -3944,7 +3946,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'France 2019'})<-[:IN_TOURNAMENT]-(m:Match)\nMATCH (p:Person)-[sg:SCORED_GOAL]->(m)\nWHERE (p)-[:REPRESENTS]->(t)\nWITH t, p, COUNT(sg) AS goalsPerPlayer\nWITH t, AVG(goalsPerPlayer) AS avgGoalsPerPlayer, COUNT(DISTINCT p) AS totalPlayers\nRETURN t.name AS teamName, avgGoalsPerPlayer, totalPlayers",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN avg(n.number_of_goals) WITH DISTINCT n RETURN n.number_of_players",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4034,7 +4036,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PLAYED_IN]->(m:Match) OPTIONAL MATCH (p:Person)-[sg:SCORED_GOAL]->(m) WHERE (p)-[:REPRESENTS]->(t) WITH t, m, COUNT(sg) AS goalsPerMatch WITH t, SUM(goalsPerMatch) AS totalGoals, COUNT(DISTINCT m) AS totalMatches RETURN t.name AS teamName, totalGoals, totalMatches, CASE WHEN totalMatches = 0 THEN 0 ELSE toFloat(totalGoals) / totalMatches END AS avgGoalsPerMatch",
     "pred_cypher": "MATCH (n:Team) WITH DISTINCT n RETURN n.name, n.SCORED_GOAL, n.SCORED_GOAL per match",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.05099150141643059
     }
@@ -4174,7 +4176,7 @@
     "gold_cypher": "MATCH (tournament:Tournament)<-[:IN_TOURNAMENT]-(match:Match)\nWITH tournament.year AS tournamentYear, tournament, match\nMATCH (team:Team)-[:PARTICIPATED_IN]->(tournament)\nWITH tournamentYear, COUNT(DISTINCT match) AS totalMatches, COUNT(DISTINCT team) AS totalTeams, tournament\nWITH tournamentYear, totalMatches, AVG(totalTeams) AS avgTeamsPerTournament\nRETURN tournamentYear, totalMatches, avgTeamsPerTournament",
     "pred_cypher": "MATCH (n:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0273972602739726
     }
@@ -4214,7 +4216,7 @@
     "gold_cypher": "MATCH (s:Squad)<-[:IN_SQUAD]-(p:Person)-[:PLAYED_IN]->(m:Match) WITH s, p, COUNT(m) AS matchesPlayedPerPlayer WITH s, COUNT(DISTINCT p) AS totalPlayers, AVG(matchesPlayedPerPlayer) AS avgMatchesPerPlayer RETURN s.id AS squadId, totalPlayers, avgMatchesPerPlayer",
     "pred_cypher": "MATCH (n:Squad)<-[r1:playsIn]-(m1:Player) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4234,7 +4236,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match) WITH tour.year AS tournamentYear, tour, t, m WITH tournamentYear, tour, COUNT(DISTINCT t) AS numTeams, COUNT(DISTINCT m) AS numMatchesPerTournament WITH tournamentYear, AVG(numTeams) AS avgTeamsPerTournament, SUM(numMatchesPerTournament) AS totalMatchesPlayed RETURN tournamentYear, avgTeamsPerTournament, totalMatchesPlayed",
     "pred_cypher": "MATCH (n:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.024390243902439025
     }
@@ -4364,7 +4366,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament) MATCH (t)-[:NAMED]->(s:Squad)-[:FOR]->(tour) MATCH (p:Person)-[:IN_SQUAD]->(s) WITH t, tour, s, COUNT(p) AS squadSize WITH t, tour, AVG(squadSize) AS avgSquadSize RETURN t.name AS teamName, tour.name AS tournamentName, avgSquadSize",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament) WITH DISTINCT n RETURN n.name, n.Squad size",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4414,7 +4416,7 @@
     "gold_cypher": "MATCH (tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match)<-[r:PLAYED_IN]-(p:Person) WHERE r.type = 'Subbed On' OPTIONAL MATCH (p)-[sg:SCORED_GOAL]->(m) WITH tour, m, p, COUNT(sg) AS goalsScoredBySubbedOnPlayer WITH tour, m, AVG(goalsScoredBySubbedOnPlayer) AS avgGoalsBySubbedOnPlayersPerMatch WITH tour, COUNT(DISTINCT m) AS totalMatches, AVG(avgGoalsBySubbedOnPlayersPerMatch) AS avgGoalsBySubbedOnPlayers RETURN tour.name AS tournamentName, avgGoalsBySubbedOnPlayers, totalMatches",
     "pred_cypher": "MATCH (n:Tournament)<-[r0:match]-(m0:Player)-[r1:Subbed On]->(m1:Club {name: 'Subbed On'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4584,7 +4586,7 @@
     "gold_cypher": "MATCH (m:Match)\nOPTIONAL MATCH (p:Person)-[sg:SCORED_GOAL]->(m)\nWITH m.date.year AS matchYear, m, COUNT(sg) AS goals\nWITH matchYear, COUNT(m) AS totalMatches, SUM(goals) AS totalGoals\nRETURN matchYear, toFloat(totalGoals) / totalMatches AS avgGoalsPerMatch, totalMatches",
     "pred_cypher": "MATCH (n:Match) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.42388059701492536
     }
@@ -4594,7 +4596,7 @@
     "gold_cypher": "MATCH (m:Match)-[:IN_TOURNAMENT]->(tour:Tournament {name: 'Germany 2011'}) OPTIONAL MATCH (p:Person)-[sg:SCORED_GOAL]->(m) WITH tour, m, COUNT(sg) AS matchGoals WITH tour, SUM(matchGoals) AS totalGoals, COUNT(m) AS totalMatches RETURN tour.name AS tournamentName, CASE WHEN totalMatches > 0 THEN toFloat(totalGoals) / totalMatches ELSE 0 END AS avgGoalsPerMatch, totalMatches;",
     "pred_cypher": "MATCH (n:Tournament {name: 'Germany 2011'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.011235955056179775
     }
@@ -4634,7 +4636,7 @@
     "gold_cypher": "MATCH (t:Team)-[r:PLAYED_IN]->(m:Match)\nWHERE r.score IS NOT NULL\nWITH t, COUNT(m) AS totalMatches, SUM(r.score) AS totalGoals\nWHERE totalMatches > 0\nRETURN t.name AS teamName, totalMatches, toFloat(totalGoals) / totalMatches AS avgGoals",
     "pred_cypher": "MATCH (n:Team)<-[r0:playsAt]-(m0:Match) WITH DISTINCT n RETURN n.name, n.SUM, n.SUM",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4814,7 +4816,7 @@
     "gold_cypher": "MATCH (t:Team)<-[:REPRESENTS]-(p:Person)-[sg:SCORED_GOAL]->(m:Match) WITH t, p, COUNT(sg) AS goalsPerPlayer WITH t, AVG(goalsPerPlayer) AS avgGoalsPerPlayer RETURN t.name AS teamName, avgGoalsPerPlayer",
     "pred_cypher": "MATCH (n:Team)<-[r0:playsIn]-(m0:Match)<-[r1:playsIn]-(m1:Player)-[r1:representing]->(m1:Team {name: 'n'}) WITH DISTINCT n RETURN n.name, n.S SCORED_GOAL",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5084,7 +5086,7 @@
     "gold_cypher": "MATCH (tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match)<-[sg:SCORED_GOAL]-(p:Person) WITH tour, m, COUNT(sg) AS goalsPerMatch WITH tour, SUM(goalsPerMatch) AS totalGoals, COUNT(m) AS totalMatches RETURN tour.name AS tournamentName, totalGoals, totalMatches, CASE WHEN totalMatches > 0 THEN toFloat(totalGoals) / totalMatches ELSE 0 END AS avgGoalsPerMatch",
     "pred_cypher": "MATCH (n:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.011940298507462687
     }
@@ -5524,7 +5526,7 @@
     "gold_cypher": "MATCH (tour:Tournament)<-[:IN_TOURNAMENT]-(m:Match)<-[sg:SCORED_GOAL]-(:Person) WITH tour, m, COUNT(sg) AS goalsPerMatch WITH tour, SUM(goalsPerMatch) AS totalGoals, COUNT(m) AS totalMatches RETURN tour.name AS tournamentName, totalGoals, CASE WHEN totalMatches > 0 THEN toFloat(totalGoals) / totalMatches ELSE 0 END AS avgGoalsPerMatch",
     "pred_cypher": "MATCH (n:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.011940298507462687
     }
@@ -5934,7 +5936,7 @@
     "gold_cypher": "MATCH (team:Team {name: 'Canada'})-[:PLAYED_IN]->(match:Match)<-[:SCORED_GOAL]-(player:Person) WITH match, player MATCH (player)-[scored:SCORED_GOAL]->(match) RETURN player.name AS playerName, match.date AS matchDate, scored.minute AS goalMinute",
     "pred_cypher": "MATCH (n:Player)-[r0:SCORED_GOAL]->(m0:Integer) WITH DISTINCT n WHERE n.Team = (m0:Team {name: 'Canada'}) RETURN n.name, n.date",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6084,7 +6086,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(tour:Tournament {name: 'France 2019'}), (t:Team)-[:NAMED]->(s) RETURN p.name AS coachName, t.name AS teamName",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN n.name, n.Team",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6164,7 +6166,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(t:Tournament {name: 'France 2019'}) RETURN p.name AS coachName",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6354,7 +6356,7 @@
     "gold_cypher": "MATCH (t:Team {name: 'Colombia'})-[:PLAYED_IN]->(m:Match), (p:Person)-[sg:SCORED_GOAL]->(m) RETURN m.id AS matchId, p.name AS playerName, sg.minute AS goalMinute",
     "pred_cypher": "MATCH (n:Match)<-[r1:playsIn]-(m1:Team {name: 'Colombia'}) OPTIONAL MATCH (n:Match)<-[r0:playsIn]-(m0:Player)-[r0:SCORED_GOAL]->(m0:Integer) WITH n, m0 AS m RETURN n.name, m0.minuteOn",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6494,7 +6496,7 @@
     "gold_cypher": "MATCH (s:Squad)-[:FOR]->(t:Tournament), (p:Person)-[:IN_SQUAD]->(s) WHERE date(p.dob) < date('1980-01-01') WITH s, COUNT(p) AS playerCount RETURN s.id AS squadId, playerCount",
     "pred_cypher": "MATCH (n:Squad)<-[r0:participatedIn]-(m0:Tournament) WITH n, count(DISTINCT m0) AS num WHERE n.dob < 1980 AND (n.id = m0) OR (n.id <> m0) RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6544,7 +6546,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(t:Tournament {name: 'France 2019'}) RETURN p.name AS coachName, s.id AS squadId",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -6834,7 +6836,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(tour:Tournament {name: 'China 2007'}) RETURN p.name AS coachName, s.id AS squadId",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'China 2007'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7054,7 +7056,7 @@
     "gold_cypher": "MATCH (m:Match)-[:IN_TOURNAMENT]->(tour:Tournament {name: 'China PR 1991'}), (t:Team)-[:PLAYED_IN]->(m) RETURN m.id AS matchId, t.name AS teamName",
     "pred_cypher": "MATCH (n:Match {name: 'China PR 1991'}) OPTIONAL MATCH (n:Match)<-[r0:playsIn]-(m0:Team) WITH DISTINCT n RETURN n.name, m0",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7474,7 +7476,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(t:Tournament {name: 'Germany 2011'}) RETURN p.name AS coachName, s.id AS squadId",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7504,7 +7506,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(tour:Tournament {name: 'France 2019'}) RETURN p.name AS coachName, s.id AS squadId",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7544,7 +7546,7 @@
     "gold_cypher": "MATCH (coach:Person)-[:COACH_FOR]->(squad:Squad)-[:FOR]->(tournament:Tournament {year: 1999}) RETURN coach.name AS CoachName",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:in_Tournament]->(m1:Tournament {name: '1999'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7694,7 +7696,7 @@
     "gold_cypher": "MATCH (p:Person)-[:PLAYED_IN]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'France 2019'}) WHERE date(p.dob) > date('1970-01-01') RETURN p.name AS playerName, p.dob AS playerDob, t.name AS tournamentName",
     "pred_cypher": "MATCH (n:Player)-[r0:playsIn]->(m0:Match)-[r1:in_Tournament]->(m1:Tournament {name: 'France 2019'}) WITH DISTINCT n WHERE n.date_of_birth.year > 1970-01-01 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7774,7 +7776,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(t:Tournament {name: 'Germany 2011'}) RETURN p.name AS CoachName, s.id AS SquadID",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -8194,7 +8196,7 @@
     "gold_cypher": "MATCH (m:Match {stage: 'First Stage'})-[:IN_TOURNAMENT]->(t:Tournament {name: 'France 2019'}), (team:Team)-[:PLAYED_IN]->(m), (player:Person)-[sg:SCORED_GOAL]->(m), (player)-[:REPRESENTS]->(team) RETURN team.name AS teamName, player.name AS playerName, sg.minute AS goalMinute",
     "pred_cypher": "MATCH (n:Team)<-[r0:playsIn]-(m0:Match)-[r1:participatedIn]->(m1:Tournament {name: 'France 2019'}) WITH n, (m0:Painting {name: 'goal'}) RETURN n.name, m0.minuteOn",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -8354,7 +8356,7 @@
     "gold_cypher": "MATCH (coach:Person)-[:COACH_FOR]->(squad:Squad)-[:FOR]->(tournament1:Tournament {name: 'USA 1999'})\nMATCH (coach)-[:COACH_FOR]->(squad2:Squad)-[:FOR]->(tournament2:Tournament {name: 'Germany 2011'})\nRETURN coach.name AS coachName",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'USA 1999'}),(n:Person)<-[r1:coached squads]-(m1:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -8464,7 +8466,7 @@
     "gold_cypher": "MATCH (coach:Person)-[:COACH_FOR]->(squad:Squad)-[:FOR]->(tournament:Tournament {name: 'France 2019'}), (player:Person)-[:IN_SQUAD]->(squad) RETURN coach.name AS coachName, player.name AS playerName",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached]-(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN n.name, n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -8504,7 +8506,7 @@
     "gold_cypher": "MATCH (t:Tournament {name: 'Germany 2011'})<-[:IN_TOURNAMENT]-(m:Match)<-[:PLAYED_IN]-(p:Person)-[:REPRESENTS]->(team:Team {name: 'Equatorial Guinea'}) RETURN m.id AS matchId, p.name AS playerName, m.stage AS matchStage",
     "pred_cypher": "MATCH (n:Match)-[r0:in_Tournament]->(m0:Tournament {name: 'Germany 2011'}),(n:Match)-[r1:Player]-[r1:REPRESENTS]->(m1:Team {name: 'Equatorial Guinea'}) WITH DISTINCT n RETURN n.name, n.stage",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -8724,7 +8726,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(tour:Tournament {year: 1999}) RETURN p.name AS coachName, p.id AS coachId, tour.name AS tournamentName",
     "pred_cypher": "MATCH (n:Person)<-[r0:coachFor]-(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: '1999'}) WITH n, (m0:Tournament) AS m RETURN n.name, m.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9004,7 +9006,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(tour:Tournament {year: 1995}) RETURN p.name AS coachName, tour.name AS tournamentName",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:in_Tournament]->(m1:Tournament) WITH DISTINCT n WHERE n.date.year = 1995 RETURN n.name, n.associated_tournament",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9094,7 +9096,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(tour:Tournament {name: 'USA 2003'}), (t:Team)-[:NAMED]->(s) RETURN p.name AS coachName, t.name AS teamName",
     "pred_cypher": "MATCH (n:Person)<-[r0:coaching]-(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'USA 2003'}) WITH n, each m0:Team RETURN n.name, m0:Team",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9564,7 +9566,7 @@
     "gold_cypher": "MATCH (c:Person {name: 'Effiom Ntiero'})-[:COACH_FOR]->(s:Squad)-[:FOR]->(t:Tournament), (p:Person)-[:IN_SQUAD]->(s) RETURN p.name AS playerName, t.name AS tournamentName",
     "pred_cypher": "MATCH (n:Player)-[r1:coachedBy]->(m1:Squad {name: 'Effiom Ntiero'}) OPTIONAL MATCH (n:Player)-[r0:participatedIn]->(m0:Tournament) WITH DISTINCT n RETURN n.name, m0.Tournament",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9584,7 +9586,7 @@
     "gold_cypher": "MATCH (t:Tournament {name: 'France 2019'})<-[:PARTICIPATED_IN]-(team:Team)<-[:REPRESENTS]-(player:Person) RETURN team.name AS TeamName, player.name AS PlayerName",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament {name: 'France 2019'}) WITH DISTINCT n WHERE n.name IN_SQUAD n:Player)-[r1:representing]->(m1:Team {name: 'n'}) RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9644,7 +9646,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {year: 2015}), (p:Person)-[sg:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(tour), (p)-[:REPRESENTS]->(t) RETURN t.name AS teamName, p.name AS playerName, sg.minute AS goalMinute",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament)-[r1:year]->(m1:DATE {name: '2015'}) WITH n, (m0:Player)-[r1:SCORED_GOAL]->(m1:INTEGER) WITH DISTINCT n RETURN n.name, n.minuteOn",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9764,7 +9766,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'USA 1999'}), (p:Person)-[:REPRESENTS]->(t) RETURN t.name AS teamName, p.name AS playerName",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament {name: 'USA 1999'}) WITH DISTINCT n RETURN n.name, n.associated players",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9804,7 +9806,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(t:Tournament {name: 'France 2019'}) RETURN p.name AS coachName, s.id AS squadId",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10054,7 +10056,7 @@
     "gold_cypher": "MATCH (t:Team {name: 'Ghana'})-[:PLAYED_IN]->(m:Match), (p:Person)-[:PLAYED_IN]->(m) RETURN DISTINCT p.name AS playerName, m.stage AS matchStage",
     "pred_cypher": "MATCH (n:Match)<-[r1:playsIn]-(m1:Team {name: 'Ghana'}) OPTIONAL MATCH (n:Match)<-[r0:playsIn]-(m0:Player) WITH n, r0 AS r RETURN n.name, r0.stage",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10314,7 +10316,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'China PR 1991'}), (p:Person)-[:REPRESENTS]->(t), (p)-[:PLAYED_IN]->(m:Match), (m)-[:IN_TOURNAMENT]->(tour) RETURN t.name AS teamName, collect(DISTINCT p.name) AS playerNames",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament {name: 'China PR 1991'}) WITH DISTINCT n RETURN n.name, n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10354,7 +10356,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'China PR 1991'}), (p:Person)-[:REPRESENTS]->(t), (p)-[:IN_SQUAD]->(s:Squad {id: 'Sweden in 1991'}) RETURN t.name AS teamName, p.name AS playerName",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament {name: 'China PR 1991'}) WITH DISTINCT n WHERE n.name IN_SQUAD {name: 'Sweden in 1991'}) RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10434,7 +10436,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(t:Tournament {name: 'USA 1999'}) RETURN p.name AS coachName, s.id AS squadId",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'USA 1999'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10514,7 +10516,7 @@
     "gold_cypher": "MATCH (t:Tournament {name: 'Canada 2015'})<-[:FOR]-(s:Squad)<-[:IN_SQUAD]-(p:Person)-[:REPRESENTS]->(team:Team), (team)-[:PARTICIPATED_IN]->(t) RETURN team.name AS teamName, p.name AS playerName",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament {name: 'Canada 2015'}) WITH DISTINCT n WHERE n.name IN_SQUAD RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10594,7 +10596,7 @@
     "gold_cypher": "MATCH (tournament:Tournament {name: 'France 2019'})<-[:FOR]-(squad:Squad)<-[:COACH_FOR]-(coach:Person) RETURN coach.name AS CoachName, squad.id AS SquadId",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10714,7 +10716,7 @@
     "gold_cypher": "MATCH (p:Person)-[:PLAYED_IN]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'USA 2003'}) RETURN p.name AS PlayerName, m.stage AS MatchStage, m.date AS MatchDate",
     "pred_cypher": "MATCH (n:Player)-[r1:playsIn]->(m1:Match)-[r0:in]->(m0:Tournament {name: 'USA 2003'}) OPTIONAL MATCH (n:Player)-[r0:playsIn]->(m0:Match) WITH n, date AS d RETURN n.name, d",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10844,7 +10846,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(tour:Tournament {year: 2019}) RETURN p.name AS coachName, tour.name AS tournamentName",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:in_Tournament]->(m1:Tournament) WITH DISTINCT n WHERE n.date.year = 2019 RETURN n.name, m1.Tournament",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -11024,7 +11026,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(t:Tournament {name: 'Canada 2015'}) RETURN p.name AS coachName, s.id AS squadId",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'Canada 2015'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -11144,7 +11146,7 @@
     "gold_cypher": "MATCH (p:Person)-[:REPRESENTS]->(t:Team), (p)-[sg:SCORED_GOAL]->(m:Match) RETURN p.name AS playerName, t.name AS teamName, m.id AS matchId",
     "pred_cypher": "MATCH (n:Player)-[r0:REPRESENTS]->(m0:Team)<-[r1:playsIn]-(m1:Match) WITH DISTINCT n RETURN n.name, n.Team, n.match ID",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -11304,7 +11306,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad)-[:FOR]->(tour:Tournament {name: 'China 2007'}) RETURN p.name AS coachName, s.id AS squadId",
     "pred_cypher": "MATCH (n:Person)<-[r0:coached squads]-[r1:participatedIn]->(m1:Tournament {name: 'China 2007'}) WITH DISTINCT n RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -11524,7 +11526,7 @@
     "gold_cypher": "MATCH (team:Team)-[:PARTICIPATED_IN]->(tournament:Tournament {year: 2019}), (team)-[:PLAYED_IN]->(match:Match)-[:IN_TOURNAMENT]->(tournament) WITH team, COUNT(match) AS matchCount RETURN team.name AS TeamName, matchCount ORDER BY matchCount DESC",
     "pred_cypher": "MATCH (n:Team)<-[r1:participatedIn]-(m1:Tournament) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -12464,7 +12466,7 @@
     "gold_cypher": "MATCH (p:Person {id: '181255'}) RETURN p.dob AS personDOB;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob.date.year = 181255 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -13084,7 +13086,7 @@
     "gold_cypher": "MATCH (p:Person {id:'217080'}) RETURN p.dob AS dateOfBirth;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob = date('217080') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -13194,7 +13196,7 @@
     "gold_cypher": "MATCH (p:Person {id: '277701'}) RETURN p.dob AS personDob;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob.date = date('277701') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -13904,7 +13906,7 @@
     "gold_cypher": "MATCH (p:Person {id: '277108'})-[:PLAYED_IN]->(m:Match) RETURN m.stage AS matchStage;",
     "pred_cypher": "MATCH (n:Match)<-[r0:playsIn]-(m0:Player {name: 'Ayumi Kaihori with ID '277108'}) WITH DISTINCT n RETURN n.stage",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -14004,7 +14006,7 @@
     "gold_cypher": "MATCH (p:Person {id: '508'}) RETURN p.dob AS personDateOfBirth;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob = date('508') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -14624,7 +14626,7 @@
     "gold_cypher": "MATCH (p:Person) WHERE p.id = '200387' RETURN p.dob AS personDob;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob.date.year = 200387 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -14944,7 +14946,7 @@
     "gold_cypher": "MATCH (p:Person {id: '212572'}) RETURN p.dob AS personDob;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob = date('212572') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -15084,7 +15086,7 @@
     "gold_cypher": "MATCH (p:Person {id: '365'}) RETURN p.dob AS personDob;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob.date.year = 365 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -15354,7 +15356,7 @@
     "gold_cypher": "MATCH (p:Person {id:'75'}) RETURN p.dob AS dateOfBirth;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob = date('75') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -15434,7 +15436,7 @@
     "gold_cypher": "MATCH (p:Person {id:'264571'}) RETURN p.dob AS personDob;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob = date('264571') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -17034,7 +17036,7 @@
     "gold_cypher": "MATCH (p:Person {id:'191355'}) RETURN p.dob AS personDob;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob = date('191355') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -17164,7 +17166,7 @@
     "gold_cypher": "MATCH (p:Person {id: '178571'}) RETURN p.dob AS personDOB;",
     "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.dob = date('178571') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -17484,7 +17486,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'Germany 2011'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad;",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -17544,7 +17546,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Squad) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.06589147286821706
     }
@@ -17574,7 +17576,7 @@
     "gold_cypher": "MATCH (t:Team {name:'Thailand'})-[r:PLAYED_IN]->(m:Match) WHERE r.score IS NOT NULL RETURN AVG(r.score) AS averageGoals;",
     "pred_cypher": "MATCH (n:Match)-[r0:playsBy]->(m0:Team {name: 'Thailand'}) WITH DISTINCT n RETURN avg(n SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -17664,7 +17666,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament) WITH tour, COUNT(t) AS teamCount RETURN AVG(teamCount) AS avgTeamsPerTournament",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -17824,7 +17826,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad {id: 'Ghana in 2003'}) RETURN COUNT(p) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Person)<-[r0:in_SQUAD]-(m0:Squad {name: 'Ghana in 2003'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -17844,7 +17846,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'China 2007'}) WITH COUNT(t) AS teamCount RETURN AVG(teamCount) AS avgTeamsInTournament",
     "pred_cypher": "MATCH (n:Team)-[r0:participatedIn]->(m0:Tournament {name: 'China 2007'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -17984,7 +17986,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'France 2019'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18194,7 +18196,7 @@
     "gold_cypher": "MATCH (t:Team {name: 'Russia'})-[r:PLAYED_IN]->(m:Match) WHERE r.score IS NOT NULL RETURN AVG(r.score) AS averageGoalsScored",
     "pred_cypher": "MATCH (n:Match)-[r0:playsBy]->(m0:Team {name: 'Russia'}) WITH DISTINCT n RETURN avg(n.S SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18204,7 +18206,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Squad) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.06589147286821706
     }
@@ -18234,7 +18236,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'USA 1999'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'USA 1999'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18484,7 +18486,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament) WITH tour, COUNT(t) AS teamCount RETURN AVG(teamCount) AS avgTeamsPerTournament;",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18504,7 +18506,7 @@
     "gold_cypher": "MATCH (m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'Sweden 1995'}) RETURN COUNT(m) AS matchCount;",
     "pred_cypher": "MATCH (n:Match)-[r0:in_Tournament]->(m0:Tournament {name: 'Sweden 1995'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18594,7 +18596,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'USA 1999'}) WITH COUNT(t) AS teamCount RETURN AVG(teamCount) AS avgTeamsInTournament",
     "pred_cypher": "MATCH (n:Team)-[r0:participatedIn]->(m0:Tournament {name: 'USA 1999'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18664,7 +18666,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament) WITH tour, COUNT(t) AS teamCount RETURN AVG(teamCount) AS avgTeamsPerTournament",
     "pred_cypher": "MATCH (n:Team)<-[r0:team]-(m0:Tournament) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18954,7 +18956,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'Sweden 1995'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'Sweden 1995'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19054,7 +19056,7 @@
     "gold_cypher": "MATCH (p:Person {name: 'Susanne Hedberg'})-[r:SCORED_GOAL]->(m:Match) RETURN COUNT(r) AS totalGoalsScored",
     "pred_cypher": "MATCH (n:Person {name: 'Susanne Hedberg'}), (m0:Match) WITH DISTINCT n RETURN avg(n SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.007017543859649123
     }
@@ -19214,7 +19216,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'China PR 1991'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad;",
     "pred_cypher": "MATCH (n:Player)-[r0:playsIn]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'China PR 1991'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19244,7 +19246,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'USA 2003'}) WITH COUNT(t) AS teamCount RETURN avg(teamCount) AS averageTeams",
     "pred_cypher": "MATCH (n:Team)-[r0:participatedIn]->(m0:Tournament {name: 'USA 2003'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19274,7 +19276,7 @@
     "gold_cypher": "MATCH (t:Team {name: 'England'})-[r:PLAYED_IN]->(m:Match) WHERE r.score IS NOT NULL RETURN AVG(r.score) AS averageScore;",
     "pred_cypher": "MATCH (n:Match)-[r0:playsBy]->(m0:Team {name: 'England'}) WITH DISTINCT n RETURN avg(n.S SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19354,7 +19356,7 @@
     "gold_cypher": "MATCH (p:Person)-[:REPRESENTS]->(t:Team) WITH p, COUNT(t) AS teamCount RETURN AVG(teamCount) AS avgTeamsPerPerson",
     "pred_cypher": "MATCH (n:Team)<-[r0:team]-(m0:Person) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19374,7 +19376,7 @@
     "gold_cypher": "MATCH (p:Person)-[r:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'USA 1999'}) RETURN COUNT(r) AS totalGoalsInUSA1999",
     "pred_cypher": "MATCH (n:SCORED_GOAL)<-[r0:SCORED_GOAL]-(m0:Match)-[r1:IN_Tournament]->(m1:Tournament {name: 'USA 1999'}) WITH DISTINCT n RETURN n.count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19484,7 +19486,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {id: '278513'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: '278513'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19524,7 +19526,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'Sweden 1995'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad;",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'Sweden 1995'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19534,7 +19536,7 @@
     "gold_cypher": "MATCH (p:Person)-[r:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'USA 1999'}) RETURN COUNT(r) AS totalGoals;",
     "pred_cypher": "MATCH (n:SCORED_GOAL)<-[r0:SCORED_GOAL]-(m0:Match)-[r1:MATCH]->(m1:Tournament {name: 'USA 1999'}) WITH DISTINCT n RETURN total(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19584,7 +19586,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {id: '3373'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad;",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: '3373'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19624,7 +19626,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'USA 2003'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'USA 2003'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19644,7 +19646,7 @@
     "gold_cypher": "MATCH (p:Person)-[:SCORED_GOAL]->(m:Match) WITH p, COUNT(m) AS matchCount RETURN AVG(matchCount) AS avgMatchesScoredIn",
     "pred_cypher": "MATCH (n:Match)<-[r0:playsIn]-(m0:Person)-[r1:SCORED_GOAL]->(m1:INTEGER) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19764,7 +19766,7 @@
     "gold_cypher": "MATCH (t:Team {name: 'Norway'})-[r:PLAYED_IN]->(m:Match) WHERE r.score IS NOT NULL RETURN AVG(r.score) AS averageGoals",
     "pred_cypher": "MATCH (n:Match)-[r0:playsBy]->(m0:Team {name: 'Norway'}) WITH DISTINCT n RETURN avg(n SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19924,7 +19926,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'China PR 1991'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad;",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'China PR 1991'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20034,7 +20036,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'China PR 1991'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Player)-[r0:in_Squad]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'China PR 1991'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20044,7 +20046,7 @@
     "gold_cypher": "MATCH (p:Person {name: 'Christine Sinclair'})-[r:SCORED_GOAL]->(m:Match) WITH m, COUNT(r) AS goalsScored RETURN AVG(goalsScored) AS avgGoals;",
     "pred_cypher": "MATCH (n:Match)<-[r0:SCORED_GOAL]-(m0:Person {name: 'Christine Sinclair'}) WITH DISTINCT n RETURN avg(n SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -20084,7 +20086,7 @@
     "gold_cypher": "MATCH (t:Tournament {name: 'USA 2003'})<-[:IN_TOURNAMENT]-(m:Match)<-[r:PLAYED_IN]-(:Team) WHERE r.score IS NOT NULL WITH r.score AS score RETURN avg(score) AS AverageGoals;",
     "pred_cypher": "MATCH (n:Match)-[r0:participatedIn]->(m0:Tournament {name: 'USA 2003'}) WITH DISTINCT n RETURN avg(n.S SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20254,7 +20256,7 @@
     "gold_cypher": "MATCH (p:Person {name: 'Anneli Andelen'})-[r:SCORED_GOAL]->(m:Match) WHERE r.minute IS NOT NULL WITH r.minute AS minute ORDER BY minute DESC LIMIT 1 RETURN minute AS highestGoalsScored",
     "pred_cypher": "MATCH (n:Person {name: 'Anneli Andelen'}) WITH DISTINCT n RETURN max(n SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.25
     }
@@ -20264,7 +20266,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'USA 2003'}) WITH COUNT(t) AS teamCount RETURN AVG(teamCount) AS avgTeamsInTournament",
     "pred_cypher": "MATCH (n:Team)-[r0:participatedIn]->(m0:Tournament {name: 'USA 2003'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20284,7 +20286,7 @@
     "gold_cypher": "MATCH (p:Person)-[r:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'USA 2003'}) RETURN COUNT(r) AS totalGoalsScored",
     "pred_cypher": "MATCH (n:SCORED_GOAL)<-[r0:SCORED_GOAL]-(m0:Match)-[r1:participatedIn]->(m1:Tournament {name: 'USA 2003'}) WITH DISTINCT n RETURN total(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20294,7 +20296,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad {id: 'Australia in 2007'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Player)-[r0:in_Squad]->(m0:Squad {name: 'Australia in 2007'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20324,7 +20326,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'USA 2003'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'USA 2003'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20394,7 +20396,7 @@
     "gold_cypher": "MATCH (p:Person)-[:REPRESENTS]->(t:Team) WITH t, COUNT(p) AS personCount RETURN AVG(personCount) AS averagePersonsPerTeam",
     "pred_cypher": "MATCH (n:Person)<-[r0:Person]-(m0:Team) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20564,7 +20566,7 @@
     "gold_cypher": "MATCH (p:Person)-[r:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'France 2019'}) WITH r.minute as goals WHERE goals IS NOT NULL RETURN count(goals) AS totalGoals;",
     "pred_cypher": "MATCH (n:Match)-[r0:in_Tournament]->(m0:Tournament {name: 'France 2019'}) WITH DISTINCT n RETURN avg(n SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20604,7 +20606,7 @@
     "gold_cypher": "MATCH (p:Person)-[r:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'Germany 2011'}) WHERE r.minute IS NOT NULL RETURN COUNT(r) AS totalGoals",
     "pred_cypher": "MATCH (n:Match)-[r0:in_Tournament]->(m0:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN avg(n SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20614,7 +20616,7 @@
     "gold_cypher": "MATCH (p:Person)-[:COACH_FOR]->(s:Squad) RETURN s.id AS squadId, COUNT(DISTINCT p) AS numberOfCoaches",
     "pred_cypher": "MATCH (n:Person)<-[r0:coachFor]-(m0:Squad) WITH DISTINCT n RETURN n.count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20634,7 +20636,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {name: 'Germany 2011'}) RETURN COUNT(t) AS totalTeams",
     "pred_cypher": "MATCH (n:Team)-[r0:participatedIn]->(m0:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20684,7 +20686,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Person)-[r0:in_Squad]->(m0:Squad) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20714,7 +20716,7 @@
     "gold_cypher": "MATCH (t:Team)-[r:PLAYED_IN]->(m:Match) WHERE m.date.year = 2003 AND r.score IS NOT NULL WITH m, AVG(r.score) AS avgScore RETURN avgScore",
     "pred_cypher": "MATCH (n:Match)-[r0:playsIn]->(m0:DATE {name: '2003'}) WITH DISTINCT n RETURN avg(n.S SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20844,7 +20846,7 @@
     "gold_cypher": "MATCH (p:Person)-[:SCORED_GOAL]->(m:Match) WITH m, COUNT(p) AS scorerCount RETURN AVG(scorerCount) AS avgScorersPerMatch",
     "pred_cypher": "MATCH (n:Person)<-[r0:playsIn]-(m0:Match)-[r1:SCORED_GOAL]->(m1:INTEGER) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21284,7 +21286,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad",
     "pred_cypher": "MATCH (n:Player)-[r0:in_squad]->(m0:Squad) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21324,7 +21326,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name:'Germany 2011'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad;",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21334,7 +21336,7 @@
     "gold_cypher": "MATCH (p:Person)-[r:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name:'Germany 2011'}) RETURN COUNT(r) AS totalGoals;",
     "pred_cypher": "MATCH (n:SCHEMA) WITH DISTINCT n WHERE n.Tournament = {name: 'Germany 2011'}) RETURN count(DISTINCT n.SCHEMA)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21354,7 +21356,7 @@
     "gold_cypher": "MATCH (p:Person)-[r:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(t:Tournament {name: 'USA 2003'}) RETURN COUNT(r) AS totalGoals",
     "pred_cypher": "MATCH (n:SCORED_GOAL)<-[r0:SCORED_GOAL]-(m0:Match)-[r1:IN_Tournament]->(m1:Tournament {name: 'USA 2003'}) WITH DISTINCT n RETURN sum(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21574,7 +21576,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'Canada 2015'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad;",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'Canada 2015'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21594,7 +21596,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PARTICIPATED_IN]->(tour:Tournament {shortName: 'usa2003'}) WITH tour, COUNT(t) AS teamCount RETURN AVG(teamCount) AS avgTeamsPerTournament;",
     "pred_cypher": "MATCH (n:Team)<-[r0:participatedIn]-(m0:Tournament)-[r1:shortName]->(m1:STRING {name: 'usa2003'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21644,7 +21646,7 @@
     "gold_cypher": "MATCH (t:Tournament {name: 'China PR 1991'})<-[:IN_TOURNAMENT]-(m:Match)<-[r:PLAYED_IN]-(team:Team) WHERE r.score IS NOT NULL RETURN avg(r.score) AS averageGoals",
     "pred_cypher": "MATCH (n:Match)-[r0:in_Tournament]->(m0:Tournament {name: 'China PR 1991'}) WITH DISTINCT n RETURN avg(n.S SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21714,7 +21716,7 @@
     "gold_cypher": "MATCH (p:Person)-[:REPRESENTS]->(t:Team) WITH t, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerTeam;",
     "pred_cypher": "MATCH (n:Person)-[r0:REPRESENTS]->(m0:Team) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -21794,7 +21796,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {name: 'Germany 2011'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad;",
     "pred_cypher": "MATCH (n:Player)-[r0:in_SQUAD]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: 'Germany 2011'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -22274,7 +22276,7 @@
     "gold_cypher": "MATCH (p:Person)-[:IN_SQUAD]->(s:Squad)-[:FOR]->(t:Tournament {id: '251475'}) WITH s, COUNT(p) AS playerCount RETURN AVG(playerCount) AS avgPlayersPerSquad;",
     "pred_cypher": "MATCH (n:Player)-[r0:in_Squad]->(m0:Squad)-[r1:participatedIn]->(m1:Tournament {name: '251475'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -22434,7 +22436,7 @@
     "gold_cypher": "MATCH (t:Tournament {name: 'China 2007'})<-[:IN_TOURNAMENT]-(m:Match)<-[r:PLAYED_IN]-(:Team) WHERE r.score IS NOT NULL RETURN AVG(r.score) AS averageGoals;",
     "pred_cypher": "MATCH (n:Match)-[r0:in_Tournament]->(m0:Tournament {name: 'China 2007'}) WITH DISTINCT n RETURN avg(n SCORED_GOAL)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -22554,7 +22556,7 @@
     "gold_cypher": "MATCH (p:Person)-[:REPRESENTS]->(t:Team {name: 'Spain'}) RETURN COUNT(p) AS PlayerCount",
     "pred_cypher": "MATCH (n:Person)-[r0:playsIn]->(m0:Match {name: 'Spain'}) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -22584,7 +22586,7 @@
     "gold_cypher": "MATCH (p:Person)-[:SCORED_GOAL]->(m:Match)-[:IN_TOURNAMENT]->(tour:Tournament {name: 'USA 2003'}) RETURN COUNT(DISTINCT p) AS totalGoalScorers;",
     "pred_cypher": "MATCH (n:Player)-[r0:SCORED_GOAL]->(m0:Integer) WITH DISTINCT n WHERE n.Tournament = {name: 'USA 2003'}) RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -22714,7 +22716,7 @@
     "gold_cypher": "MATCH (t:Team)-[:PLAYED_IN]->(m:Match) WITH t, COUNT(m) AS matchCount RETURN AVG(matchCount) AS avgMatchesPerTeam",
     "pred_cypher": "MATCH (n:Match)<-[r0:playsIn]-(m0:Team) WITH DISTINCT n RETURN avg(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -24664,7 +24666,7 @@
     "gold_cypher": "MATCH (p:Person)-[:PLAYED_IN]->(m:Match {id: '69290001'}) RETURN p.name AS personName, p.id AS personId;",
     "pred_cypher": "MATCH (n:Person)<-[r0:playsIn]-(m0:Match {name: '69290001'}) WITH n, id RETURN n.name, n.id",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
