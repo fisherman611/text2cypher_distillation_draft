@@ -134,7 +134,7 @@
     "gold_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}), (m0:Company {name: 'Plaza & Janés'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}) WITH DISTINCT n RETURN n.name, n.launch_year UNION MATCH (n:Company {name: 'Plaza & Janés'}) WITH DISTINCT n RETURN n.name, n.launch_year ORDER BY launch_year DESC LIMIT 1",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -214,7 +214,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Meta Platforms'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'video game industry'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Meta Platforms'}) OPTIONAL MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'video game industry'}) WITH DISTINCT n WHERE m1 IS NOT NULL RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -554,7 +554,7 @@
     "gold_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'HSBC'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Singapore'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'HSBC'}) RETURN n as company, m0 as company UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Singapore'}) RETURN n as company, m1 as company } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -744,7 +744,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Bertelsmann'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Alfred Hugenberg'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Bertelsmann'}) WITH DISTINCT n WHERE EXISTS ((n)-[r1:hasBoardMember]->(m1:Person {name: 'Alfred Hugenberg'})) RETURN n.name, n.launch_year",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -784,7 +784,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-[r0:hasBoardMember]->(m0:Company)-[r1:hasCEO]->(m1:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -885,7 +885,9 @@
     "pred_cypher": "MATCH (n:Person)-[r0:foundedBy]->(m0:Company)<-[r1:foundedBy]-(m1:Person {name: 'Emmett Shear'}) WITH DISTINCT n WHERE n.date_of_birth.year > 1982 RETURN n.name",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1982-10-07\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -1044,7 +1046,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'SIE Worldwide Studios'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Andy Gavin'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'SIE Worldwide Studios'}) OPTIONAL MATCH (n)<-[r1:hasCEO]-(m1:Person {name: 'Andy Gavin'}) WITH DISTINCT n WHERE r1 IS NOT NULL RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1084,7 +1086,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'business travel'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Nathan Blecharczyk'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'business travel'}) WITH DISTINCT n WHERE EXISTS ((n)-[r1:foundedBy]->(m1:Person {name: 'Nathan Blecharczyk'})) RETURN n.name, n.launch_year",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1204,7 +1206,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
     "pred_cypher": "MATCH (n:Person)<-[r1:hasBoardMember]-[r1:hasBoardMember]->(m1:Company)<-[r2:hasCEO]->(m2:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1214,7 +1216,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name as name }",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1254,7 +1256,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasCEO]->() RETURN DISTINCT n as x WHERE n IS NOT NULL RETURN x } WITH DISTINCT x MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasCEO]->() RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.4362179487179487
     }
@@ -1324,7 +1326,7 @@
     "gold_cypher": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Oakpont'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Bell Resources'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Person)-[r0:foundedBy]->(m0:Company {name: 'Oakpont'}) RETURN n as x WHERE n IS NOT NULL UNION MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Bell Resources'}) RETURN n as x WHERE n IS NOT NULL } WITH DISTINCT x RETURN count(x)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2784,7 +2786,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN count(DISTINCT n)",
     "pred_cypher": "CALL { MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person)-[r1:hasCEO]->(m1:Company) RETURN n, m0, m1 as dummy WHERE n IS NOT NULL RETURN n, m0 } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3374,7 +3376,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Domino\\'s Pizza Group plc'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"

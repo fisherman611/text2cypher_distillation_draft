@@ -164,7 +164,7 @@
     "gold_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'musical film'}) WITH DISTINCT n RETURN count(DISTINCT n)",
     "pred_cypher": "CALL { MATCH (n:Award)<-[r0:receivesAward]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'musical'}) WITH n, count(DISTINCT m0) AS num RETURN n, num } WITH max(num) AS num RETURN count(DISTINCT n) AS award_count",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.005244755244755245
     }
@@ -734,7 +734,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'crossover fiction'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'crossover fiction'}) WITH DISTINCT n RETURN n.name as name }",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -784,7 +784,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie),(n:Person)<-[r1:hasCastMember]-(m0:Movie) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:writtenBy]-[r1:hasCastMember]->(m:Movie) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -814,7 +814,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person {name: 'Allie Light'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'documentary film'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person {name: 'Allie Light'}) WITH DISTINCT n WHERE n.name MATCH (n:Movie)-[r1:directedBy]->(m1:Person {name: 'Allie Light'}) AND n.genre = 'documentary' RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -944,7 +944,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:originatesFrom]->(m0:Country),(n:Movie)-[r1:releasedIn]->(m0:Country) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany)-[r1:ProductionCompany]-[r2:originatesFrom]->(m1:Country)<-[r3:releasedIn]-(m2:Movie) WITH DISTINCT n WHERE m0.country = m1.name RETURN n.name ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1064,7 +1064,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Goosebumps'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Goosebumps'}) WITH DISTINCT n RETURN n.name as name }",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1314,7 +1314,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie {name: 'The Elementary School'}),(n:Person)<-[r1:writtenBy]-(m1:Movie {name: 'Kolya'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-[r1:hasCastMember]->(m0:Movie {name: 'The Elementary School'}),(n:Person)<-[r2:writtenBy]-(m1:Movie {name: 'Kolya'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1384,7 +1384,7 @@
     "gold_cypher": "CALL { MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'EON James Bond series'}) RETURN n, m0 as m UNION MATCH (n:Movie)-[r1:directedBy]->(m1:Person {name: 'Roger Spottiswoode'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'EON James Bond'}) RETURN n as movie WHERE n is not null UNION MATCH (n:Movie)-[r1:directedBy]->(m1:Person {name: 'Roger Spottiswoode'}) RETURN n as movie WHERE n is not null } WITH DISTINCT movie RETURN count(movie)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.4782608695652174
     }
@@ -1675,7 +1675,9 @@
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie)<-[r1:hasCastMember]-(m1:Person) WITH DISTINCT n RETURN max(n.date_of_birth.year) AS latest_birth_year",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 0.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1962-10-20\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -1754,7 +1756,7 @@
     "gold_cypher": "CALL { MATCH (n:Person)<-[r0:directedBy]-(m0:Movie {name: 'Schindler\\'s List'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'Men in Black'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -1916,7 +1918,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country),(n:Movie)-[r1:originatesFrom]->(m0:Country) WITH DISTINCT n RETURN n.name ORDER BY n.runtime_minute ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)-[r0:originatesFrom]->(m0:Country),(n:Movie)-[r1:releasedIn]->(m1:Country) WITH DISTINCT n WHERE m0.name = m1.name RETURN n.name ORDER BY n.runtime_minute ASC LIMIT 1",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -3216,7 +3218,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie),(n:Person)<-[r1:writtenBy]-(m0:Movie) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-[r1:writtenBy]->(m0:Movie) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3286,7 +3288,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie),(n:Person)<-[r1:writtenBy]-(m0:Movie) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-[r1:writtenBy]->(m:Movie) WITH DISTINCT n RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3296,7 +3298,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Lili Taylor'}),(n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Lili Taylor'}) OPTIONAL MATCH (n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n WHERE m1 IS NOT NULL RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -3396,7 +3398,7 @@
     "gold_cypher": "MATCH (n:ProductionCompany)<-[r0:producedBy]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Marvel Cinematic Universe Phase Four'}) WITH DISTINCT n RETURN count(DISTINCT n.country)",
     "pred_cypher": "MATCH (n:Country)<-[r0:originatesFrom]-(m0:Movie)<-[r1:producedBy]-(m1:ProductionCompany) WHERE m0.partOfSeries.some(x IN relationships(m0) WHERE x.label = 'partOfSeries' AND x.end_node:FilmSeries AND x.end_node.name = 'Marvel Cinematic Universe Phase Four') WITH DISTINCT n RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3426,7 +3428,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie),(n:Person)<-[r1:directedBy]-(m0:Movie) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
     "pred_cypher": "CALL { MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:directedBy]->(m1:Movie) RETURN DISTINCT n as x WHERE n IS NOT NULL RETURN x } WITH NODES(x) MATCH (n:Person)-[r0:writtenBy]->(m0:Movie)<-[r1:directedBy]-(m1:Movie) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }

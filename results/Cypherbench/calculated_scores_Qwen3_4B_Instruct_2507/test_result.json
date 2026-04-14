@@ -134,7 +134,7 @@
     "gold_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}), (m0:Company {name: 'Plaza & Janés'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}) WITH DISTINCT n RETURN n.name, n.launch_year UNION MATCH (n:Company {name: 'Plaza & Janés'}) WITH DISTINCT n RETURN n.name, n.launch_year ORDER BY launch_year DESC LIMIT 1",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -214,7 +214,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Meta Platforms'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'video game industry'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Meta Platforms'}) OPTIONAL MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'video game industry'}) WITH DISTINCT n WHERE m1 IS NOT NULL RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -554,7 +554,7 @@
     "gold_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'HSBC'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Singapore'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'HSBC'}) RETURN n as company, m0 as company UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Singapore'}) RETURN n as company, m1 as company } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -744,7 +744,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Bertelsmann'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Alfred Hugenberg'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Bertelsmann'}) WITH DISTINCT n WHERE EXISTS ((n)-[r1:hasBoardMember]->(m1:Person {name: 'Alfred Hugenberg'})) RETURN n.name, n.launch_year",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -784,7 +784,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-[r0:hasBoardMember]->(m0:Company)-[r1:hasCEO]->(m1:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -885,7 +885,9 @@
     "pred_cypher": "MATCH (n:Person)-[r0:foundedBy]->(m0:Company)<-[r1:foundedBy]-(m1:Person {name: 'Emmett Shear'}) WITH DISTINCT n WHERE n.date_of_birth.year > 1982 RETURN n.name",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1982-10-07\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -1044,7 +1046,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'SIE Worldwide Studios'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Andy Gavin'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'SIE Worldwide Studios'}) OPTIONAL MATCH (n)<-[r1:hasCEO]-(m1:Person {name: 'Andy Gavin'}) WITH DISTINCT n WHERE r1 IS NOT NULL RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1084,7 +1086,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'business travel'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Nathan Blecharczyk'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'business travel'}) WITH DISTINCT n WHERE EXISTS ((n)-[r1:foundedBy]->(m1:Person {name: 'Nathan Blecharczyk'})) RETURN n.name, n.launch_year",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1204,7 +1206,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
     "pred_cypher": "MATCH (n:Person)<-[r1:hasBoardMember]-[r1:hasBoardMember]->(m1:Company)<-[r2:hasCEO]->(m2:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1214,7 +1216,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name as name }",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1254,7 +1256,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasCEO]->() RETURN DISTINCT n as x WHERE n IS NOT NULL RETURN x } WITH DISTINCT x MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasCEO]->() RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.4362179487179487
     }
@@ -1324,7 +1326,7 @@
     "gold_cypher": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Oakpont'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Bell Resources'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Person)-[r0:foundedBy]->(m0:Company {name: 'Oakpont'}) RETURN n as x WHERE n IS NOT NULL UNION MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Bell Resources'}) RETURN n as x WHERE n IS NOT NULL } WITH DISTINCT x RETURN count(x)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2784,7 +2786,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN count(DISTINCT n)",
     "pred_cypher": "CALL { MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person)-[r1:hasCEO]->(m1:Company) RETURN n, m0, m1 as dummy WHERE n IS NOT NULL RETURN n, m0 } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3374,7 +3376,7 @@
     "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Domino\\'s Pizza Group plc'}) WITH DISTINCT n RETURN n.name, n.launch_year",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -3696,7 +3698,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Euron Greyjoy'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Trystane Martell'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Euron Greyjoy'}) RETURN n as character WHERE n IS NOT NULL UNION MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Trystane Martell'}) RETURN n as character WHERE n IS NOT NULL } WITH DISTINCT character RETURN count(character)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.8333333333333334
     }
@@ -3716,7 +3718,7 @@
     "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location) WITH DISTINCT n WHERE 'Yan' IN n.country_of_citizenship RETURN n.name",
     "pred_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location) WITH DISTINCT n WHERE n.country_of_citizenship ANY (x IN n.country_of_citizenship WHERE x = 'Yan') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3876,7 +3878,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Cersei Lannister'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Cassana Baratheon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Cersei Lannister'}) RETURN n as character, m0 as match WHERE n IS NOT NULL UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Cassana Baratheon'}) RETURN n as character, m1 as match WHERE n IS NOT NULL } WITH DISTINCT nodes(path) RETURN character.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -3956,7 +3958,7 @@
     "gold_cypher": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Chang\\'an'}) OPTIONAL MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -4008,7 +4010,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Winterfell'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lynesse Hightower'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Lynesse Hightower'}) RETURN n as character WHERE n IS NOT NULL UNION MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Winterfell'}) RETURN n as character WHERE n IS NOT NULL } WITH DISTINCT character RETURN count(character)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -4018,8 +4020,8 @@
     "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Cthulhu Mythos'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:FictionalCharacter)-[r1:hasFather]->(m1:FictionalCharacter)<-[r0:fromUniverse]:(FictionalUniverse {name: 'Cthulhu Mythos'}) WITH n, count(DISTINCT m1) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -4098,7 +4100,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Petyr Baelish'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Cersei Lannister'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Petyr Baelish'}) RETURN n as character WHERE n IS NOT NULL UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Cersei Lannister'}) RETURN n as character WHERE n IS NOT NULL } WITH DISTINCT character RETURN character.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -4178,8 +4180,8 @@
     "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Cosmere'}) WITH DISTINCT n WHERE NOT 'therapist' IN n.occupation RETURN n.name",
     "pred_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Cosmere'}) WITH DISTINCT n WHERE 'therapist' NOT IN n.occupation RETURN n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -4278,7 +4280,7 @@
     "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Brotherhood Without Banners'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location)<-[r1:memberOf]-(m1:Character {name: 'Brotherhood Without Banners'}) WITH DISTINCT n RETURN n.name, m0.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4348,7 +4350,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Demon King of Confusion'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Xuanzang'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Demon King of Confusion'}) RETURN n as character, m0 as match WHERE n IS NOT NULL RETURN n, m0 } UNION CALL { MATCH (n:Character)-[r1:hasStudent]->(m1:Character {name: 'Xuanzang'}) RETURN n as character, m1 as match WHERE n IS NOT NULL RETURN n, m1 } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4558,7 +4560,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'King\\'s Landing'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Steffon Baratheon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -4780,7 +4782,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Loras Tyrell'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasMother]-(m1:Character {name: 'Tommen Baratheon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Loras Tyrell'}) RETURN n as x WHERE n IS NOT NULL UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Tommen Baratheon'}) RETURN n as x WHERE n IS NOT NULL } WITH DISTINCT x RETURN count(x)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4840,7 +4842,7 @@
     "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization {name: 'Planet Express'}),(n:Location)<-[r1:bornIn]-(m1:Character {name: 'Leela'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Location)<-[r0:basedIn]-(m0:Organization {name: 'Planet Express'}) WITH DISTINCT n RETURN n as x UNION MATCH (n:Location)<-[r1:bornIn]-(m1:Character {name: 'Leela'}) WITH DISTINCT n RETURN n as x } YIELD node WITH DISTINCT node RETURN node.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -4920,7 +4922,7 @@
     "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'World of Ice and Fire'}),(n:Organization)-[r1:basedIn]->(m1:Location) WITH n, count(DISTINCT m1) AS num RETURN m1.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -5270,7 +5272,7 @@
     "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:diedIn]->(m1:Location {name: 'Dorne'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location)<-[r1:diedIn]-(m1:Character {name: 'Dorne'}) WITH n, count(DISTINCT n) AS num RETURN m0.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5660,7 +5662,7 @@
     "gold_cypher": "MATCH (n:Character)-[r0:bornIn]->(m0:Location),(n:Character)-[r1:diedIn]->(m0:Location) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Character)-[r1:bornIn]->(m1:Location)<-[r2:diedIn]-(m2:Location) WITH DISTINCT n WHERE m1.name = m2.name RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5700,7 +5702,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Hellfire Club'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Jacob Shaw'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Hellfire Club'}) RETURN n as character, m0 as org UNION MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Jacob Shaw'}) RETURN n as character, m1 as org } WITH DISTINCT node RETURN count(*)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -5770,7 +5772,7 @@
     "gold_cypher": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Marvel Universe'}),(n:Organization)<-[r1:memberOf]-(m1:Character {name: 'Kamala Khan'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character {name: 'Kamala Khan'}) WHERE n.fromUniverse.some(x IN n.fromUniverse WHERE x.name = 'Marvel Universe') RETURN DISTINCT n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -5890,7 +5892,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Brotherhood Without Banners'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'King\\'s Landing'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -5932,7 +5934,7 @@
     "gold_cypher": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Riverrun'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Character)-[r1:killedBy]->(m1:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m1) AS num RETURN n.name, num WHERE n.bornIn.some([x in nodes() WHERE label(x) = 'Location' AND x.name = 'Riverrun'])",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.00686106346483705
     }
@@ -6242,8 +6244,8 @@
     "gold_cypher": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Character)-[r1:hasMother]->(m1:Character)<-[r0:fromUniverse]:(FictionalUniverse {name: 'World of Ice and Fire'}) WITH n, count(DISTINCT m1) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -6562,8 +6564,8 @@
     "gold_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Earth-167'}),(n:Character)-[r1:bornIn]->(m1:Location {name: 'Krypton'}) WITH DISTINCT n WHERE NOT 'murderer' IN n.occupation RETURN n.name",
     "pred_cypher": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Earth-167'}),(n:Character)-[r1:bornIn]->(m1:Location {name: 'Krypton'}) WITH DISTINCT n WHERE 'murderer' NOT IN n.occupation RETURN n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -6762,7 +6764,7 @@
     "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Chang\\'an'}),(n:Character)-[r1:hasStudent]->(m1:Character {name: 'Gu Yong'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -6904,7 +6906,7 @@
     "gold_cypher": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization {name: 'Planet Express'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Organization {name: 'Planet Express'}) WITH DISTINCT n RETURN n.name, n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.5
     }
@@ -6994,7 +6996,7 @@
     "gold_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Mandarin\\'s Minions'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Mandarin''s Minions'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7244,7 +7246,7 @@
     "gold_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Burglar'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Aunt May'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Burglar'}) RETURN n as x WHERE n IS NOT NULL UNION MATCH (n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Aunt May'}) RETURN n as x WHERE n IS NOT NULL } WITH DISTINCT x RETURN count(x)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -7514,7 +7516,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport),(n:FlightAccident)-[r1:departsFrom]->(m0:Airport) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_deaths DESC",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:destinedFor]-(m1:Airport) WITH DISTINCT n WHERE m0.iata_code = m1.iata_code RETURN n.name ORDER BY n.number_of_deaths DESC",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7584,7 +7586,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport),(n:FlightAccident)-[r1:destinedFor]->(m0:Airport) WITH DISTINCT n RETURN n.name, n.number_of_injuries",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:destinedFor]-(m1:Airport) WITH DISTINCT n WHERE m0.iata_code = m1.iata_code RETURN n.name, n.number_of_injuries",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -7734,7 +7736,7 @@
     "gold_cypher": "MATCH (n:FlightAccident) WITH DISTINCT n WHERE n.date.year = 1988 RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident) WITH DISTINCT n WHERE n.date.year = 1988 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -8445,7 +8447,9 @@
     "pred_cypher": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'Bombardier'}) WITH DISTINCT n WHERE n.first_flight > date('1978-12-31') RETURN n.name",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1991-05-10\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -8674,7 +8678,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'de Havilland Canada DHC-2 Beaver'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:AircraftManufacturer)-(m0:manufacturedBy)-[r0:manufacturedBy]->(m1:AircraftModel {name: 'de Havilland Canada DHC-2 Beaver'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -8764,7 +8768,7 @@
     "gold_cypher": "CALL { MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'Lockheed L-1049 Super Constellation'}) RETURN n, m0 as m UNION MATCH (n:AircraftManufacturer)<-[r1:manufacturedBy]-(m1:AircraftModel {name: 'KC-130 Hercules'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel) WHERE m0.name IN ['Lockheed L-1049 Super Constellation', 'KC-130 Hercules'] RETURN DISTINCT n.name as name }",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9034,7 +9038,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'S-92'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:AircraftManufacturer)-(m0:manufacturedBy)-[r0:manufacturedBy]->(m1:AircraftModel {name: 'S-92'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9104,7 +9108,7 @@
     "gold_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Samui Airport'}) WITH DISTINCT n WHERE n.date.year = 2009 RETURN n.name",
     "pred_cypher": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Samui Airport'}) WITH DISTINCT n WHERE n.date.year = 2009 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -9144,7 +9148,7 @@
     "gold_cypher": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'de Havilland Canada DHC-2 Beaver'}) WITH DISTINCT n RETURN n.name, n.country",
     "pred_cypher": "MATCH (n:AircraftManufacturer)-(m0:manufacturedBy)-[r0:manufacturedBy]->(m1:AircraftModel {name: 'de Havilland Canada DHC-2 Beaver'}) WITH DISTINCT n RETURN n.name, n.country",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9344,7 +9348,7 @@
     "gold_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n WHERE n.length_km >= 800 RETURN n.name",
     "pred_cypher": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'People's Republic of China'}) WITH DISTINCT n WHERE n.length_km >= 800 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -9654,8 +9658,8 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}),(n:Lake)<-[r1:flowsInto]-(m1:River {name: 'Xiang River'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Lake)-[r0:flowsInto]->(m0:River {name: 'Xiang River'}),(n:Lake)-[r1:locatedIn]->(m1:Country {name: 'People''s Republic of China'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -9764,8 +9768,8 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Lac la Ronge'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Rivière du Lièvre basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WHERE m0.name = 'Lac la Ronge' OR m0.name = 'Rivière du Lièvre' RETURN n.name as name, m0.name as basin } WITH DISTINCT n RETURN name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -10124,8 +10128,8 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Rwanda'}),(n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Pool Malebo'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:partOf]->(m0:DrainageBasin {name: 'Pool Malebo'}) WITH DISTINCT n WHERE n.name IS NOT NULL AND n.locatedIn.some(r1:Country {name: 'Rwanda'}) RETURN n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -10314,7 +10318,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Lake Tai'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Sepu Kangri'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Lake Tai'}) WITH DISTINCT n RETURN n as x WHERE n IS NOT NULL UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Sepu Kangri'}) WITH DISTINCT n RETURN n as x WHERE n IS NOT NULL } WITH DISTINCT x RETURN count(x)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10474,7 +10478,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Gul Lasht Zom'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Choricho'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain) WHERE m0.name = 'Gul Lasht Zom' OR m0.name = 'Choricho' WITH DISTINCT n RETURN n } WITH nodes(n) RETURN count(DISTINCT node) AS num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -10544,8 +10548,8 @@
     "gold_cypher": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Russia'}),(n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Tayma'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:DrainageBasin)-[r0:partOf]->(m0:River {name: 'Tayma River'}) WITH DISTINCT n WHERE n.name IN [name FOR name IN n.name IF name IS NOT NULL] AND n.locatedIn.some(x IN n.locatedIn WHERE x.name = 'Russia') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -11394,7 +11398,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Kalurong'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Hulun Lake'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Kalurong'}) WITH DISTINCT n RETURN n.name as name WHERE n IS NOT NULL UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Hulun Lake'}) WITH DISTINCT n RETURN n.name as name WHERE n IS NOT NULL } WITH DISTINCT name RETURN count(name)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -11994,8 +11998,8 @@
     "gold_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'South America'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Camarones basin'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'South America'}) OPTIONAL MATCH (n)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Camarones basin'}) WITH DISTINCT n WHERE m1 IS NOT NULL RETURN n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -12184,7 +12188,7 @@
     "gold_cypher": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'People\\'s Republic of China'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'People's Republic of China'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -12314,7 +12318,7 @@
     "gold_cypher": "MATCH (n:Ocean) WITH DISTINCT n WHERE n.max_vertical_depth_m > 7400 RETURN n.name",
     "pred_cypher": "MATCH (n:Ocean) WITH DISTINCT n RETURN n.name WHERE n.max_vertical_depth_m > 7400",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.6
     }
@@ -12574,8 +12578,8 @@
     "gold_cypher": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Belaya-Berel\\''}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC LIMIT 1",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
       }
@@ -12786,8 +12790,8 @@
     "gold_cypher": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}),(n:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Yellow River Basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
     "pred_cypher": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin)-[r1:partOf]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n WHERE m1.name = 'People\\'s Republic of China' AND m0.name = 'Yellow River Basin' RETURN n.name, n.vertical_depth_m",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -13046,7 +13050,7 @@
     "gold_cypher": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'musical film'}) WITH DISTINCT n RETURN count(DISTINCT n)",
     "pred_cypher": "CALL { MATCH (n:Award)<-[r0:receivesAward]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'musical'}) WITH n, count(DISTINCT m0) AS num RETURN n, num } WITH max(num) AS num RETURN count(DISTINCT n) AS award_count",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.005244755244755245
     }
@@ -13616,7 +13620,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'crossover fiction'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:hasGenre]->(m1:Genre {name: 'crossover fiction'}) WITH DISTINCT n RETURN n.name as name }",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -13666,7 +13670,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie),(n:Person)<-[r1:hasCastMember]-(m0:Movie) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:writtenBy]-[r1:hasCastMember]->(m:Movie) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -13696,7 +13700,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person {name: 'Allie Light'}),(n:Movie)-[r1:hasGenre]->(m1:Genre {name: 'documentary film'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person {name: 'Allie Light'}) WITH DISTINCT n WHERE n.name MATCH (n:Movie)-[r1:directedBy]->(m1:Person {name: 'Allie Light'}) AND n.genre = 'documentary' RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -13826,7 +13830,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:originatesFrom]->(m0:Country),(n:Movie)-[r1:releasedIn]->(m0:Country) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany)-[r1:ProductionCompany]-[r2:originatesFrom]->(m1:Country)<-[r3:releasedIn]-(m2:Movie) WITH DISTINCT n WHERE m0.country = m1.name RETURN n.name ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -13946,7 +13950,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Goosebumps'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:releasedIn]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Goosebumps'}) WITH DISTINCT n RETURN n.name as name }",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -14196,7 +14200,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie {name: 'The Elementary School'}),(n:Person)<-[r1:writtenBy]-(m1:Movie {name: 'Kolya'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-[r1:hasCastMember]->(m0:Movie {name: 'The Elementary School'}),(n:Person)<-[r2:writtenBy]-(m1:Movie {name: 'Kolya'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -14266,7 +14270,7 @@
     "gold_cypher": "CALL { MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'EON James Bond series'}) RETURN n, m0 as m UNION MATCH (n:Movie)-[r1:directedBy]->(m1:Person {name: 'Roger Spottiswoode'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'EON James Bond'}) RETURN n as movie WHERE n is not null UNION MATCH (n:Movie)-[r1:directedBy]->(m1:Person {name: 'Roger Spottiswoode'}) RETURN n as movie WHERE n is not null } WITH DISTINCT movie RETURN count(movie)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.4782608695652174
     }
@@ -14557,7 +14561,9 @@
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie)<-[r1:hasCastMember]-(m1:Person) WITH DISTINCT n RETURN max(n.date_of_birth.year) AS latest_birth_year",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 0.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1962-10-20\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -14636,7 +14642,7 @@
     "gold_cypher": "CALL { MATCH (n:Person)<-[r0:directedBy]-(m0:Movie {name: 'Schindler\\'s List'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasCastMember]-(m1:Movie {name: 'Men in Black'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -14798,7 +14804,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country),(n:Movie)-[r1:originatesFrom]->(m0:Country) WITH DISTINCT n RETURN n.name ORDER BY n.runtime_minute ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)-[r0:originatesFrom]->(m0:Country),(n:Movie)-[r1:releasedIn]->(m1:Country) WITH DISTINCT n WHERE m0.name = m1.name RETURN n.name ORDER BY n.runtime_minute ASC LIMIT 1",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -16098,7 +16104,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-(m0:Movie),(n:Person)<-[r1:writtenBy]-(m0:Movie) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Person)<-[r0:hasCastMember]-[r1:writtenBy]->(m0:Movie) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -16168,7 +16174,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie),(n:Person)<-[r1:writtenBy]-(m0:Movie) WITH DISTINCT n RETURN DISTINCT n.gender",
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-[r1:writtenBy]->(m:Movie) WITH DISTINCT n RETURN DISTINCT n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -16178,7 +16184,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Lili Taylor'}),(n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Lili Taylor'}) OPTIONAL MATCH (n:Movie)-[r1:originatesFrom]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n WHERE m1 IS NOT NULL RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -16278,7 +16284,7 @@
     "gold_cypher": "MATCH (n:ProductionCompany)<-[r0:producedBy]-(m0:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Marvel Cinematic Universe Phase Four'}) WITH DISTINCT n RETURN count(DISTINCT n.country)",
     "pred_cypher": "MATCH (n:Country)<-[r0:originatesFrom]-(m0:Movie)<-[r1:producedBy]-(m1:ProductionCompany) WHERE m0.partOfSeries.some(x IN relationships(m0) WHERE x.label = 'partOfSeries' AND x.end_node:FilmSeries AND x.end_node.name = 'Marvel Cinematic Universe Phase Four') WITH DISTINCT n RETURN count(DISTINCT n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -16308,7 +16314,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie),(n:Person)<-[r1:directedBy]-(m0:Movie) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
     "pred_cypher": "CALL { MATCH (n:Person)<-[r0:writtenBy]-(m0:Movie)-[r1:directedBy]->(m1:Movie) RETURN DISTINCT n as x WHERE n IS NOT NULL RETURN x } WITH NODES(x) MATCH (n:Person)-[r0:writtenBy]->(m0:Movie)<-[r1:directedBy]-(m1:Movie) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -18549,7 +18555,9 @@
     "pred_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Khalid El-Amin'}) WITH DISTINCT n WHERE n.date_of_death < date('2019-12-31') RETURN n.name",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"2012-05-31\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -18588,7 +18596,7 @@
     "gold_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'power forward'}) WITH DISTINCT n RETURN min(n.date_of_death.year)",
     "pred_cypher": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'power forward'}) WITH DISTINCT n RETURN min(n.date_of_death.year)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -18748,7 +18756,7 @@
     "gold_cypher": "MATCH (n:Division)-[r1:partOfConference]->(m1:Conference {name: 'Eastern Conference'}) OPTIONAL MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Eastern Conference'}) WITH n, count(DISTINCT (n)<-[:partOfDivision]-(m1:Team)) AS num RETURN n.name, num",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.21052631578947367
     }
@@ -19328,7 +19336,7 @@
     "gold_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Billy Donovan'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
     "pred_cypher": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Billy Donovan'}) WITH n, min(age(n)) AS age RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -19648,7 +19656,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Prime Minister of Cambodia'}) RETURN n, m0 as m UNION MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Khmer Renovation'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'Cambodia'}) WITH n, m0 MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Khmer Renovation'}) RETURN n.name as name } UNION ALL CALL { MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country {name: 'Cambodia'}) WITH n, m0 MATCH (n:Politician)-[r1:memberOf]->(m1:PoliticalParty {name: 'Khmer Renovation'}) RETURN n.name as name }",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19658,7 +19666,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty {name: 'Central African Democratic Rally'}),(n:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'Central African Democratic Rally'}) WITH DISTINCT n RETURN n.name, n.gender",
     "pred_cypher": "MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'Central African Democratic Rally'}) WITH DISTINCT n WHERE 'foundedBy' IN relationships(n) RETURN n.name, n.gender",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -19738,7 +19746,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:hasDiplomaticRelationWith]-(m0:Country {name: 'People\\'s Republic of China'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:hasDiplomaticRelationWith]-(m1:Country {name: 'Uruguay'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -20261,7 +20269,9 @@
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'cardinal priest'}) WITH DISTINCT n WHERE n.date_of_birth < date('1973-12-31') RETURN n.name",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1835-03-12\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -20420,7 +20430,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'France'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:foundedBy]-(m1:PoliticalParty {name: 'Socialist Party'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'France'}) RETURN n as politician UNION MATCH (n:Politician)-[r1:foundedBy]->(m1:PoliticalParty {name: 'Socialist Party'}) RETURN n as politician } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20570,7 +20580,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Party Chairman of the CDU Mecklenburg-Western Pomerania'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'Germany'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:headedBy]->(m0:PoliticalParty {name: 'CDU Mecklenburg-Western Pomerania'}) WITH n, m0 WHERE r0.start_year IS NOT NULL RETURN n.name as name UNION MATCH (n:Politician)-[r1:hasHeadOfGovernment]->(m1:GovernmentOrganization {name: 'Germany'}) WITH n, m1 WHERE r1.start_year IS NOT NULL RETURN n.name as name }",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -20621,7 +20631,9 @@
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country)<-[r1:hasHeadOfGovernment]-(m1:Country {name: 'United States'}) WITH DISTINCT n WHERE n.date_of_birth > date('1800-12-31') RETURN n.name",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1946-08-19\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -20691,7 +20703,9 @@
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty) WITH DISTINCT n RETURN max(n.date_of_birth.year) AS latest_birth_year",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 0.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1965-04-08\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -21020,7 +21034,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Mayor of Coti-Chiavari'}) WHERE r0.start_year <= 2001 AND (r0.end_year >= 2001 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'Mayor of Coti-Chiavari'}) WITH DISTINCT n WHERE r0.start_year <= 2001 AND (r0.end_year >= 2001 OR r0.end_year IS NULL) RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -21480,7 +21494,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Stephen Harper'}),(n:Country)-[r1:memberOf]->(m1:InternationalOrganization {name: 'World Meteorological Organization'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Stephen Harper'}) WITH DISTINCT n WHERE n.memberOf.some(x IN n.memberOf WHERE x.name = 'World Meteorological Organization') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -21830,8 +21844,10 @@
     "gold_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician),(n:PoliticalParty)-[r1:foundedBy]->(m0:Politician) WITH DISTINCT n RETURN max(n.founding_date.year)",
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:headedBy]->(m0:Politician)<-[r1:foundedBy]-(m1:PoliticalParty) WITH DISTINCT n RETURN max(n.founding_date.year) AS latest_founding_year",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"2020-09-27\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.6780487804878049
     }
   },
@@ -22390,7 +22406,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:memberOf]->(m0:InternationalOrganization {name: 'Asian Development Bank'}),(n:Country)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Willy Brandt'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)-[r0:memberOf]->(m0:InternationalOrganization {name: 'Asian Development Bank'}),(n:Country)-(r1:hasHeadOfGovernment)->(m1:Politician {name: 'Willy Brandt'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -22690,7 +22706,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'member of the Chamber of Deputies of Romania'}) WHERE r0.start_year <= 2008 AND (r0.end_year >= 2008 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'member of the Chamber of Deputies of Romania'}) WITH DISTINCT n WHERE r0.start_year <= 2008 AND (r0.end_year >= 2008 OR r0.end_year IS NULL) RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 1.0
     }
@@ -22820,7 +22836,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)<-[r0:belongsTo]-(m0:GovernmentOrganization {name: 'Ministry of Economy, Development and Tourism'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:belongsTo]-(m1:GovernmentOrganization {name: 'Ministry of National Defence'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Country)-[r0:leads]->(m0:GovernmentOrganization {name: 'Ministry of Economy, Development and Tourism'}) RETURN n as x WHERE n IS NOT NULL UNION MATCH (n:Country)-[r1:leads]->(m1:GovernmentOrganization {name: 'Ministry of National Defence'}) RETURN n as x WHERE n IS NOT NULL } WITH DISTINCT x RETURN count(x)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -23190,7 +23206,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Socialist Party of Chile'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:hasHeadOfState]-(m1:Country {name: 'Chile'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty {name: 'Socialist Party of Chile'}) RETURN n as Politician, m0 as party UNION MATCH (n:Politician)-[r1:hasHeadOfState]->(m1:Country {name: 'Chile'}) RETURN n as Politician, m1 as country } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -23240,7 +23256,7 @@
     "gold_cypher": "CALL { MATCH (n:Politician)<-[r0:hasHeadOfState]-(m0:Country {name: 'Andorra'}) RETURN n, m0 as m UNION MATCH (n:Politician)<-[r1:headedBy]-(m1:PoliticalParty {name: 'The Republicans'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:Politician)-[r0:hasHeadOfState]->(m0:Country {name: 'Andorra'}) RETURN n as politician UNION MATCH (n:Politician)-[r1:headedBy]->(m1:PoliticalParty {name: 'The Republicans'}) RETURN n as politician } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -23460,7 +23476,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Donald Tusk'}),(n:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'United People\\'s Party'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "pred_cypher": "MATCH (n:Country)<-[r0:hasHeadOfGovernment]-(m0:Politician {name: 'Donald Tusk'}),(n:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'United People''s Party'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
