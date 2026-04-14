@@ -94,7 +94,7 @@
     "gold_cypher": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'King\\'s Landing'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Jeyne Lannister'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
     "pred_cypher": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Jeyne Lannister'}) WITH DISTINCT n WHERE n.diedIn = 'King's Landing' RETURN n.name, n.country_of_citizenship",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -714,8 +714,8 @@
     "gold_cypher": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Bråkmakargatan universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
     "pred_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Brækmakargatan'}) WITH n, m0 as m RETURN n.name, m0.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -2464,7 +2464,7 @@
     "gold_cypher": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Lü Xiang'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"
@@ -2556,7 +2556,7 @@
     "gold_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Grandfather of the Troublemaker Street children'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Grandmother of the Troublemaker Street children'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Character)-[r0:hasFather]->(m0:Character)<-[r1:hasFather]-(m1:Character {name: 'Troublemaker Street'}) WITH DISTINCT n WHERE n.hasMother = (m2:Character {name: 'Grandmother of Troublemaker Street'}) RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3786,7 +3786,7 @@
     "gold_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character {name: 'Rhaenys Targaryen'}),(n:Location)<-[r1:bornIn]-(m1:Character {name: 'Aegon III Targaryen'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character {name: 'Rhaenys Targaryen'}) WITH DISTINCT n RETURN n.name, n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.75
     }

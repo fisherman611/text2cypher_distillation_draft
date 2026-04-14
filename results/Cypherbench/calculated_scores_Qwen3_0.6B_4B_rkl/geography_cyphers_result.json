@@ -2284,8 +2284,8 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Nanbang River'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Urdok III'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Nanbang River'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Urdok III'}) WITH DISTINCT n RETURN n.name, n.name",
     "metrics": {
-      "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -3074,7 +3074,7 @@
     "gold_cypher": "CALL { MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Karakoram'}) RETURN n, m0 as m UNION MATCH (n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Gasherbrum'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:MountainRange)-[r0:partOf]->(m0:Mountain) WHERE r0.is 'Karakoram' OR (n:MountainRange)-[r1:partOf]->(m1:Mountain {name: 'Gasherbrum'}) RETURN n, m0, m1 as m UNION MATCH (n:MountainRange)-[r1:partOf]->(m1:Mountain) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }

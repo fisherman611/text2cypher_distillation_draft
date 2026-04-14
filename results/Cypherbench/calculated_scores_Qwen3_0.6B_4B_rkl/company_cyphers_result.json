@@ -134,7 +134,7 @@
     "gold_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}), (m0:Company {name: 'Plaza & Janés'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}) WITH DISTINCT n RETURN CASE WHEN n.launch_year > (SELECT launch_year FROM Company {name: 'Plaza & Janés'}) THEN n.name ELSE n.name END",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.5
     }
@@ -885,7 +885,9 @@
     "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)<-[r1:hasCEO]-(m1:Person {name: 'Emmett Shear'}) WITH DISTINCT n WHERE n.date_of_birth.year > 1982 RETURN n.name",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1982-10-07\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },

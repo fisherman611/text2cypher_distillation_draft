@@ -664,7 +664,7 @@
     "gold_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'cardinal priest'}) WITH DISTINCT n WHERE n.date_of_birth.year < 1973 RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:holdsPosition]->(m0:Position {name: 'cardinal priest'}) WITH DISTINCT n WHERE n.date_of_birth.year < 1973 RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 1.0,
       "psjs": 1.0
     }
@@ -834,7 +834,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:hasHeadOfGovernment]-(m0:Country {name: 'Norway'}) WHERE r0.start_year <= 1989 AND (r0.end_year >= 1989 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:GovernmentOrganization)-[r1:belongsTo]->(m1:Country {name: 'Norway'}) WITH DISTINCT n WHERE r0.start_year <= 1989 AND (r0.end_year >= 1989 OR r0.end_year IS NULL) RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -844,7 +844,7 @@
     "gold_cypher": "MATCH (n:Politician)<-[r0:foundedBy]-(m0:PoliticalParty),(n:Politician)<-[r1:headedBy]-(m0:PoliticalParty) WITH DISTINCT n RETURN n.name, n.date_of_birth",
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'United States'}) WITH DISTINCT n WHERE n.hasDiplomaticRelationWith(m0) AND n.leads(m0) RETURN n.name, n.date_of_birth",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1025,7 +1025,9 @@
     "pred_cypher": "MATCH (n:Politician)-[r0:hasHeadOfGovernment]->(m0:Country)<-[r1:belongsTo]-(m1:Politician {name: 'Abraham Lincoln'}) WITH DISTINCT n WHERE n.date_of_birth.year > 1800 RETURN n.name",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1946-08-19\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -1095,7 +1097,9 @@
     "pred_cypher": "MATCH (n:Politician)-[r0:memberOf]->(m0:PoliticalParty) WITH DISTINCT n RETURN max(n.date_of_birth.year)",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 0.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1965-04-08\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -1884,7 +1888,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Stephen Harper'}),(n:Country)-[r1:memberOf]->(m1:InternationalOrganization {name: 'World Meteorological Organization'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:belongsTo]-(m0:PoliticalParty)-[r1:hasHeadOfState]->(m1:Politician {name: 'Stephen Harper'}) WITH DISTINCT n WHERE n.hasMemberOf('World Meteorological Organization') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1964,7 +1968,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:operatesIn]-(m0:PoliticalParty {name: 'Convergence'}),(n:Country)-[r1:hasDiplomaticRelationWith]->(m1:Country {name: 'Greece'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Country)<-[r0:operatesIn]-(m0:PoliticalParty {name: 'Convergence'}) WITH DISTINCT n WHERE n.hasDiplomaticRelationWith('Greece') RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2235,7 +2239,9 @@
     "pred_cypher": "MATCH (n:PoliticalParty)-[r0:hasHeadOfState]->(m0:Politician)-[r1:hasHeadOfState]->(m1:PoliticalParty) WITH DISTINCT n RETURN max(n.founding_date)",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 0.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"2020-09-27\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -2464,7 +2470,7 @@
     "gold_cypher": "CALL { MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Konrad Adenauer'}) RETURN n, m0 as m UNION MATCH (n:Country)-[r1:memberOf]->(m1:InternationalOrganization {name: 'Organisation for the Prohibition of Chemical Weapons'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
     "pred_cypher": "CALL { MATCH (n:Country)<-[r0:belongsTo]-(m0:GovernmentOrganization)-[r1:hasHeadOfGovernment]->(m1:Politician {name: 'Konrad Adenauer'}) RETURN n, m0, m1 as m UNION MATCH (n:Country)<-[r2:memberOf]-(m2:InternationalOrganization {name: 'Organisation for the Prohibition of Chemical Weapons'}) RETURN n, m2 as m } WITH DISTINCT n RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3144,7 +3150,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:memberOf]->(m0:InternationalOrganization {name: 'African Development Bank'}),(n:Country)-[r1:hasHeadOfState]->(m1:Politician {name: 'Christian IV of Denmark'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "pred_cypher": "MATCH (n:Country)<-[r0:belongsTo]-(m0:InternationalOrganization {name: 'African Development Bank'}) WITH DISTINCT n WHERE n.hasHeadOfState (m0:Politician {name: 'Christian IV of Denmark'}) RETURN n.name, n.official_language",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3864,7 +3870,7 @@
     "gold_cypher": "MATCH (n:Country)-[r0:hasHeadOfGovernment]->(m0:Politician {name: 'Donald Tusk'}),(n:Country)<-[r1:operatesIn]-(m1:PoliticalParty {name: 'United People\\'s Party'}) WITH DISTINCT n RETURN n.name, n.official_language",
     "pred_cypher": "MATCH (n:Country)<-[r0:belongsTo]-(m0:PoliticalParty {name: 'United People\\'s Party'}) WITH DISTINCT n WHERE n.hasHeadOfGovernment(<<Donald Tusk>>), n.official_language IS NOT NULL RETURN n.name, n.official_language",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }

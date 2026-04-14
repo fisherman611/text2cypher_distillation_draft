@@ -5,8 +5,8 @@
     "pred_cypher": "CALL { MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Amanda Award for Best Foreign Feature Film'}) RETURN n, m0 as m UNION MATCH (n:Movie)<-[r1:hasCastMember]-(m1:Person {name: 'Elijah Wood'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
-      "psjs": 0.0
+      "execution_accuracy": 0.0,
+      "psjs": 0.43209876543209874
     }
   },
   {
@@ -15,7 +15,7 @@
     "pred_cypher": "MATCH (n:Movie)-[r0:producedBy]->(m0:ProductionCompany {name: 'Biograf Jan Svšrăk'}),(n:Movie)-[r1:hasCastMember]->(m1:Person {name: 'Martin Bohadlo'}) WITH DISTINCT n RETURN n.name",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 1.0,
+      "execution_accuracy": 0.0,
       "psjs": 0.0
     }
   },
@@ -1675,7 +1675,9 @@
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie)<-[r1:directedBy]-(m1:Movie) WITH DISTINCT n RETURN max(n.date_of_birth.year)",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 0.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1962-10-20\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -2864,7 +2866,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person),(n:Movie)-[r1:writtenBy]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)<-[r0:directedBy]-(m0:Person) WITH DISTINCT n MATCH (n)<-[r1:writtenBy]-(m1:Person) WITH n ORDER BY n.global_box_office_usd ASC LIMIT 1",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3864,7 +3866,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:directedBy]->(m0:Person),(n:Movie)-[r1:hasCastMember]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.global_box_office_usd DESC LIMIT 1",
     "pred_cypher": "MATCH (n:Movie)<-[r0:directedBy]-(m0:Person) WITH DISTINCT n WHERE n.hasCastMember(m0) RETURN n.name ORDER BY n.global_box_office_usd DESC LIMIT 1",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }

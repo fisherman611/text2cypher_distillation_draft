@@ -284,7 +284,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country),(n:Movie)-[r1:originatesFrom]->(m0:Country) WITH DISTINCT n UNWIND n.filming_location AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Movie)-[r0:releasedIn]->(m0:Country)<-[r1:originatesFrom]-(m1:Movie) WITH DISTINCT n RETURN DISTINCT n.filming_location",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1084,7 +1084,7 @@
     "gold_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie),(n:Person)<-[r1:hasCastMember]-(m0:Movie) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
     "pred_cypher": "MATCH (n:Person)<-[r0:directedBy]-(m0:Movie) AND (n:Person)<-[r1:hasCastMember]-(m1:Movie) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1675,7 +1675,9 @@
     "pred_cypher": "MATCH (n:Person)-[r0:directedBy]->(m0:Movie)<-[r1:hasCastMember]-(m1:Person) WITH DISTINCT n RETURN max(n.date_of_birth.year)",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 0.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1962-10-20\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -2044,7 +2046,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:hasCastMember]->(m0:Person {name: 'Chris Parnell'}),(n:Movie)-[r1:partOfSeries]->(m1:FilmSeries {name: 'Goosebumps'}) WITH DISTINCT n RETURN n.name",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Goosebumps'}) WITH DISTINCT n WHERE r0.subj_label = 'Person' AND r0.obj_label = 'Chris Parnell' RETURN n.name",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -2914,7 +2916,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'The Hobbit trilogy'}) WITH DISTINCT n WHERE n.global_box_office_usd < 960000000 RETURN n.name",
     "pred_cypher": null,
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": {
         "error": "provenance_subgraph_jaccard_similarity failed: 'NoneType' object has no attribute 'strip'"

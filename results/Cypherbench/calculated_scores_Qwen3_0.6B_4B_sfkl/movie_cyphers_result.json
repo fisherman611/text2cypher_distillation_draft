@@ -754,7 +754,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Batman in film'}),(n:Movie)-[r1:receivesAward]->(m1:Award {name: 'Golden Trailer Awards'}) WITH DISTINCT n RETURN n.name, n.global_box_office_usd",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Batman in film'}) WITH DISTINCT n WHERE n.receivesAward(award:Award {name: 'Golden Trailer'}) RETURN n.name, n.global_box_office_usd",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1244,7 +1244,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Star Wars'}),(n:Movie)-[r1:releasedIn]->(m1:Country {name: 'Hungary'}) WITH DISTINCT n UNWIND n.original_language AS prop RETURN DISTINCT prop",
     "pred_cypher": "MATCH (n:Movie)-[r0:partOfSeries]->(m0:FilmSeries {name: 'Star Wars'}) WITH DISTINCT n WHERE n.original_language NOT IN ['en', 'en'] AND n.original_language NOT IN ['de', 'fr', 'es'] AND n.original_language NOT IN ['ja', 'pt', 'en'] RETURN DISTINCT n.original_language",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -1675,7 +1675,9 @@
     "pred_cypher": "MATCH (n:Person)-[r0:directedBy]->(m0:Movie)<-[r1:directedBy]-(m1:Movie) WITH DISTINCT n RETURN max(n.date_of_birth.year)",
     "metrics": {
       "executable": 1.0,
-      "execution_accuracy": 0.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1962-10-20\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
       "psjs": 0.0
     }
   },
@@ -3934,7 +3936,7 @@
     "gold_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Academy Award for Best Writing, Adapted Screenplay'}),(n:Movie)-[r1:releasedIn]->(m1:Country {name: 'South Korea'}) WITH DISTINCT n RETURN n.name, n.original_language",
     "pred_cypher": "MATCH (n:Movie)-[r0:receivesAward]->(m0:Award {name: 'Academy Award for Best Writing, Adapted Screenplay'}) WITH DISTINCT n WHERE n.originatesFrom(Country {name: 'South Korea'}) RETURN n.name, n.original_language",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }

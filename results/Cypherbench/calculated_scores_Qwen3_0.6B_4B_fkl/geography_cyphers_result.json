@@ -1604,7 +1604,7 @@
     "gold_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Léman basin'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Rhône basin'}) WITH DISTINCT n RETURN avg(n.area_km2)",
     "pred_cypher": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'L\\u00eamean basin'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Rh\\u00ene basin'}) WITH DISTINCT n RETURN avg(n.area_km2)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3074,7 +3074,7 @@
     "gold_cypher": "CALL { MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Karakoram'}) RETURN n, m0 as m UNION MATCH (n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Gasherbrum'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
     "pred_cypher": "CALL { MATCH (n:MountainRange)-[r0:partOf]->(m0:Mountain) RETURN n, m0 as m UNION MATCH (n:MountainRange)-[r1:partOf]->(m1:Mountain) WITH DISTINCT n RETURN count(n) } WITH RETURN count(n)",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.0
     }
@@ -3424,7 +3424,7 @@
     "gold_cypher": "MATCH (n:Ocean {name: 'Arctic Ocean'}), (m0:Ocean {name: 'Pacific Ocean'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
     "pred_cypher": "MATCH (n:Ocean {name: 'Arctic Ocean'}) RETURN CASE WHEN n.area_km2 > (SELECT 1) THEN n.name ELSE (SELECT 1) END AS answer",
     "metrics": {
-      "executable": 1.0,
+      "executable": 0.0,
       "execution_accuracy": 0.0,
       "psjs": 0.5
     }
