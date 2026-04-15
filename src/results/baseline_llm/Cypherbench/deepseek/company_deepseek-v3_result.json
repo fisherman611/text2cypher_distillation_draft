@@ -1,0 +1,2084 @@
+[
+  {
+    "question": "What are the names of individuals who have both founded a company and served on its board, but are not citizens of Austria?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasBoardMember]-(m0:Company) WITH DISTINCT n WHERE NOT 'Austria' IN n.country_of_citizenship RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of individuals who have served as board members for companies based in Russia, along with the count of such companies for each person.",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Russia'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Person)<-[:hasBoardMember]-(c:Company)-[:basedIn]->(country:Country {name: 'Russia'}) RETURN p.name AS person_name, COUNT(DISTINCT c) AS company_count ORDER BY company_count DESC, person_name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of individuals who passed away after May 5th, 1940, and who both founded and served on the board of a company?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasBoardMember]-(m0:Company) WITH DISTINCT n WHERE n.date_of_death > date('1940-05-05') RETURN n.name",
+    "pred": "MATCH (p:Person) WHERE p.date_of_death > date('1940-05-05') AND EXISTS { MATCH (c:Company)-[:foundedBy]->(p) MATCH (c)-[:hasBoardMember]->(p) } RETURN p.name",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all individuals who were founders of Viacom, along with the number of companies where each has served as CEO, either currently or in the past.",
+    "gold": "MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Viacom'}) OPTIONAL MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (v:Company {name: 'Viacom'})-[:foundedBy]->(founder:Person) WITH founder OPTIONAL MATCH (c:Company)-[:hasCEO]->(founder) RETURN founder.name AS founder_name, COUNT(DISTINCT c) AS ceo_count",
+    "graph": "company"
+  },
+  {
+    "question": "Identify the individuals who have served as CEOs of companies that, at some point, had Norman Welsh as their CEO, and specify the number of such companies for each individual.",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Norman Welsh'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Company)-[:hasCEO]->(norman:Person {name: \"Norman Welsh\"}) MATCH (c)-[:hasCEO]->(ceo:Person) RETURN ceo.name AS individual, COUNT(DISTINCT c) AS number_of_companies ORDER BY individual",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who both founded Global Market Insite and have served as its CEO, and what are their countries of citizenship?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Global Market Insite'}),(n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Global Market Insite'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (c:Company {name: \"Global Market Insite\"})-[:foundedBy]->(p:Person), (c)-[:hasCEO]->(p) RETURN p.name AS name, p.country_of_citizenship AS countries",
+    "graph": "company"
+  },
+  {
+    "question": "Identify the companies that have had CEOs who were also board members of Agrofert at some point, and specify how many such individuals have been CEOs for each company.",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Agrofert'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (agrofert:Company {name: 'Agrofert'}) MATCH (agrofert)-[:hasBoardMember]->(bm:Person) WITH DISTINCT bm MATCH (c:Company)-[:hasCEO]->(bm) WITH DISTINCT c, bm RETURN c.name AS company, COUNT(bm) AS number_of_ceos ORDER BY company",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies founded by Jason Jones and based in the United States of America?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jason Jones'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (p:Person {name: 'Jason Jones'})<-[:foundedBy]-(c:Company)-[:basedIn]->(country:Country {name: 'United States of America'}) RETURN c.name AS name, c.launch_year AS launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies either operate in the publishing industry or have had Nancy McKinstry as their CEO at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'publishing'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Nancy McKinstry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Company) WHERE (c)-[:operatesIn]->(:Industry {name: 'publishing'}) OR (c)-[:hasCEO]->(:Person {name: 'Nancy McKinstry'}) RETURN COUNT(DISTINCT c)",
+    "graph": "company"
+  },
+  {
+    "question": "Who were the board members of Best Buy in the year 2009?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Best Buy'}) WHERE r0.start_year <= 2009 AND (r0.end_year >= 2009 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company {name: 'Best Buy'})-[r:hasBoardMember]->(p:Person) WHERE r.start_year <= 2009 AND (r.end_year >= 2009 OR r.end_year IS NULL) RETURN p",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies have had John Alexander Thain as a board member at any time, past or present?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'John Alexander Thain'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[:hasBoardMember]->(p:Person {name: 'John Alexander Thain'}) RETURN DISTINCT c",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have 'Novo Nordisk (Germany)' as a subsidiary?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Novo Nordisk (Germany)'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (sub:Company {name: 'Novo Nordisk (Germany)'})-[:subsidiaryOf]->(parent:Company) RETURN parent.name",
+    "graph": "company"
+  },
+  {
+    "question": "Who was the CEO of Mercedes-AMG in the year 1999?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Mercedes-AMG'}) WHERE r0.start_year <= 1999 AND (r0.end_year >= 1999 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company {name: 'Mercedes-AMG'})-[r:hasCEO]->(p:Person) WHERE r.start_year <= 1999 AND (r.end_year >= 1999 OR r.end_year IS NULL) RETURN p.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of industries in which Canadian companies operate, and how many Canadian companies are there in each industry?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Canada'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Company)-[:basedIn]->(co:Country {name: 'Canada'}) MATCH (c)-[:operatesIn]->(i:Industry) RETURN i.name AS industry, count(DISTINCT c) AS companyCount ORDER BY companyCount DESC",
+    "graph": "company"
+  },
+  {
+    "question": "Which company was launched later, Fresenius Kabi (United States) or Plaza & Janés?",
+    "gold": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}), (m0:Company {name: 'Plaza & Janés'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (c1:Company {name: \"Fresenius Kabi (United States)\"}) MATCH (c2:Company {name: \"Plaza & Janés\"}) RETURN CASE WHEN c1.launch_year > c2.launch_year THEN c1.name WHEN c2.launch_year > c1.launch_year THEN c2.name ELSE \"Same launch year\" END AS later_company",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the founders of companies in the footwear industry, and what are their genders?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'footwear industry'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (c:Company)-[:operatesIn]->(i:Industry {name: 'footwear'}) MATCH (c)-[:foundedBy]->(p:Person) RETURN p, p.gender",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have Neal Harmon as a CEO and are subsidiaries of VidAngel?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Neal Harmon'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'VidAngel'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (subsidiary:Company)-[:subsidiaryOf]->(:Company {name: 'VidAngel'}), (subsidiary)-[:hasCEO]->(:Person {name: 'Neal Harmon'}) RETURN subsidiary.name AS name, subsidiary.launch_year AS launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the CEOs, past or present, of companies headquartered in the Czech Republic?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Czech Republic'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[:basedIn]->(country:Country {name: 'Czech Republic'}) MATCH (c)-[:hasCEO]->(p:Person) RETURN DISTINCT p",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies had Charles Prince as a board member during the year 2006?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Charles Prince'}) WHERE r0.start_year <= 2006 AND (r0.end_year >= 2006 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[r:hasBoardMember]->(p:Person {name: 'Charles Prince'}) WHERE r.start_year <= 2006 AND (r.end_year IS NULL OR r.end_year >= 2006) RETURN c",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies share board members with Boeing, and how many such shared board members does each company have?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Boeing'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (b:Company {name: 'Boeing'})-[:hasBoardMember]->(shared:Person)<-[:hasBoardMember]-(other:Company) WHERE b <> other RETURN other.name AS company, count(DISTINCT shared) AS shared_members ORDER BY shared_members DESC",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of all companies that are subsidiaries of Liberty Media, and how many board members have they had, both past and present?",
+    "gold": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Liberty Media'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (lib:Company {name: \"Liberty Media\"}) MATCH (sub:Company)-[:subsidiaryOf]->(lib) OPTIONAL MATCH (sub)-[:hasBoardMember]->(bm:Person) RETURN sub.name AS company_name, COUNT(DISTINCT bm) AS number_of_board_members",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies involved in the academic publishing industry?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'academic publishing'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[:operatesIn]->(i:Industry {name: 'academic publishing'}) RETURN c.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of all the countries?",
+    "gold": "MATCH (n:Country) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country) RETURN c.name",
+    "graph": "company"
+  },
+  {
+    "question": "What Meta Platforms subsidiaries operate in the video game industry?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Meta Platforms'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'video game industry'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (meta:Company {name: \"Meta Platforms\"})<-[r:subsidiaryOf]-(sub:Company) MATCH (sub)-[:operatesIn]->(ind:Industry {name: \"video game industry\"}) RETURN sub.name AS subsidiary_name",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies are either based in Italy or operate in the ferrous metallurgy industry?",
+    "gold": "CALL { MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Italy'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'ferrous metallurgy'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Company) WHERE EXISTS((c)-[:basedIn]->(:Country {name: \"Italy\"})) OR EXISTS((c)-[:operatesIn]->(:Industry {name: \"ferrous metallurgy\"})) RETURN count(c) AS company_count",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of subsidiaries of Groupe Flammarion, and how many individuals founded each of them?",
+    "gold": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Groupe Flammarion'}) OPTIONAL MATCH (n:Company)-[r0:foundedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (parent:Company {name: 'Groupe Flammarion'})<-[:subsidiaryOf]-(sub:Company) OPTIONAL MATCH (sub)-[:foundedBy]->(founder:Person) RETURN sub.name AS subsidiary_name, COUNT(DISTINCT founder) AS founder_count ORDER BY subsidiary_name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies founded by Marie-Etienne Nitot?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Marie-Etienne Nitot'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (p:Person {name: \"Marie-Etienne Nitot\"})<-[:foundedBy]-(c:Company) RETURN c.name, c.launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of parent companies of subsidiaries founded by Tikhon Bernstam?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Tikhon Bernstam'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (founder:Person {name: 'Tikhon Bernstam'})<-[:foundedBy]-(subsidiary:Company)-[:subsidiaryOf]->(parent:Company) RETURN DISTINCT parent.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies founded by individuals who have served on the board of General Electric?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'General Electric'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (ge:Company {name: 'General Electric'})-[:hasBoardMember]->(p:Person) MATCH (c:Company)-[:foundedBy]->(p) RETURN c.name, c.launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "How many individuals have served as CEOs of companies at any time, whether in the past or present?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Company)-[:hasCEO]->(p:Person) RETURN COUNT(DISTINCT p)",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies currently have Bret Taylor as a board member?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Bret Taylor'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[r:hasBoardMember]->(p:Person {name: 'Bret Taylor'}) WHERE date().year >= r.start_year AND date().year <= r.end_year RETURN c.name",
+    "graph": "company"
+  },
+  {
+    "question": "What is Paul Stone's gender?",
+    "gold": "MATCH (n:Person {name: 'Paul Stone'}) WITH DISTINCT n RETURN n.gender",
+    "pred": "MATCH (p:Person {name: 'Paul Stone'}) RETURN p.gender",
+    "graph": "company"
+  },
+  {
+    "question": "Who is the youngest individual who has ever been a board member of a company?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "pred": "MATCH (c:Company)-[:hasBoardMember]->(p:Person) WHERE p.date_of_birth IS NOT NULL RETURN p ORDER BY p.date_of_birth DESC LIMIT 1",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have either had Andreas Sommer as CEO at some point or were founded by Ita Wegman?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Andreas Sommer'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Ita Wegman'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Company) WHERE (c)-[:hasCEO]->(:Person {name: 'Andreas Sommer'}) OR (c)-[:foundedBy]->(:Person {name: 'Ita Wegman'}) RETURN count(DISTINCT c)",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by Gunnar Hordvik or that are subsidiaries of EMI?",
+    "gold": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Gunnar Hordvik'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'EMI'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[:foundedBy]->(p:Person) WHERE p.name = 'Gunnar Hordvik' RETURN c.name AS company_name UNION MATCH (c:Company)-[:subsidiaryOf]->(emi:Company) WHERE emi.name = 'EMI' RETURN c.name AS company_name",
+    "graph": "company"
+  },
+  {
+    "question": "What year was PENAM launched?",
+    "gold": "MATCH (n:Company {name: 'PENAM'}) WITH DISTINCT n RETURN n.launch_year",
+    "pred": "MATCH (c:Company {name: 'PENAM'}) RETURN c.launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that operate in the same industries as Bardel Entertainment?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Bardel Entertainment'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (bardel:Company {name: 'Bardel Entertainment'})-[:operatesIn]->(industry:Industry) MATCH (company:Company)-[:operatesIn]->(industry) WHERE company <> bardel RETURN DISTINCT company.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that are headquartered in the United States of America and have had Hiro Kamezawa as a board member at some point?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Hiro Kamezawa'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (c:Company)-[:basedIn]->(co:Country {name: 'United States of America'}) MATCH (c)-[:hasBoardMember]->(p:Person {name: 'Hiro Kamezawa'}) RETURN c.name, c.launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have a board member who is also their founder, sorted by their launch year from the earliest to the latest?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:foundedBy]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC",
+    "pred": "MATCH (c:Company)-[:foundedBy]->(p:Person), (c)-[:hasBoardMember]->(p) RETURN c.name AS company_name, c.launch_year ORDER BY c.launch_year ASC",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have had Gerald Johnson as a board member and operate in the mechanical engineering industry?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Gerald Johnson'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'mechanical engineering'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (c:Company)-[:hasBoardMember]->(p:Person {name: 'Gerald Johnson'}), (c)-[:operatesIn]->(i:Industry {name: 'mechanical engineering'}) RETURN c.name AS company_name, c.launch_year AS launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "What are the unique countries of citizenship of individuals who have both served as CEO and founded a company?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company),(n:Person)<-[r1:foundedBy]-(m0:Company) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (p:Person) WHERE EXISTS ((c:Company)-[:hasCEO]->(p)) AND EXISTS ((c2:Company)-[:foundedBy]->(p)) UNWIND p.country_of_citizenship AS country RETURN DISTINCT country",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the CEOs, past or present, of companies in the tyre industry?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'tyre industry'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (i:Industry {name: 'tyre'})<-[:operatesIn]-(c:Company)-[:hasCEO]->(p:Person) RETURN DISTINCT p.name AS CEO",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have 'Novo Nordisk (Germany)' as a subsidiary?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Novo Nordisk (Germany)'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (sub:Company {name: 'Novo Nordisk (Germany)'})-[:subsidiaryOf]->(parent:Company) RETURN parent.name, parent.launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies based in the United States of America, along with the number of companies that are their subsidiaries.",
+    "gold": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) OPTIONAL MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (usa:Country {name: 'United States of America'}) MATCH (comp:Company)-[:basedIn]->(usa) OPTIONAL MATCH (sub:Company)-[:subsidiaryOf]->(comp) RETURN comp.name AS company_name, COUNT(sub) AS number_of_subsidiaries",
+    "graph": "company"
+  },
+  {
+    "question": "Which country is BFM DICI Haute-Provence based?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'BFM DICI Haute-Provence'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company {name: \"BFM DICI Haute-Provence\"})-[:basedIn]->(country:Country) RETURN country.name",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies are either based in the United States of America or own Mentor Graphics (Hungary)?",
+    "gold": "CALL { MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Mentor Graphics (Hungary)'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Company) WHERE EXISTS((c)-[:basedIn]->(:Country {name: \"United States of America\"})) OR EXISTS((c)<-[:subsidiaryOf]-(:Company {name: \"Mentor Graphics\"})-[:basedIn]->(:Country {name: \"Hungary\"})) RETURN count(c)",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that were both founded and led by the same individual as CEO, sorted by their launch year from the most recent to the oldest?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person),(n:Company)-[r1:foundedBy]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred": "MATCH (c:Company)-[:foundedBy]->(p:Person), (c)-[:hasCEO]->(p) RETURN c.name AS company_name ORDER BY c.launch_year DESC",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the CEOs of companies where Peter Henry has served as a board member, and how many such companies has each of these CEOs led?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Peter Henry'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (ph:Person {name: 'Peter Henry'}) MATCH (c:Company)-[:hasBoardMember]->(ph) MATCH (c)-[:hasCEO]->(ceo:Person) RETURN ceo.name AS CEO_Name, count(distinct c) AS Number_Of_Companies_Led ORDER BY Number_Of_Companies_Led DESC",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that either operate in the television industry or are based in Australia?",
+    "gold": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'television'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company) WHERE EXISTS((c)-[:operatesIn]->(:Industry {name: 'television'})) OR EXISTS((c)-[:basedIn]->(:Country {name: 'Australia'})) RETURN c.name",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have either had Gerald Hassell as a board member at some point or were founded by Ralph J. Roberts?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Gerald Hassell'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Ralph J. Roberts'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Company) WHERE EXISTS((c)-[:hasBoardMember]->(:Person {name: 'Gerald Hassell'})) OR EXISTS((c)-[:foundedBy]->(:Person {name: 'Ralph J. Roberts'})) RETURN count(DISTINCT c)",
+    "graph": "company"
+  },
+  {
+    "question": "Identify the individuals who have served on the board of companies that are subsidiaries of Czech Media Invest, and specify how many such companies each individual has been associated with.",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Czech Media Invest'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (cmi:Company {name: 'Czech Media Invest'})<-[:subsidiaryOf*]-(subsidiary:Company)-[r:hasBoardMember]->(person:Person)\nRETURN person.name AS individual, COUNT(DISTINCT subsidiary) AS company_count\nORDER BY company_count DESC",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies have had the same person serve as both CEO and board member at some point, and what year were they launched?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person),(n:Company)-[r1:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (c:Company)-[:hasCEO]->(p:Person), (c)-[:hasBoardMember]->(p) RETURN DISTINCT c.launch_year AS launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served on the boards of both Goldman Sachs and Dell Inc. at any time, whether in the past or present?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Goldman Sachs'}),(n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Dell Inc.'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (gs:Company {name: 'Goldman Sachs'})-[:hasBoardMember]->(person:Person)<-[:hasBoardMember]-(dell:Company {name: 'Dell Inc.'}) RETURN person.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where companies based in the United Kingdom are also based, and how many such companies are there in each country?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'United Kingdom'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (uk:Country {name: \"United Kingdom\"})<-[:basedIn]-(parent:Company), (sub:Company)-[:subsidiaryOf]->(parent), (sub)-[:basedIn]->(country:Country) RETURN country.name AS country_name, COUNT(sub) AS number_of_companies ORDER BY country_name",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies are either subsidiaries of HSBC or based in Singapore?",
+    "gold": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'HSBC'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Singapore'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Company) WHERE EXISTS((c)-[:subsidiaryOf]->(:Company {name: 'HSBC'})) OR EXISTS((c)-[:basedIn]->(:Country {name: 'Singapore'})) RETURN count(DISTINCT c)",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have had Richard E. Snyder as CEO and are based in the United States of America?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Richard E. Snyder'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (c:Company)-[:hasCEO]->(:Person {name: \"Richard E. Snyder\"}) MATCH (c)-[:basedIn]->(:Country {name: \"United States of America\"}) RETURN c.name AS name, c.launch_year AS launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "Which subsidiaries of Interscope Records were founded by Vincent Herbert?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Interscope Records'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Vincent Herbert'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (parent:Company {name: 'Interscope Records'})<-[:subsidiaryOf]-(subsidiary:Company)-[:foundedBy]->(founder:Person {name: 'Vincent Herbert'}) RETURN subsidiary",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of all subsidiaries of Nederlandse Spoorwegen, and how many companies are subsidiaries of each of them?",
+    "gold": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Nederlandse Spoorwegen'}) OPTIONAL MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (parent:Company {name: 'Nederlandse Spoorwegen'}) MATCH (subsidiary:Company)-[:subsidiaryOf]->(parent) WITH subsidiary OPTIONAL MATCH (subSub:Company)-[:subsidiaryOf]->(subsidiary) RETURN subsidiary.name AS subsidiary_name, COUNT(subSub) AS number_of_subsidiaries",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies where the founder has served as a board member?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:foundedBy]->(m0:Person) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[:foundedBy]->(founder:Person), (c)-[:hasBoardMember]->(founder) RETURN c.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies operating in IT service management, and how many different industries does each of them operate in?",
+    "gold": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'IT service management'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Company)-[:operatesIn]->(i:Industry) WHERE i.name = 'IT service management' WITH c, COLLECT(DISTINCT i) AS industries RETURN c.name AS company_name, SIZE(industries) AS industry_count",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the founders of companies that are subsidiaries of Sirius XM, and how many such companies did each person found?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Sirius XM'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (sirius:Company {name: 'Sirius XM'})\nMATCH (subsidiary:Company)-[:subsidiaryOf]->(sirius)\nMATCH (subsidiary)-[:foundedBy]->(founder:Person)\nRETURN founder.name AS founder, COUNT(subsidiary) AS numberOfCompanies\nORDER BY numberOfCompanies DESC",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where both the Howard Miller Clock Company and Dynetics are based?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'Howard Miller Clock Company'}),(n:Country)<-[r1:basedIn]-(m1:Company {name: 'Dynetics'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c1:Company {name: 'Howard Miller Clock Company'})-[:basedIn]->(country:Country), (c2:Company {name: 'Dynetics'})-[:basedIn]->(country) RETURN country.name",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies headquartered in the Republic of Ireland, along with the number of industries each operates in.",
+    "gold": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Republic of Ireland'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Company)-[:basedIn]->(country:Country {name: 'Republic of Ireland'}) OPTIONAL MATCH (c)-[:operatesIn]->(industry:Industry) RETURN c.name AS company_name, COUNT(industry) AS number_of_industries",
+    "graph": "company"
+  },
+  {
+    "question": "What are the unique countries of citizenship of individuals who have served on the board of a company that also had Yasir Al-Rumayyan as a board member at some time?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Yasir Al-Rumayyan'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (y:Person {name: 'Yasir Al-Rumayyan'})-[:hasBoardMember]->(c:Company) MATCH (c)-[:hasBoardMember]->(p:Person) UNWIND p.country_of_citizenship AS country RETURN DISTINCT country",
+    "graph": "company"
+  },
+  {
+    "question": "Which company, operating in both the phonographic and music industries, was launched first?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'phonographic industry'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'music industry'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC LIMIT 1",
+    "pred": "MATCH (c:Company)-[:operatesIn]->(i:Industry) WHERE i.name IN ['phonographic', 'music'] WITH c, COLLECT(DISTINCT i.name) AS industries WHERE size(industries) = 2 RETURN c.name AS company_name ORDER BY c.launch_year ASC LIMIT 1",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by either Jan Nordlund or Stefan Enberg?",
+    "gold": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jan Nordlund'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Stefan Enberg'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[:foundedBy]->(p:Person) WHERE p.name IN ['Jan Nordlund', 'Stefan Enberg'] RETURN c.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that are subsidiaries of a company where Patricia Barbizet has served as a board member?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Patricia Barbizet'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (p:Person {name: 'Patricia Barbizet'}) MATCH (parent:Company)-[:hasBoardMember]->(p) MATCH (subsidiary:Company)-[:subsidiaryOf]->(parent) RETURN subsidiary.name AS company_name, subsidiary.launch_year AS launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies were either founded by Sergey Brin or have Jambool as a subsidiary?",
+    "gold": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Sergey Brin'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Jambool'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Company) WHERE (c)-[:foundedBy]->(:Person {name: 'Sergey Brin'}) OR EXISTS((:Company {name: 'Jambool'})-[:subsidiaryOf]->(c)) RETURN COUNT(c)",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have had Marianne Laigneau as their CEO at some point?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Marianne Laigneau'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (c:Company)-[r:hasCEO]->(p:Person {name: \"Marianne Laigneau\"}) RETURN c.name AS name, c.launch_year AS launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as CEOs of companies based in Italy, and how many such companies has each person led?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Italy'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Company)-[:basedIn]->(:Country {name: 'Italy'}), (c)-[:hasCEO]->(p:Person) RETURN p.name AS person, count(DISTINCT c) AS companyCount ORDER BY companyCount DESC",
+    "graph": "company"
+  },
+  {
+    "question": "What is the earliest launch year of companies that own a subsidiary once led by Mario Rossetti as CEO?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Mario Rossetti'}) WITH DISTINCT n RETURN min(n.launch_year)",
+    "pred": "MATCH (p:Person {name: \"Mario Rossetti\"}) MATCH (sub:Company)-[:hasCEO]->(p) MATCH (sub)-[:subsidiaryOf]->(parent:Company) RETURN MIN(parent.launch_year) AS earliest_launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies were both founded by and had the same person as CEO at some point, and what are their launch years?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (c:Company)-[:foundedBy]->(p:Person), (c)-[:hasCEO]->(p) RETURN DISTINCT c, c.launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the CEOs, past or present, of companies founded by Simon Rogerson, and what are their countries of citizenship?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Simon Rogerson'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (founder:Person {name: 'Simon Rogerson'})<-[:foundedBy]-(company:Company) MATCH (company)-[:hasCEO]->(ceo:Person) RETURN DISTINCT ceo.name AS ceo_name, ceo.country_of_citizenship AS countries_of_citizenship",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies in the public relations industry that were launched after 1927?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'public relations'}) WITH DISTINCT n WHERE n.launch_year > 1927 RETURN n.name",
+    "pred": "MATCH (c:Company)-[:operatesIn]->(i:Industry) WHERE c.launch_year > 1927 AND i.name = 'public relations' RETURN c.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that are subsidiaries of Bertelsmann and have had Alfred Hugenberg as a board member at some point?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Bertelsmann'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Alfred Hugenberg'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (parent:Company {name: 'Bertelsmann'}) MATCH (subsidiary:Company)-[:subsidiaryOf]->(parent) MATCH (subsidiary)-[:hasBoardMember]->(person:Person {name: 'Alfred Hugenberg'}) RETURN subsidiary.name AS company_name, subsidiary.launch_year AS launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "Which countries host companies that are subsidiaries of EMI, and how many such companies are based in each country?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'EMI'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (emi:Company {name: \"EMI\"})<-[:subsidiaryOf]-(subsidiary:Company)-[:basedIn]->(country:Country) RETURN country.name AS country, COUNT(subsidiary) AS number_of_subsidiaries",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all individuals who have served as CEO of GitHub Inc. at any time, along with the number of companies for which each has held the CEO position, whether in the past or present.",
+    "gold": "MATCH (n:Person)<-[r1:hasCEO]-(m1:Company {name: 'GitHub Inc.'}) OPTIONAL MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (github:Company {name: \"GitHub Inc.\"})-[:hasCEO]->(ceo:Person) WITH ceo MATCH (company:Company)-[:hasCEO]->(ceo) RETURN ceo.name AS name, count(DISTINCT company) AS number_of_companies",
+    "graph": "company"
+  },
+  {
+    "question": "List the names of individuals who have been both a CEO and a founder of a company.",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company),(n:Person)<-[r1:foundedBy]-(m0:Company) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[:foundedBy]->(p:Person)<-[:hasCEO]-(c) RETURN DISTINCT p.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the unique genders of individuals who have served as both a board member and a CEO of a company at some point?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (p:Person)<-[:hasCEO]-(:Company), (p)<-[:hasBoardMember]-(:Company) RETURN DISTINCT p.gender",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the current board members of Best Buy?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Best Buy'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company {name: 'Best Buy'})-[r:HAS_BOARD_MEMBER]->(p:Person) WHERE r.end_date IS NULL OR r.end_date > date() RETURN p.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had Richard K. Davis as a board member, and how many different individuals have served as CEO for each of those companies?",
+    "gold": "MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Richard K. Davis'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Person {name: 'Richard K. Davis'})<-[:hasBoardMember]-(c:Company)\nOPTIONAL MATCH (c)-[:hasCEO]->(ceo:Person)\nRETURN c.name AS companyName, COUNT(DISTINCT ceo) AS numberOfCEOs",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of companies where Amy Chang has served as a board member, along with the number of industries each company operates in.",
+    "gold": "MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Amy Chang'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Person {name: 'Amy Chang'})<-[:hasBoardMember]-(c:Company) WITH DISTINCT c OPTIONAL MATCH (c)-[:operatesIn]->(i:Industry) RETURN c.name AS company_name, COUNT(DISTINCT i) AS industry_count",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where companies in the jewelry industry are headquartered?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'jewelry industry'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Company)-[:operatesIn]->(:Industry {name: 'jewelry'}) MATCH (c)-[:basedIn]->(country:Country) RETURN DISTINCT country.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have had Paul Desmarais, Jr. as a board member at any time?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Paul Desmarais, Jr.'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (c:Company)-[:hasBoardMember]->(p:Person) WHERE p.name = 'Paul Desmarais, Jr.' RETURN c.name, c.launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies either operate in the phonographic industry or are subsidiaries of the company named 'Sony (United Kingdom)'?",
+    "gold": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'phonographic industry'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Sony (United Kingdom)'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Company) WHERE (c)-[:operatesIn]->(:Industry {name: 'phonographic'}) OR (c)-[:subsidiaryOf]->(:Company {name: 'Sony (United Kingdom)'}) RETURN count(DISTINCT c) AS count",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have either had Bob Swan as their CEO at some point or operate in the electrical industry?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Bob Swan'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'electrical industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Company) WHERE EXISTS { MATCH (c)-[:hasCEO]->(p:Person {name: \"Bob Swan\"}) } OR EXISTS { MATCH (c)-[:operatesIn]->(i:Industry {name: \"electrical\"}) } RETURN COUNT(DISTINCT c)",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that operate in the same industries as Parke-Davis, and how many of those industries does each company operate in?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Parke-Davis'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (pd:Company {name: 'Parke-Davis'})-[:operatesIn]->(pdIndustry:Industry) WITH COLLECT(DISTINCT pdIndustry) AS pdIndustries MATCH (c:Company)-[:operatesIn]->(industry:Industry) WHERE industry IN pdIndustries WITH c, COUNT(DISTINCT industry) AS sharedIndustriesCount RETURN c.name AS companyName, sharedIndustriesCount ORDER BY companyName",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of individuals born after 1982 who co-founded a company with Emmett Shear?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Emmett Shear'}) WITH DISTINCT n WHERE n.date_of_birth.year > 1982 RETURN n.name",
+    "pred": "MATCH (emmett:Person {name: 'Emmett Shear'}) MATCH (c:Company)-[:foundedBy]->(emmett) MATCH (c)-[:foundedBy]->(cofounder:Person) WHERE cofounder <> emmett AND year(cofounder.date_of_birth) > 1982 RETURN DISTINCT cofounder.name",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have shared a CEO with CDP Reti at some point in time?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'CDP Reti'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (cdp:Company {name: \"CDP Reti\"})-[ceo_rel1:hasCEO]->(ceo:Person)<-[ceo_rel2:hasCEO]-(otherCompany:Company) WHERE otherCompany <> cdp AND ceo_rel1.start_year <= ceo_rel2.end_year AND ceo_rel2.start_year <= ceo_rel1.end_year RETURN DISTINCT otherCompany.name",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies have had John Alexander Thain as a board member at any time, and in what year were they launched?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'John Alexander Thain'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (c:Company)-[:hasBoardMember]->(p:Person) WHERE p.name = 'John Alexander Thain' RETURN c.name AS company_name, c.launch_year AS launch_year",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all IBM subsidiaries, along with the number of founders for each of them.",
+    "gold": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'IBM'}) OPTIONAL MATCH (n:Company)-[r0:foundedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (ibm:Company {name: 'IBM'}) MATCH (subsidiary:Company)-[:subsidiaryOf]->(ibm) OPTIONAL MATCH (subsidiary)-[:foundedBy]->(founder:Person) RETURN subsidiary.name AS subsidiary_name, COUNT(founder) AS number_of_founders",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies that are subsidiaries of the Volkswagen Group, along with the number of individuals who have served as their CEO at any time.",
+    "gold": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Volkswagen Group'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as CEO of Campbell Soup Company at any time, and when did they pass away?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Campbell Soup Company'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies that are subsidiaries of Audi AG, along with the number of individuals who have served as board members for each company, whether currently or in the past.",
+    "gold": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Audi AG'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Company {name: \"Audi AG\"}) MATCH (sub:Company)-[:subsidiaryOf]->(c) WITH sub OPTIONAL MATCH (sub)-[:hasBoardMember]->(person:Person) RETURN sub.name AS company_name, COUNT(DISTINCT person) AS number_of_board_members ORDER BY company_name",
+    "graph": "company"
+  },
+  {
+    "question": "Identify the individuals who have served on the board of companies where Meg Whitman has also been a board member, and specify the number of such companies for each individual.",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Meg Whitman'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (company:Company)-[:hasBoardMember]->(meg:Person {name: \"Meg Whitman\"}) MATCH (company)-[:hasBoardMember]->(person:Person) RETURN person.name AS individual, COUNT(DISTINCT company) AS number_of_shared_companies ORDER BY number_of_shared_companies DESC",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the current board members of General Motors?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'General Motors'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of Mexican companies that operate in the banking industry?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'banking industry'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'Mexico'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the difference in launch years between On2 Technologies and LaCie?",
+    "gold": "MATCH (n:Company {name: 'On2 Technologies'}), (m0:Company {name: 'LaCie'}) RETURN n.launch_year - m0.launch_year AS answer",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where companies in the electronics industry are based, and how many such companies are there in each country?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'electronics'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals that founded Oakpont Professionals and have served on the board of Oakpont, and what are their birth dates?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Oakpont Professionals'}),(n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Oakpont'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of individuals who have served as board members for Adobe and as CEOs for Eli Lilly and Company, either currently or in the past?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Adobe'}),(n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Eli Lilly and Company'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of companies involved in rail transport and the number of individuals who have served as their CEO, whether currently or in the past.",
+    "gold": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'rail transport'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have Makoto Uchida as their CEO and are parent of Nissan New Zealand?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Makoto Uchida'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Nissan New Zealand'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are subsidiaries of companies based in Australia?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of subsidiaries of SIE Worldwide Studios that had Andy Gavin as their CEO at some point?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'SIE Worldwide Studios'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Andy Gavin'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as board members for companies in the payment card industry, and how many such companies has each individual been a board member of?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'payment card industry'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of companies operating in the phonographic industry, along with the number of individuals who have served as their CEO at any time.",
+    "gold": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'phonographic industry'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of industries in which companies based in the Republic of Ireland operate, and how many such companies are there for each industry?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Republic of Ireland'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies involved in business travel that were founded by Nathan Blecharczyk?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'business travel'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Nathan Blecharczyk'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies headquartered in the United States of America that have had Ramon Laguarta as their CEO at some point?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Ramon Laguarta'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where companies with Irene Dorner as a board member are based?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Irene Dorner'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the earliest launch year of companies headquartered in France?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'France'}) WITH DISTINCT n RETURN min(n.launch_year)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have had either Thierry Desmarest or Marcel Champin as their CEO at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Thierry Desmarest'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Marcel Champin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the difference in launch years between Fresenius Kabi (United States) and Plaza & Janés?",
+    "gold": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}), (m0:Company {name: 'Plaza & Janés'}) RETURN n.launch_year - m0.launch_year AS answer",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies where David M. Solomon is the current CEO?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'David M. Solomon'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by Marie-Etienne Nitot?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Marie-Etienne Nitot'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies operating in the media and entertainment industry, along with the number of founders of each company.",
+    "gold": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'media & entertainment industry'}) OPTIONAL MATCH (n:Company)-[r0:foundedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that are founded by Sandra Lerner and have Okena as a subsidiary?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Sandra Lerner'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Okena'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies are either based in the United States of America or founded by Mike Lazzo?",
+    "gold": "CALL { MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Mike Lazzo'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who passed away later, Henry A. Clark or Harvey Samuel Firestone?",
+    "gold": "MATCH (n:Person {name: 'Henry A. Clark'}), (m0:Person {name: 'Harvey Samuel Firestone'}) RETURN CASE WHEN n.date_of_death > m0.date_of_death THEN n.name ELSE m0.name END AS answer",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "List the names of individuals who have been both board members and CEOs of a company, sorted by their date of death from the most recent to the oldest.",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of individuals who have been board members of companies at any time, past or present?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names and genders of individuals who have both served as CEO of Vista Equity Partners and founded the company.",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Vista Equity Partners'}),(n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Vista Equity Partners'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that are subsidiaries of Twinkl?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Twinkl'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the founders of companies that are subsidiaries of HSBC?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'HSBC'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the unique genders of individuals who have both founded and served as CEO of a company at some point?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the founders of the parent company of High Moon Studios, listed from the youngest to the oldest?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'High Moon Studios'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where companies that are subsidiaries of H. J. Heinz Company are based, and how many such companies are there in each country?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'H. J. Heinz Company'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of individuals who have both founded and served as CEO of a company, excluding those born in Taipei.",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n WHERE n.place_of_birth <> 'Taipei' RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the name of the subsidiary of The Coca-Cola Company that was launched most recently?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'The Coca-Cola Company'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC LIMIT 1",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies operating in the mobile phone industry, along with the number of countries each is based in.",
+    "gold": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'mobile phone industry'}) OPTIONAL MATCH (n:Company)-[r0:basedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as board members for companies that, at some point, had Heinrich von Pierer as CEO, and how many such companies has each individual been a board member of?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Heinrich von Pierer'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many individuals have either founded Oakpont or served as board members of Bell Resources at any time?",
+    "gold": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Oakpont'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Bell Resources'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of individuals who founded Twinkl and were born in Huntingdon?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Twinkl'}) WITH DISTINCT n WHERE n.place_of_birth = 'Huntingdon' RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the founders of companies that have had John Alexander Thain as a board member, and how many such companies did each person found?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'John Alexander Thain'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Identify the companies that have shared a CEO with Norwegian Air International at any time, and specify how many such CEOs they have had.",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'Norwegian Air International'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had either Gaurdie Banister or Samuel R. Allen as board members at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Gaurdie Banister'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Samuel R. Allen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had Marianne Laigneau as their CEO at any time, past or present?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Marianne Laigneau'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of industries where companies led by Doug McMillon operate, and how many such companies are there in each industry?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Doug McMillon'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies operating in the film industry, along with the number of individuals who have served as board members for each company, whether currently or in the past.",
+    "gold": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'film industry'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "List the names of companies that have Canadian-based subsidiaries, along with the number of these subsidiaries for each company.",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Canada'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the sister companies of Latvijas Gāze?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Latvijas Gāze'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are headquartered in both Russia and the Netherlands?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Russia'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'Netherlands'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of companies operating in the hotel industry, along with the number of countries they are based in.",
+    "gold": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'hotel industry'}) OPTIONAL MATCH (n:Company)-[r0:basedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of companies where Risa Lavizzo-Mourey has served as a board member, along with the count of individuals who have held the CEO position at each of those companies.",
+    "gold": "MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Risa Lavizzo-Mourey'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the founders of companies that have had Roberto Setúbal as a board member, and how many such companies did each person found?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Roberto Setúbal'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of individuals who have served on the board of companies founded by Marcel Renault, and for each individual, indicate how many such companies they have been a board member of, whether currently or in the past.",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Marcel Renault'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies located in Russia, along with the number of individuals who have served on their boards at any time.",
+    "gold": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Russia'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies headquartered in the Republic of Ireland, along with the number of individuals who have served as their CEO at any time.",
+    "gold": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Republic of Ireland'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where the parent company of Disney Platform Distribution is based?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Disney Platform Distribution'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as board members of 3SHAPE HOLDING and also founded 3Shape, listed from the most recently deceased to the earliest?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: '3SHAPE HOLDING'}),(n:Person)<-[r1:foundedBy]-(m1:Company {name: '3Shape'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of industries in which Foxconn operates?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Foxconn'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of individuals who have served as board members for companies based in the Czech Republic, along with the count of such companies for each person.",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Czech Republic'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as CEO of Campbell Soup Company, and what is their gender?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Campbell Soup Company'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that were both founded by and had the same person as CEO at some point, listed from the most recently launched to the oldest?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all individuals who have served as board members for Nike, along with the number of companies where each has held the position of CEO.",
+    "gold": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Nike'}) OPTIONAL MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies have had a board member who was also a CEO of AT&T at some point?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'AT&T'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have either had Stefan Hartung as CEO at some point or own Bosch (China) Investment?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Stefan Hartung'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Bosch (China) Investment'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of individuals who have been CEOs of Seznam.cz and were born on February 7th, 1974?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Seznam.cz'}) WITH DISTINCT n WHERE n.date_of_birth = date('1974-02-07') RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many individuals have served as board members for Ford Motor Company or as CEOs for Deere & Company at any time?",
+    "gold": "CALL { MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Ford Motor Company'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Deere & Company'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of all companies that are subsidiaries of GE Healthcare, and how many industries does each operate in?",
+    "gold": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'GE Healthcare'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that were both founded by and have had the same person as a board member, listed in order of their launch year from earliest to latest?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person),(n:Company)-[r1:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have Lampiris as a subsidiary?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Lampiris'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of individuals born in Addis Ababa who have served as board members for companies in the leisure industries?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'leisure industries'}) WITH DISTINCT n WHERE n.place_of_birth = 'Addis Ababa' RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies are headquartered in France?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'France'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals that founded Tennman Records?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Tennman Records'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies either founded by Samuel Whitbread or that have had Alison Brittain as their CEO at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Samuel Whitbread'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Alison Brittain'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have subsidiaries in the human resource management industry?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'human resource management'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all individuals who have served as board members for Cisco at any time, along with the count of companies where each has held the position of CEO, whether currently or in the past.",
+    "gold": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Cisco'}) OPTIONAL MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the industries in which both CCH and Adobe operate?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'CCH'}),(n:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Adobe'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who were the board members of General Motors in the year 2015?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'General Motors'}) WHERE r0.start_year <= 2015 AND (r0.end_year >= 2015 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of individuals who have served as board members for either Cisco or General Motors at any time?",
+    "gold": "CALL { MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Cisco'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'General Motors'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had David C. Page as a board member and Indra Nooyi as a CEO at some point?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'David C. Page'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Indra Nooyi'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies have board members who have also served as CEOs of General Motors, and how many such individuals are there for each company?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'General Motors'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all individuals who have served as board members for Mapbox, along with the number of companies that have been founded by each of them.",
+    "gold": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Mapbox'}) OPTIONAL MATCH (n:Person)<-[r0:foundedBy]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the board members, past or present, of companies that own Rolls-Royce (Sweden), and where were they born?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Rolls-Royce (Sweden)'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who were the CEOs of General Electric in the year 2001?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'General Electric'}) WHERE r0.start_year <= 2001 AND (r0.end_year >= 2001 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies that are subsidiaries of Mitsubishi, along with the number of individuals who have served as their CEO at any time.",
+    "gold": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Mitsubishi'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies have had both Jeffrey O. Henley and Larry Ellison as board members at some point, and what are their launch years?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Jeffrey O. Henley'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Larry Ellison'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as CEO for both Fiat and Abarth at any time?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Fiat'}),(n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Abarth'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "List the names of companies founded by individuals who also founded Frigidaire, and for each company, provide the number of such individuals.",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'Frigidaire'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Did On2 Technologies and LaCie start in the same year?",
+    "gold": "MATCH (n:Company {name: 'On2 Technologies'}), (m0:Company {name: 'LaCie'}) RETURN n.launch_year = m0.launch_year AS answer",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many distinct industries are there?",
+    "gold": "MATCH (n:Industry) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies involved in academic publishing?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'academic publishing'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies had Jack J. Pelton as their CEO in the year 2003?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Jack J. Pelton'}) WHERE r0.start_year <= 2003 AND (r0.end_year >= 2003 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are subsidiaries of Marvel Entertainment or have Marvel Music as a subsidiary?",
+    "gold": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Marvel Entertainment'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Marvel Music'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as board members of Société Générale, either currently or in the past?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Société Générale'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which company, having had the same individual serve as both CEO and board member at some point, was launched most recently?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person),(n:Company)-[r1:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC LIMIT 1",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who was born later, Dan Schulman or Ivo Lukačovič?",
+    "gold": "MATCH (n:Person {name: 'Dan Schulman'}), (m0:Person {name: 'Ivo Lukačovič'}) RETURN CASE WHEN n.date_of_birth > m0.date_of_birth THEN n.name ELSE m0.name END AS answer",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of individuals who have served as CEOs of companies in the petroleum industry, along with the number of such companies they have led.",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'petroleum industry'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who is the youngest board member of any company founded by Mark Zuckerberg?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Mark Zuckerberg'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by Henry A. Wallace that are subsidiaries of DuPont?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Henry A. Wallace'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'DuPont'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have a CEO who has also been a board member of Boeing, listed from the most recently launched to the oldest?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Boeing'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had Brian Krzanich as CEO and Lip-Bu Tan as a board member at some point?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Brian Krzanich'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Lip-Bu Tan'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that operate in the software industry and have Juha Varelius as their CEO, either currently or in the past?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'software industry'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Juha Varelius'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many individuals have either served as CEO of Walmart or founded the company?",
+    "gold": "CALL { MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Walmart'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Walmart'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are either subsidiaries of J Sainsbury or have had Mike Coupe as their CEO at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'J Sainsbury'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Mike Coupe'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of individuals born after April 21st, 1962?",
+    "gold": "MATCH (n:Person) WITH DISTINCT n WHERE n.date_of_birth > date('1962-04-21') RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies founded by Jérôme Hatt?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jérôme Hatt'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where companies led by John Mackey are based?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'John Mackey'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as CEO of Seznam.cz, either currently or in the past?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Seznam.cz'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have had Nancy McKinstry as their CEO at any time?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Nancy McKinstry'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many industries do either ADOR or Siengdee Thaweesuk operate in?",
+    "gold": "CALL { MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'ADOR'}) RETURN n, m0 as m UNION MATCH (n:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Siengdee Thaweesuk'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies based in the Netherlands that were launched after 1969?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Netherlands'}) WITH DISTINCT n WHERE n.launch_year > 1969 RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Are Christine E. Seidman and Wojciech Jasiński of the same gender?",
+    "gold": "MATCH (n:Person {name: 'Christine E. Seidman'}), (m0:Person {name: 'Wojciech Jasiński'}) RETURN n.gender = m0.gender AS answer",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Identify the individuals who have served as board members for companies that are subsidiaries of 3SHAPE HOLDING, and specify the number of such companies for each individual.",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: '3SHAPE HOLDING'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have Lampiris as a subsidiary?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Lampiris'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that operate in the public relations industry?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'public relations'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is Henry VIII of England's gender?",
+    "gold": "MATCH (n:Person {name: 'Henry VIII of England'}) WITH DISTINCT n RETURN n.gender",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have a CEO who is a person that founded Courrèges?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'Courrèges'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the name of the company, founded and once led by the same individual, that was launched the earliest?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person),(n:Company)-[r1:foundedBy]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC LIMIT 1",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals that Czech News Center has had as board members, past or present, listed from the most recently deceased to the earliest?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Czech News Center'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had Nancy McKinstry as their CEO at any time?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Nancy McKinstry'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies either operate in the logistics industry or have had Christiana Smith Shi as a board member at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'logistics'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Christiana Smith Shi'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have had Bob Chapek as a board member and were founded by Roy O. Disney?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Bob Chapek'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Roy O. Disney'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where companies founded by Jason Kapalka are based?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Jason Kapalka'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals that Tennman Records was founded by, and where were they born?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Tennman Records'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the unique countries of citizenship of individuals who have served as CEOs of companies, either currently or in the past?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the earliest launch year among companies that have subsidiaries?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH DISTINCT n RETURN min(n.launch_year)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as both CEO and board member of Hewlett Packard Enterprise at any time?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Hewlett Packard Enterprise'}),(n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Hewlett Packard Enterprise'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies were both founded by and have had the same person as a board member, and what are their launch years?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person),(n:Company)-[r1:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have had a board member who also served on the board of HP Inc. at some time?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'HP Inc.'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the board members of companies that have had Doug McMillon as CEO, listed from the most recently deceased to the earliest?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Doug McMillon'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who is the youngest individual who has been both a CEO and a board member of the same company at some point?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company),(n:Person)<-[r1:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies either founded by Owen D. Young or operating in the electronics industry?",
+    "gold": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Owen D. Young'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'electronics industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that are based in the Netherlands and are subsidiaries of Fremantle?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Netherlands'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Fremantle'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of companies operating in the chemical industry, along with the number of individuals who have served on their boards, either currently or in the past.",
+    "gold": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'chemical industry'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that operate in the entertainment industry and have Disney Digital Network as a subsidiary?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'entertainment industry'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Disney Digital Network'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had a board member who was also a founder of KLM?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'KLM'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served on the board of companies founded by James E. Casey, and how many such companies has each individual been a board member of?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'James E. Casey'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of all companies that are subsidiaries of Gazprom, and how many countries is each of them based in?",
+    "gold": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Gazprom'}) OPTIONAL MATCH (n:Company)-[r0:basedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the founders of companies that have had Jean-François van Boxmeer as their CEO at some point?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Jean-François van Boxmeer'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the founders of companies that are based in England?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'England'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies that have had Jacob Schram as CEO at any time, along with the number of countries each company is based in.",
+    "gold": "MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Jacob Schram'}) OPTIONAL MATCH (n:Company)-[r0:basedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies either have Harvey C. Jones as a board member or operate in the semiconductor industry?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Harvey C. Jones'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'semiconductor industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are subsidiaries and were launched before the year 1868?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company) WITH DISTINCT n WHERE n.launch_year < 1868 RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are subsidiaries of Sony Corporation of America and are parent companies to Sony Music Entertainment (Norway) AS?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Sony Corporation of America'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Sony Music Entertainment (Norway) AS'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many industries does the parent company of Garmin (United Kingdom) operate in?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Garmin (United Kingdom)'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have founded companies based in France, and how many such companies has each person founded?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'France'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the CEOs, past or present, of companies that are subsidiaries of Walgreens Boots Alliance, and how many such subsidiaries has each of them led?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Walgreens Boots Alliance'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are subsidiaries of Ericsson and are located in the Netherlands?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Ericsson'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'Netherlands'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have subsidiaries based in the People's Republic of China, and how many such subsidiaries does each have?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'People\\'s Republic of China'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that either operate in the mass media industry or were founded by Mark Palmer?",
+    "gold": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'mass media'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Mark Palmer'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many countries are there?",
+    "gold": "MATCH (n:Country) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have subsidiaries operating in the metal industry, and how many such subsidiaries does each company have?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'metal industry'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of board members of Société Générale who were not born in Saint-Dizier?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Société Générale'}) WITH DISTINCT n WHERE n.place_of_birth <> 'Saint-Dizier' RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have Renault Korea Motors and Nissan Motor Co. Ltd. as subsidiaries, sorted by their launch year from the earliest to the latest?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Renault Korea Motors'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Nissan Motor Co. Ltd.'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of companies that have subsidiaries with Daniel Yohannes as a board member, and for each, indicate how many such subsidiaries they have.",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Daniel Yohannes'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have had Andrej Babiš as a board member at some point or are subsidiaries of Agrofert?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Andrej Babiš'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Agrofert'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Do Charles Edelstenne and Alessandro Perrone share the same gender?",
+    "gold": "MATCH (n:Person {name: 'Charles Edelstenne'}), (m0:Person {name: 'Alessandro Perrone'}) RETURN n.gender = m0.gender AS answer",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by Steve Jobs that have had Bob Iger as a board member at some point?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Steve Jobs'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Bob Iger'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies had Hartmut Mehdorn as their CEO during the year 2009?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Hartmut Mehdorn'}) WHERE r0.start_year <= 2009 AND (r0.end_year >= 2009 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who passed away later, Marie Krogh or Ron W. Miller?",
+    "gold": "MATCH (n:Person {name: 'Marie Krogh'}), (m0:Person {name: 'Ron W. Miller'}) RETURN CASE WHEN n.date_of_death > m0.date_of_death THEN n.name ELSE m0.name END AS answer",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the CEOs, past or present, of companies that own Wolters Kluwer Health, and what are their dates of death?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Wolters Kluwer Health'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that operate in the retail industry and have had Tim Cook as a board member at some point?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'retail'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Tim Cook'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of the industries?",
+    "gold": "MATCH (n:Industry) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals that founded either Hewlett-Packard or the HP Software Division?",
+    "gold": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Hewlett-Packard'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'HP Software Division'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Where was Henry VIII of England born?",
+    "gold": "MATCH (n:Person {name: 'Henry VIII of England'}) WITH DISTINCT n RETURN n.place_of_birth",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the name of the company that is a subsidiary of another company and was launched most recently?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC LIMIT 1",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies have subsidiaries that own Chrysler UK, and what are their launch years?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Chrysler UK'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "List the names of companies founded by individuals who have served as board members of Tesla, Inc., and for each company, provide the number of such individuals who founded it.",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Tesla, Inc.'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who is younger, Kurt Kokhauge Larsen or Pavel Baudiš?",
+    "gold": "MATCH (n:Person {name: 'Kurt Kokhauge Larsen'}), (m0:Person {name: 'Pavel Baudiš'}) RETURN CASE WHEN n.date_of_birth > m0.date_of_birth THEN n.name ELSE m0.name END AS answer",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What industries have been operated in by companies that have had James A. Bell as their CEO at some point?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'James A. Bell'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that operate in the hospitality industry and are subsidiaries of Raffles Hotels & Resorts?",
+    "gold": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'hospitality industry'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Raffles Hotels & Resorts'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are subsidiaries of The Coca-Cola Company?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'The Coca-Cola Company'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have been board members of companies based in Australia, listed from the youngest to the oldest?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of industries in which Lexicon operates?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Lexicon'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are subsidiaries of a Dell Technologies subsidiary?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Dell Technologies'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies had Leslie Ireland as a board member during the year 2017?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Leslie Ireland'}) WHERE r0.start_year <= 2017 AND (r0.end_year >= 2017 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by individuals who have served as CEO of Broderbund?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'Broderbund'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of individuals who have served as board members for Bell Resources, along with the number of companies they have been board members of at any time.",
+    "gold": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Bell Resources'}) OPTIONAL MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have either had Anthony Earley as a board member or John S. Gray as a CEO at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Anthony Earley'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'John S. Gray'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the different genders of individuals that Czech News Center has had as board members at any time?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Czech News Center'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the CEOs of companies that have had Bobby Kotick as a board member, and how many such companies has each person led?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Bobby Kotick'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many industries have companies operating in them that are based in Brazil?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Brazil'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the industries in which companies founded by Harry Williams operate?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Harry Williams'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many industries does Foxconn operate in?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Foxconn'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many individuals have served as either a CEO or a board member of Merck & Co. at any time?",
+    "gold": "CALL { MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Merck & Co.'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Merck & Co.'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have had the same person serve as both a board member and a CEO at some point in time?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "List the names of companies that share board members with Apple, and for each company, provide the number of individuals who have served on the boards of both Apple and that company.",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Apple'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that either operate in the media industry or are subsidiaries of Sky Mobile?",
+    "gold": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'media industry'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Sky Mobile'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies founded by the same person who founded Lionsgate?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'Lionsgate'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have had Rich Hume as a board member and are based in the United States of America?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Rich Hume'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies either founded by Steve Jobs or that have had Jerry York as a board member at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Steve Jobs'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Jerry York'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had Bobby Mehta as a board member and are subsidiaries of Sears?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Bobby Mehta'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Sears'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who have served as board members for companies in the petroleum extraction industry, and how many such companies has each individual been a board member of?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'extraction of petroleum'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies headquartered in Italy and operating in the retail industry, sorted by their launch year from the most recent to the oldest?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Italy'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'retail'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have subsidiaries and were launched before the year 1907?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH DISTINCT n WHERE n.launch_year < 1907 RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are headquartered in Switzerland and were founded by Georges Favre-Jacot?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Switzerland'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Georges Favre-Jacot'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the board members of companies that have had Albert Bourla as CEO, and how many such companies has each person been a board member of?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Albert Bourla'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of parent companies of those that have had Georg von Arco as a board member at some point?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Georg von Arco'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the individuals who founded both Mandalay Television and Mandalay Entertainment, and what are their birthdates?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Mandalay Television'}),(n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Mandalay Entertainment'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all individuals who have served as CEO of McDonald’s, along with the number of companies where each has been a board member.",
+    "gold": "MATCH (n:Person)<-[r1:hasCEO]-(m1:Company {name: 'McDonald’s'}) OPTIONAL MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who is the current CEO of SpaceX?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'SpaceX'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have Hersch Klaff as a board member and own United Supermarkets?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Hersch Klaff'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'United Supermarkets'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who is the current CEO of Teva Pharmaceutical Industries Ltd.?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Teva- Pharmaceutical Industries Ltd.'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies currently have Leslie Ireland as a board member?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Leslie Ireland'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies have had the same individual serve as both a board member and CEO at some point, whether in the past or present?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the unique countries of citizenship of individuals who have both served on the board of and founded the same company?",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:foundedBy]-(m0:Company) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies located in Australia, along with the number of individuals who have served as their CEO at any time.",
+    "gold": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where companies that are subsidiaries of Disney Platform Distribution are based?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Disney Platform Distribution'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many individuals have either founded or served as CEO of Saxo Bank A/S at any time?",
+    "gold": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Saxo Bank A/S'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Saxo Bank A/S'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "List the names of companies that have had Sundar Pichai as CEO, along with the number of individuals who have founded each of those companies.",
+    "gold": "MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Sundar Pichai'}) OPTIONAL MATCH (n:Company)-[r0:foundedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had both Hiroto Saikawa and Carlos Ghosn as CEOs at some point?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Hiroto Saikawa'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Carlos Ghosn'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that were both founded by and have had Leon Black as their CEO?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Leon Black'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Leon Black'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Which companies have had Paul Desmarais, Jr. as a board member at some point, either in the past or present?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Paul Desmarais, Jr.'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that are subsidiaries of companies operating in the human resource management industry?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'human resource management'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies operate in either the powertrain technology or electrical industry?",
+    "gold": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'powertrain technology'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'electrical industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that currently have Jamie Dimon as their CEO?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Jamie Dimon'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all companies operating in the ice cream manufacturing industry, along with the number of companies that are their subsidiaries.",
+    "gold": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'ice cream manufacturer'}) OPTIONAL MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that are subsidiaries of a company founded by Larry Rossy?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Larry Rossy'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had either Jack Rogers as CEO or William R. Johnson as a board member at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Jack Rogers'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'William R. Johnson'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all individuals who have served on the board of Berkshire Hathaway, along with the number of companies each of them has founded.",
+    "gold": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Berkshire Hathaway'}) OPTIONAL MATCH (n:Person)<-[r0:foundedBy]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the industries in which a company with Vivek Sankaran as a board member operates?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Vivek Sankaran'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies co-founded by both Drake and 40?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Drake'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: '40'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies are either subsidiaries of Adidas AG or operate in the textile industry?",
+    "gold": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Adidas AG'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'textile industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had Belén Garijo as a CEO at some point and were founded by Heinrich Emanuel Merck?",
+    "gold": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Belén Garijo'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Heinrich Emanuel Merck'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by Jerry Perenchio, and how many industries does each operate in?",
+    "gold": "MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Jerry Perenchio'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by Jérôme Hatt?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jérôme Hatt'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "List the names of companies founded by individuals who also founded DreamWorks, and for each company, provide the number of such individuals.",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'DreamWorks'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of all individuals who have served as board members for Goldman Sachs, along with the number of companies where each has held a board member position.",
+    "gold": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Goldman Sachs'}) OPTIONAL MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies are subsidiaries of either Redcats or Ginori 1735?",
+    "gold": "CALL { MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Redcats'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Ginori 1735'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Provide the names of individuals who have served as CEO at any time for companies founded by Samuel van den Bergh, along with the count of such companies for each person.",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Samuel van den Bergh'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have either had Jiří Paták as CEO at some point or are based in the Czech Republic?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Jiří Paták'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Czech Republic'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by Juan José Martínez García that operate in the computer security industry?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Juan José Martínez García'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'computer security'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the CEOs of companies that have had Tim Cook as a board member, listed in order of their date of death from earliest to latest?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Tim Cook'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death ASC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the unique genders of individuals who have served as both CEO and board member of a company at some point?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company),(n:Person)<-[r1:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names and launch years of companies that have subsidiaries based in Australia?",
+    "gold": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the unique genders of individuals who founded companies that have had Roberto Setúbal as a board member?",
+    "gold": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Roberto Setúbal'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where companies based in Switzerland are also headquartered at?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Switzerland'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that have had a board member at any time, sorted by their launch year from the most recent to the oldest?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are either subsidiaries of Take-Two Interactive or were founded by Sam Houser?",
+    "gold": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Take-Two Interactive'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Sam Houser'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have either had Thomas Horton as a board member at some point or have Compagnia Generale di Elettricità as a subsidiary?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Thomas Horton'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Compagnia Generale di Elettricità'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the name of the country where Škoda Praha is based?",
+    "gold": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'Škoda Praha'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies have either had Tidjane Thiam as CEO at some point or are subsidiaries of UBS?",
+    "gold": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Tidjane Thiam'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'UBS'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the name and launch year of the company that is based in the United States of America and owns Domino's Pizza Group plc?",
+    "gold": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Domino\\'s Pizza Group plc'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies were either founded by Eytan Elbaz or are based in the United States of America?",
+    "gold": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Eytan Elbaz'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies founded by individuals who have served as CEO of Dreamhaven, and how many such individuals have founded each company?",
+    "gold": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'Dreamhaven'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many individuals have either served on the board of Bell Resources or founded Bell Property Group?",
+    "gold": "CALL { MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Bell Resources'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Bell Property Group'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many companies are subsidiaries of a company that has had Ulrich Bez as CEO at some point?",
+    "gold": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Ulrich Bez'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the industries in which subsidiaries of 2K Games operate?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: '2K Games'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Who are the CEOs, past or present, of companies that are subsidiaries of Vinci, and where were they born?",
+    "gold": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Vinci'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of companies that are either subsidiaries of DuPont or have had Ajaypal Singh Banga as a board member at some point?",
+    "gold": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'DuPont'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Ajaypal Singh Banga'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "Identify the individuals who have served on the board of companies where Kjeld Kirk Kristiansen has also been a board member, and specify the number of such companies for each individual.",
+    "gold": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Kjeld Kirk Kristiansen'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What is the latest launch year among companies that have had a board member at any time?",
+    "gold": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN max(n.launch_year)",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "What are the names of countries where either Agrofert or Amazon Logistic Prague is based?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'Agrofert'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:basedIn]-(m1:Company {name: 'Amazon Logistic Prague'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "company"
+  },
+  {
+    "question": "How many industries do companies involved in educational technology also operate in?",
+    "gold": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'educational technology'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "company"
+  }
+]

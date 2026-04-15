@@ -1,0 +1,2198 @@
+[
+  {
+    "question": "What are the names of all countries?",
+    "gold": "MATCH (n:Country) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country) RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes situated in Armenia?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Armenia'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (l:Lake)-[r:locatedIn]->(c:Country) WHERE c.name = 'Armenia' RETURN l.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in vertical depth between Lake Sartlan and Lake Sasykkol?",
+    "gold": "MATCH (n:Lake {name: 'Lake Sartlan'}), (m0:Lake {name: 'Lake Sasykkol'}) RETURN n.vertical_depth_m - m0.vertical_depth_m AS answer",
+    "pred": "MATCH (lake1:Lake {name: 'Lake Sartlan'}), (lake2:Lake {name: 'Lake Sasykkol'}) RETURN lake1.vertical_depth_m - lake2.vertical_depth_m AS difference",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes situated in countries through which the Natara River flows, with an area of less than 390,000 square kilometers?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Natara'}) WITH DISTINCT n WHERE n.area_km2 < 390000 RETURN n.name",
+    "pred": "MATCH (n:Lake)-[:locatedIn]->(c:Country)<-[:flowsThrough]-(r:River {label: 'Natara River'}) WHERE n.area_km2 < 390000 RETURN n.label AS lake_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of oceans and their areas in square kilometers?",
+    "gold": "MATCH (n:Ocean) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (o:Ocean) RETURN o.name, o.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that include mountains located in India, and how many such mountains are part of each range?",
+    "gold": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain)-[r1:locatedIn]->(m1:Country {name: 'India'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange)<-[:locatedIn]-(c:Country {name: 'India'})\n               RETURN mr.name as mountainRange, count(m) as numberOfMountains\n               ORDER BY numberOfMountains DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries through which the Arauca River flows, and how many drainage basins are located in each of those countries?",
+    "gold": "MATCH (n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Arauca River'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (river:River {name: 'Arauca River'})-[:flowsThrough]->(country:Country)\n              RETURN country.name AS country_name, COUNT((river)-[:partOf]->(drainageBasin:DrainageBasin)) AS num_drainage_basins\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that have drainage basins located in them, which are also located in Spain, and how many such drainage basins are there for each country?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Spain'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(cb:DrainageBasin)-[:locatedIn]->(sp:Country {name: 'Spain'}) \" +\n             \"RETURN c.name AS country_name, COUNT(cb) AS drainage_basin_count\"}\n\nThis query will return the names of countries that have drainage basins located in them, which are also located in Spain, along with the count of such drainage basins for each country.",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the lowest discharge rate in cubic meters per second of rivers that have other rivers flowing into them?",
+    "gold": "MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH DISTINCT n RETURN min(n.discharge_m3_s)",
+    "pred": "MATCH (r:River)-[:flowsInto]->(other:River)\nRETURN MIN(r.discharge_m3_s) AS lowest_discharge\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that either flow through Kazakhstan or are part of the Irtysh basin?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Kazakhstan'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Irtysh basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsThrough|partOf]->(db:DrainageBasin)-[:locatedIn]->(c:Country) WHERE c.name = 'Kazakhstan' OR db.name = 'Irtysh' RETURN r.name",
+    "graph": "geography"
+  },
+  {
+    "question": "List the names of all countries where Kula Kangri is located, along with the number of drainage basins found in each.",
+    "gold": "MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Kula Kangri'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)<-[:locatedIn]-(m:Mountain {name: 'Kula Kangri'})\nRETURN c.name AS country_name, COUNT((c)<-[:locatedIn]-(db:DrainageBasin)) AS num_drainage_basins\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers fed by rivers with the Bobrovka River as a tributary, and how many of these rivers flow into each of them?",
+    "gold": "MATCH (n:River)<-[r0:flowsInto]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Bobrovka'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (bobrovka:River {name: 'Bobrovka'})-[:flowsInto*]->(river:River)\nRETURN river.name, COUNT(river) AS num_rivers",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into Dongting Lake, pass through the People's Republic of China, and are at least 800 kilometers long?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n WHERE n.length_km >= 800 RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Ocean {label: 'Dongting Lake'})-[:locatedIn]->(:Country {label: 'People's Republic of China'})-[:flowsThrough]->(r2:River) WHERE r2.length_km >= 800 RETURN r2.label AS river_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that are part of a mountain range that is part of the Karakoram?",
+    "gold": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange)-[r1:partOf]->(m1:MountainRange {name: 'Karakoram'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:MountainRange)-[:partOf]->(outer:MountainRange)-[:partOf]->(inner:MountainRange) WHERE inner.name = 'Karakoram' RETURN outer.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into another river, which then flows into Dongting Lake, sorted by their length from longest to shortest?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km DESC",
+    "pred": "MATCH (river:River)-[:flowsInto]->(flowingIntoRiver:River)-[:flowsInto]->(dongtingLake:Lake {name: 'Dongting Lake'})\n             WHERE NOT (river)-[:flowsInto]->(:Ocean)\n             RETURN river.name AS river_name, river.length_km AS river_length\n             ORDER BY river_length DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountains that are part of the Andes mountain range?",
+    "gold": "MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange {name: 'Andes'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange {name: 'Andes'}) RETURN m.name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers are part of the Tobol basin?",
+    "gold": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Tobol basin'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (r:River)-[:partOf]->(dr:DrainageBasin)\nWHERE dr.name = 'Tobol basin'\nRETURN count(r) as num_rivers\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the smallest area in square kilometers of countries located on the same continent as Brunei?",
+    "gold": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent)<-[r1:locatedIn]-(m1:Country {name: 'Brunei'}) WITH DISTINCT n RETURN min(n.area_km2)",
+    "pred": "MATCH (b:Country {name: 'Brunei'})-[:locatedIn]->(c:Continent)<-[:locatedIn]-(otherCountries:Country) RETURN MIN(otherCountries.area_km2) AS smallest_area",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all countries situated in Europe, along with the number of continents each is located in.",
+    "gold": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Europe'}) OPTIONAL MATCH (n:Country)-[r0:locatedIn]->(m0:Continent) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(e:Continent {name: 'Europe'}) RETURN c.name AS country_name, count((c)-[:locatedIn]->(cont:Continent)) AS num_continents",
+    "graph": "geography"
+  },
+  {
+    "question": "List the names of countries through which rivers of the Ob Basin flow, and for each country, provide the number of such rivers.",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Ob Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "{\n  \"cypher\": \"MATCH (r:River)-[:flowsThrough]->(c:Country)<-[:locatedIn]-(ob:DrainageBasin {name: 'Ob Basin'}) \" +\n            \"RETURN c.name AS country_name, COUNT(r) AS num_rivers \" +\n            \"ORDER BY num_rivers DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where both the Quebrada Pan de Azúcar basin and the Socompa mountain are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Quebrada Pan de Azúcar basin'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Socompa'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (d:DrainageBasin)-[:locatedIn]->(c:Country), (m:Mountain)-[:locatedIn]->(c:Country)\n             WHERE d.label = 'Quebrada Pan de Azúcar basin' AND m.label = 'Socompa mountain'\n             RETURN c.label AS CountryName\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of lakes that share a drainage basin with Kasba Lake?",
+    "gold": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Kasba Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (l:Lake)-[:partOf]->(db:DrainageBasin)<-[:partOf]-(l2:Lake)\nWHERE l.name = 'Kasba Lake'\nRETURN l2.name, l2.area_km2\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the continent where Honduras is located?",
+    "gold": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country {name: 'Honduras'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Continent)<-[:locatedIn]-(h:Country {name: 'Honduras'}) RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that are either in Asia or have Sickle Moon Peak within their borders?",
+    "gold": "CALL { MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Asia'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Sickle Moon Peak'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(cont:Continent), (m:Mountain)-[:locatedIn]->(c) WHERE cont.name = 'Asia' OR m.name = 'Sickle Moon Peak' RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the length of the Saladillo Stream in kilometers?",
+    "gold": "MATCH (n:River {name: 'Saladillo Stream'}) WITH DISTINCT n RETURN n.length_km",
+    "pred": "MATCH (r:River {name: 'Saladillo Stream'}) RETURN r.length_km",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers either flow into the Atlantic Ocean or are part of the Lena basin?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Lena basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:flowsInto]->(a:Ocean {label: 'Atlantic Ocean'}) OR (r:River)-[:partOf]->(l:DrainageBasin {label: 'Lena basin'}) RETURN count(r)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that both the Gangotri Group and Annapurna are part of?",
+    "gold": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:MountainRange {name: 'Gangotri Group'}),(n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Annapurna'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:MountainRange)-[:partOf]->(g:Mountain {name: 'Gangotri Group'}), (m)-[:partOf]->(a:Mountain {name: 'Annapurna'}) RETURN m.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and vertical depths of lakes that are part of the Léman basin?",
+    "gold": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Léman basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
+    "pred": "MATCH (l:Lake)-[:partOf]->(b:DrainageBasin {name: 'Léman basin'}) RETURN l.name, l.vertical_depth_m",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and lengths in kilometers of rivers that pass through Myanmar and has the Mun River as a tributary?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Myanmar'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Mun River'}) WITH DISTINCT n RETURN n.name, n.length_km",
+    "pred": "MATCH (m:River {name: 'Mun River'})-[:flowsInto*]->(r:River)-[:flowsThrough]->(c:Country {name: 'Myanmar'}) RETURN r.name, r.length_km",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries in which drainage basins located in Cameroon are also located, and how many such basins are located in each of these countries?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Cameroon'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (country:Country)-[:locatedIn]->(drainageBasin:DrainageBasin)-[:locatedIn]->(cameroon:Country {name: 'Cameroon'})\n             RETURN country.name, count(*) as num_basins_in_country\n             ORDER BY num_basins_in_country DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many continents have countries located within them?",
+    "gold": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (continent:Continent)-[:locatedIn]->(:Country) RETURN COUNT(DISTINCT continent)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and capitals of countries where both Avalanche Peak II and Sakram are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Avalanche Peak II'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Sakram'}) WITH DISTINCT n RETURN n.name, n.capital",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country) WHERE m.name IN ['Avalanche Peak II', 'Sakram'] RETURN c.name, c.capital",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and discharge rates in cubic meters per second of rivers that flow into a river that the Bolshaya Taychinka flows into?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Bolshaya Taychinka'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
+    "pred": "MATCH (river:River)-[:flowsInto]->(upstreamRiver:River)-[:flowsInto]->(ocean:Ocean)\n              WHERE upstreamRiver.label = 'Bolshaya Taychinka'\n              RETURN river.label AS river_name, river.discharge_m3_s AS discharge_rate\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Which country, through which a river flows into the Pacific Ocean, has the largest area in square kilometers?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC LIMIT 1",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean {label: 'Pacific Ocean'})-[:flowsThrough]->(c:Country)\nRETURN c.label AS country, c.area_km2 AS area\nORDER BY area DESC\nLIMIT 1\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the largest area in square kilometers of lakes situated in the same country as Lake Teletskoe?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Teletskoe'}) WITH DISTINCT n RETURN max(n.area_km2)",
+    "pred": "MATCH (l:Lake)-[:locatedIn]->(c:Country), (lake:Lake {name: 'Lake Teletskoe'})-[:locatedIn]->(c2:Country)\nWHERE c = c2\nRETURN MAX(l.area_km2) AS max_area\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in square kilometers between the area of the Southern Ocean and the Indian Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Southern Ocean'}), (m0:Ocean {name: 'Indian Ocean'}) RETURN n.area_km2 - m0.area_km2 AS answer",
+    "pred": "MATCH (o1:Ocean {label: 'Southern Ocean'})-[:locatedIn]->(c:Continent), (o2:Ocean {label: 'Indian Ocean'})-[:locatedIn]->(c) RETURN o1.area_km2 - o2.area_km2 AS difference",
+    "graph": "geography"
+  },
+  {
+    "question": "Which ocean has a larger area in square kilometers, the Southern Ocean or the Indian Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Southern Ocean'}), (m0:Ocean {name: 'Indian Ocean'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (southernOcean:Ocean {label: 'Southern Ocean'}), (indianOcean:Ocean {label: 'Indian Ocean'})\n             WHERE southernOcean.area_km2 > indianOcean.area_km2\n             RETURN southernOcean.label AS ocean\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many mountains are part of the Saltoro Mountains?",
+    "gold": "MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange {name: 'Saltoro Mountains'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange {name: 'Saltoro Mountains'}) RETURN count(m)",
+    "graph": "geography"
+  },
+  {
+    "question": "Which has a larger area in square kilometers, the Abarkuh–Sirjan Basin or the Rhône basin?",
+    "gold": "MATCH (n:DrainageBasin {name: 'Abarkuh–Sirjan Basin'}), (m0:DrainageBasin {name: 'Rhône basin'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (n:DrainageBasin) WHERE n.label IN ['Abarkuh-Sirjan Basin', 'Rhône basin'] RETURN n.label, n.area_km2 ORDER BY n.area_km2 DESC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and capitals of countries where there are mountains that are also located in Peru?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain)-[r1:locatedIn]->(m1:Country {name: 'Peru'}) WITH DISTINCT n RETURN n.name, n.capital",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country), (p:Country {name: 'Peru'})-[:locatedIn]->(pb:Continent) WHERE c.name = 'Peru' RETURN c.name AS CountryName, c.capital AS Capital",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into the Atbarah River?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:River {name: 'Atbarah River'}) RETURN r.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries in which a drainage basin is located, sorted by their area from smallest to largest?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC",
+    "pred": "MATCH (d:DrainageBasin)-[:locatedIn]->(c:Country)\nRETURN c.name AS CountryName, c.area_km2 AS CountryArea\nORDER BY CountryArea ASC\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where lakes that the Yuan River flows into are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake)<-[r1:flowsInto]-(m1:River {name: 'Yuan River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River {name: 'Yuan River'})-[:flowsInto]->(l:Lake)-[:locatedIn]->(c:Country) RETURN c.name AS country_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes located in the People's Republic of China that the Xiang River flows into?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}),(n:Lake)<-[r1:flowsInto]-(m1:River {name: 'Xiang River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (l:Lake)-[:locatedIn]->(c:Country {name: 'People''s Republic of China'}), (r:River)-[:flowsInto]->(l) WHERE c.name = 'People''s Republic of China' RETURN l.name AS LakeName",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers either flow into the Atlantic Ocean or pass through the Democratic Republic of the Congo?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Democratic Republic of the Congo'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Ocean {name: 'Atlantic Ocean'}) OR (r:River)-[:flowsThrough]->(:Country {name: 'Democratic Republic of the Congo'}) RETURN count(r)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of the countries in which Terich Mir is located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Terich Mir'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (r:River {name: 'Terich Mir'})-[:locatedIn]->(c:Country) RETURN c.name, c.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the elevation in meters of Trisul?",
+    "gold": "MATCH (n:Mountain {name: 'Trisul'}) WITH DISTINCT n RETURN n.elevation_m",
+    "pred": "MATCH (m:Mountain {name: 'Trisul'}) RETURN m.elevation_m",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all mountains that are part of the Severnyy Tanymas range, along with the number of countries each mountain is located in.",
+    "gold": "MATCH (n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Severnyy Tanymas'}) OPTIONAL MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange)<-[:partOf]-(c:Country)\n               WHERE mr.name = 'Severnyy Tanymas'\n               RETURN m.name AS MountainName, COUNT(c) AS NumberOfCountries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in the Democratic Republic of the Congo or that the Tshopo River is part of?",
+    "gold": "CALL { MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Democratic Republic of the Congo'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Tshopo River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (drainageBasin:DrainageBasin)-[:locatedIn]->(country:Country {name: 'Democratic Republic of the Congo'}) OR (river:River {name: 'Tshopo River'})-[:partOf]->(drainageBasin) RETURN drainageBasin.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of oceans that the Anabar River flows into, and how many rivers flow into each of those oceans?",
+    "gold": "MATCH (n:Ocean)<-[r1:flowsInto]-(m1:River {name: 'Anabar'}) OPTIONAL MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River {name: 'Anabar River'})-[:flowsInto]->(o:Ocean)\nRETURN o.name, COUNT(DISTINCT r) as num_rivers\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that flow into Dongting Lake, along with the number of countries each river passes through.",
+    "gold": "MATCH (n:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (river:River)-[:flowsInto]->(ocean:Ocean)-[:flowsInto]->(lake:Lake {name: 'Dongting Lake'})\n             WITH river, COUNT(DISTINCT ocean) AS num_countries\n             RETURN river.name AS river_name, num_countries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in length, in kilometers, between the Anerava River and the Menkere River?",
+    "gold": "MATCH (n:River {name: 'Anerava'}), (m0:River {name: 'Menkere'}) RETURN n.length_km - m0.length_km AS answer",
+    "pred": "MATCH (a:River {name: 'Anerava River'}), (b:River {name: 'Menkere River'}) RETURN a.length_km - b.length_km AS length_difference",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes situated in the same country as the Bug Basin, with an area greater than 200 square kilometers?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Bug Basin'}) WITH DISTINCT n WHERE n.area_km2 > 200 RETURN n.name",
+    "pred": "MATCH (l:Lake)-[:locatedIn]->(c:Country)<-[:locatedIn]-(b:Lake {name: 'Bug Basin'}) WHERE l.area_km2 > 200 RETURN l.name",
+    "graph": "geography"
+  },
+  {
+    "question": "List the names of lakes situated in the same countries as Chopicalqui, and for each lake, provide the number of such countries.",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Chopicalqui'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (l:Lake)-[:locatedIn]->(c:Country)-[:flowsThrough]->(r:River {name: 'Chopicalqui'})\nRETURN l.name AS lake_name, COUNT(DISTINCT c.name) AS num_countries\nORDER BY num_countries DESC\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where either Lac la Ronge or the Rivière du Lièvre basin is located?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Lac la Ronge'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Rivière du Lièvre basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)<-[:locatedIn]-(l:DrainageBasin) WHERE l.name IN ['Lac la Ronge', 'Rivière du Lièvre'] RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and average vertical depths of oceans into which both the Amazon and Hamza River flow?",
+    "gold": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River {name: 'Amazon'}),(n:Ocean)<-[r1:flowsInto]-(m1:River {name: 'Hamza River'}) WITH DISTINCT n RETURN n.name, n.avg_vertical_depth_m",
+    "pred": "MATCH (r1:River {name: 'Amazon'})-[f1:flowsInto]->(o:Ocean)<-[f2:flowsInto]-(r2:River {name: 'Hamza'}) RETURN o.name, o.avg_vertical_depth_m",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries through which both the Bolshoy Kunyak and Katiss rivers flow?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Bolshoy Kunyak'}),(n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Katiss'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River {name: 'Bolshoy Kunyak'})-[:flowsThrough]->(c:Country)-[:flowsThrough]->(r2:River {name: 'Katiss'}) RETURN c.name AS country_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of continents that have countries through which the Malaya Pikhtovaya River flows, and how many such countries are there on each continent?",
+    "gold": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Malaya Pikhtovaya'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (river:River {label: 'Malaya Pikhtovaya River'})-[:flowsThrough]->(country:Country)-[:locatedIn]->(continent:Continent)\n               RETURN continent.label AS continent_name, COUNT(country) AS country_count\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into Dongting Lake and are also flowed into by the Zheng River?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Zheng River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River)-[:flowsInto]->(ocean:Ocean {name: 'Dongting Lake'})-[:flowsInto]->(otherRiver:River)-[:flowsInto]->(zhengRiver:River {name: 'Zheng River'}) RETURN river.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries where Lake Keret is located and through which the Prorvinskaya River flows?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Keret'}),(n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Prorvinskaya'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (lake:Lake)-[:locatedIn]->(country:Country)-[:flowsThrough]->(river:River {name: 'Prorvinskaya River'})\nRETURN country.name AS CountryName, country.area_km2 AS AreaInSquareKilometers\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the discharge rate in cubic meters per second of the Guamués River?",
+    "gold": "MATCH (n:River {name: 'Guamués River'}) WITH DISTINCT n RETURN n.discharge_m3_s",
+    "pred": "MATCH (r:River {label: 'Guamués River'}) RETURN r.discharge_m3_s",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the longest length in kilometers of any river?",
+    "gold": "MATCH (n:River) WITH DISTINCT n RETURN max(n.length_km)",
+    "pred": "MATCH (r:River) RETURN MAX(r.length_km) AS max_length",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the largest area in square kilometers of oceans that rivers flow into?",
+    "gold": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River) WITH DISTINCT n RETURN max(n.area_km2)",
+    "pred": "MATCH (o:Ocean)<-[r:flowsInto]-(r:River) RETURN o.area_km2 AS area ORDER BY area DESC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where Lake Albert is located, and how many drainage basins are situated in each of those countries?",
+    "gold": "MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Albert'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (l:Lake {name: 'Lake Albert'})-[:locatedIn]->(c:Country)\n             RETURN c.name as country_name, COUNT((c)<-[:partOf*]-(:DrainageBasin)) as num_drainage_basins\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries does the Mangpa River, Lancang flow through or are located in the Yellow River Basin?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Mangpa River, Lancang'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Yellow River Basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (river:River {name: 'Mangpa'})-[:flowsThrough|locatedIn]->(country:Country), (river:River {name: 'Lancang'})-[:flowsThrough|locatedIn]->(country:Country), (river:River {name: 'Lancang'})-[:flowsInto]->(lake:Lake)-[:locatedIn]->(country:Country) RETURN COUNT(DISTINCT country)",
+    "graph": "geography"
+  },
+  {
+    "question": "Which country has a larger area in square kilometers, the Republic of Ireland or Turkey?",
+    "gold": "MATCH (n:Country {name: 'Republic of Ireland'}), (m0:Country {name: 'Turkey'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (c:Country {name: 'Republic of Ireland'}), (c2:Country {name: 'Turkey'}) WHERE c.area_km2 > c2.area_km2 RETURN c.name AS country_with_larger_area",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries have either Okanagan Lake or Lake Michigan–Huron within their borders?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Okanagan Lake'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Michigan–Huron'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(db:DrainageBasin)-[:partOf]->(l:Lake) WHERE l.name IN ['Okanagan Lake', 'Lake Michigan–Huron'] RETURN count(distinct c)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes situated in countries where the Bug Basin is located, and how many such countries does each lake span?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Bug Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (l:Lake)-[:locatedIn]->(c:Country)-[:partOf]->(db:DrainageBasin)\nWHERE db.name = 'Bug Basin'\nRETURN l.name AS lake_name, COUNT(c) AS num_countries",
+    "graph": "geography"
+  },
+  {
+    "question": "How many lakes are either part of the Ob Basin or located in Kazakhstan?",
+    "gold": "CALL { MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Ob Basin'}) RETURN n, m0 as m UNION MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Kazakhstan'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (l:Lake)-[:partOf]->(ob:DrainageBasin {name: 'Ob Basin'}) OR (l)-[:locatedIn]->(kz:Country {name: 'Kazakhstan'}) RETURN COUNT(l)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of continents where countries are located?",
+    "gold": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Continent)<-[:locatedIn]-(co:Country) RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries through which a river flowing through Cameroon also passes, sorted by their area from largest to smallest?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'Cameroon'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC",
+    "pred": "MATCH (river:River)-[:flowsThrough]->(country:Country)-[:locatedIn]->(continent:Continent)\n             WHERE river.name = 'Cameroon'\n             RETURN country.name AS country_name, country.area_km2 AS country_area\n             ORDER BY country_area DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that are located in Asia and have Nanga Parbat located in them?",
+    "gold": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Asia'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Nanga Parbat'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(n:Mountain) WHERE n.name = 'Nanga Parbat' AND c.name = 'Asia' RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many mountain ranges are there?",
+    "gold": "MATCH (n:MountainRange) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (mr:MountainRange) RETURN COUNT(mr)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that either flow into the Atlantic Ocean or have the Kyuelenke River as a tributary?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}) RETURN n, m0 as m UNION MATCH (n:River)<-[r1:flowsInto]-(m1:River {name: 'Kyuelenke'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River)-[:flowsInto|partOf*]->(atlantic:Ocean {name: 'Atlantic Ocean'}) \" +\n            \"RETURN river.name AS river_name \" +\n            \"UNION \" +\n            \"MATCH (river:River)-[:flowsInto]->(kyuelenke:River {name: 'Kyuelenke River'}) \" +\n            \"RETURN river.name AS river_name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of the oceans that the Nile River flows into?",
+    "gold": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River {name: 'Nile'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (o:Ocean)<-[r:flowsInto]-(r:River {name: 'Nile'}) RETURN o.name AS ocean_name, o.area_km2 AS ocean_area",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountains that are part of both the Himalayas and the Gurans Himal?",
+    "gold": "MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange {name: 'Himalayas'}),(n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Gurans Himal'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr1:MountainRange)-[:partOf]->(c1:Continent), (m)-[:partOf]->(mr2:MountainRange)-[:partOf]->(c2:Continent)\n             WHERE mr1.name = 'Himalayas' AND mr2.name = 'Gurans Himal' AND c1.name = c2.name\n             RETURN m.name AS mountain_name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the area of the Sava Basin in square kilometers?",
+    "gold": "MATCH (n:DrainageBasin {name: 'Sava Basin'}) WITH DISTINCT n RETURN n.area_km2",
+    "pred": "MATCH (db:DrainageBasin {name: 'Sava Basin'}) RETURN db.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow through Russia and are part of the Irtysh basin, sorted by their length from shortest to longest?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Russia'}),(n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Irtysh basin'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(:Country {name: 'Russia'})-[:partOf]->(:DrainageBasin {name: 'Irtysh'}) \" +\n            \"RETURN r.name AS river_name, r.length_km AS length \" +\n            \"ORDER BY length ASC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and lengths in kilometers of rivers that pass through countries where the Chinchey mountain is located?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Chinchey'}) WITH DISTINCT n RETURN n.name, n.length_km",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country)-[:partOf]->(mr:MountainRange)-[:partOf]->(m:Mountain {name: 'Chinchey'}) \" +\n            \"RETURN r.name AS river_name, r.length_km AS river_length\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes that rivers flow into?",
+    "gold": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(l:Lake) RETURN l.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountains located in Tajikistan, and how many countries is each of them situated in?",
+    "gold": "MATCH (n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'Tajikistan'}) OPTIONAL MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country) WHERE c.name = 'Tajikistan' RETURN m.name AS mountain_name, COUNT(c) AS country_count",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that flow into the Arctic Ocean, along with the number of countries each river passes through.",
+    "gold": "MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Arctic Ocean'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (river:River)-[:flowsInto]->(ocean:Ocean {label: 'Arctic Ocean'})-[:flowsThrough]->(country:Country)\n             RETURN river.label AS river, COUNT(DISTINCT country) AS num_countries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the minimum vertical depth of lakes situated in the same country as Devistan II?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Devistan II'}) WITH DISTINCT n RETURN min(n.vertical_depth_m)",
+    "pred": "MATCH (l:Lake)-[:locatedIn]->(c:Country)-[:locatedIn]->(co:Continent {name: 'Devistan II'}) RETURN min(l.vertical_depth_m) as min_depth",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes situated in the same countries as the mountain Chaudhara, and how many such countries are there for each lake?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Chaudhara'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "{\n  \"cypher\": \"MATCH (l:Lake)-[:locatedIn]->(c:Country)-[:partOf]->(dr:DrainageBasin)-[:flowsInto*]->(r:River)-[:flowsThrough]->(ch:Country)<-[:locatedIn]-(m:Mountain {name: 'Chaudhara'})\n  RETURN l.name AS LakeName, COUNT(DISTINCT c) AS NumberOfCountries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that either flow through Vietnam or have the Tongdian River as tributary?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Vietnam'}) RETURN n, m0 as m UNION MATCH (n:River)<-[r1:flowsInto]-(m1:River {name: 'Tongdian River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(v:Country {name: 'Vietnam'}) RETURN r.name AS river_name UNION MATCH (r:River)-[:flowsInto*]->(t:River {name: 'Tongdian River'}) RETURN r.name AS river_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in discharge rate in cubic meters per second between the Olyokma and Kasai River?",
+    "gold": "MATCH (n:River {name: 'Olyokma'}), (m0:River {name: 'Kasai River'}) RETURN n.discharge_m3_s - m0.discharge_m3_s AS answer",
+    "pred": "MATCH (o:River {name: 'Olyokma'}), (k:River {name: 'Kasai'}) RETURN o.discharge_m3_s - k.discharge_m3_s",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of continents that have countries containing Beloye Lake, and how many such countries are there in each continent?",
+    "gold": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Beloye Lake'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Continent)-[:locatedIn]->(co:Country)-[:partOf]->(db:DrainageBasin)-[:locatedIn]->(l:Lake {name: 'Beloye Lake'})\nRETURN c.name AS continent_name, COUNT(co) AS country_count\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in the same countries as Lake Sartlan, and how many such countries are there for each basin?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Sartlan'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (db:DrainageBasin)-[:locatedIn]->(c:Country)<-[:locatedIn]-(l:Lake {name: 'Lake Sartlan'}) RETURN db.name AS drainageBasinName, count(c) AS countryCount GROUP BY db.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and lengths in kilometers of rivers that are part of the Lena basin and also flow into the Atlantic Ocean?",
+    "gold": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Lena basin'}),(n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH DISTINCT n RETURN n.name, n.length_km",
+    "pred": "MATCH (r:River)-[:partOf]->(l:DrainageBasin)-[:locatedIn]->(c:Country)-[:flowsInto*]->(o:Ocean)\n             WHERE l.area_km2 = 'Lena' AND o.label = 'Atlantic Ocean'\n             RETURN r.label AS river_name, r.length_km AS length_km\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that both the Panjal Range and Lapche Kang II are part of?",
+    "gold": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:MountainRange {name: 'Panjal Range'}),(n:MountainRange)<-[r1:partOf]-(m1:Mountain {name: 'Lapche Kang II'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (mr:MountainRange)-[:partOf]->(:Mountain {name: 'Panjal Range'})<-[:partOf]-(mr2:MountainRange) RETURN mr2.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that are located in Rwanda and that Pool Malebo is part of?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Rwanda'}),(n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Pool Malebo'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (drainageBasin:DrainageBasin)-[:locatedIn]->(country:Country {name: 'Rwanda'})-[:partOf]->(drainageBasinPoolMalebo:DrainageBasin {name: 'Pool Malebo'}) RETURN drainageBasin.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that are located in Africa or have Lake Ngami located in them?",
+    "gold": "CALL { MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Africa'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Ngami'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(a:Continent {name: 'Africa'})<-[:locatedIn]-(l:Lake {name: 'Lake Ngami'}) RETURN c.name AS country_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that include rivers flowing into the Kasai River?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:River {name: 'Kasai River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto*]->(k:River {name: 'Kasai River'})-[:partOf]->(b:DrainageBasin) RETURN b.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes located in the Democratic Republic of the Congo, and how many drainage basins is each one part of?",
+    "gold": "MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Democratic Republic of the Congo'}) OPTIONAL MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (l:Lake)-[p:partOf]->(db:DrainageBasin), (c:Country {name: 'Democratic Republic of the Congo'})-[lf:locatedIn]->(db)\n               RETURN l.name AS lake_name, COUNT(p) AS num_drainage_basins\n               ORDER BY lake_name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and lengths in kilometers of rivers that are part of the Tobol basin and that the Posyrya flows into?",
+    "gold": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Tobol basin'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Posyrya'}) WITH DISTINCT n RETURN n.name, n.length_km",
+    "pred": "MATCH (r:River)-[:partOf]->(tb:DrainageBasin {name: 'Tobol basin'})-[:flowsInto]->(pos:River {name: 'Posyrya'})-[:flowsInto]->(o:Ocean)\nRETURN r.name AS river_name, r.length_km AS river_length\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the area of the Arctic Ocean in square kilometers?",
+    "gold": "MATCH (n:Ocean {name: 'Arctic Ocean'}) WITH DISTINCT n RETURN n.area_km2",
+    "pred": "MATCH (o:Ocean {label: 'Arctic Ocean'}) RETURN o.area_km2 AS area",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers flow through countries located in Africa?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)-[r1:locatedIn]->(m1:Continent {name: 'Africa'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country)-[:locatedIn]->(a:Continent {name: 'Africa'}) RETURN count(r)",
+    "graph": "geography"
+  },
+  {
+    "question": "Which countries does a river that Polsky Buerak flows into pass through?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Polsky Buerak'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Ocean {name: 'Polsky Buerak'})-[:flowsThrough]->(c:Country) RETURN c.name AS country_name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers are either part of the Tobol basin or flow into the Netva?",
+    "gold": "CALL { MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Tobol basin'}) RETURN n, m0 as m UNION MATCH (n:River)<-[r1:flowsInto]-(m1:River {name: 'Netva'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:partOf]->(tb:DrainageBasin {name: 'Tobol basin'}) OR (r)-[:flowsInto]->(n:River {name: 'Netva'}) RETURN count(r) AS num_rivers",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries situated in either Europe or Asia?",
+    "gold": "CALL { MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Europe'}) RETURN n, m0 as m UNION MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Asia'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(r:Continent) WHERE r.name IN ['Europe', 'Asia'] RETURN c.name AS CountryName",
+    "graph": "geography"
+  },
+  {
+    "question": "Which river is longer, Bandeya or Sultunka?",
+    "gold": "MATCH (n:River {name: 'Bandeya'}), (m0:River {name: 'Sultunka'}) RETURN CASE WHEN n.length_km > m0.length_km THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (r1:River {name: 'Bandeya'}), (r2:River {name: 'Sultunka'}) WHERE r1.length_km > r2.length_km RETURN r1.name AS longer_river",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and capitals of countries located in Oceania?",
+    "gold": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Oceania'}) WITH DISTINCT n RETURN n.name, n.capital",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(o:Continent) WHERE o.name = 'Oceania' RETURN c.name, c.capital",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where the Kuybyshev Reservoir is located or through which the Scherbakovka River flows?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Kuybyshev Reservoir'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Scherbakovka'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River {label: 'Scherbakovka River'})-[:flowsThrough]->(c:Country) RETURN c.label AS countryName UNION MATCH (l:Lake {label: 'Kuybyshev Reservoir'})-[:locatedIn]->(c:Country) RETURN c.label AS countryName",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and capitals of countries in South America that the Baquiá Preto River flows through?",
+    "gold": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'South America'}),(n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Baquiá Preto River'}) WITH DISTINCT n RETURN n.name, n.capital",
+    "pred": "MATCH (r:River {name: 'Baquiá Preto'})-[:flowsThrough]->(c:Country)\n               WHERE c.name IN ['Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia', 'Ecuador', 'Guyana', 'Paraguay', 'Peru', 'Suriname', 'Uruguay', 'Venezuela']\n               RETURN c.name AS CountryName, c.capital AS Capital\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of drainage basins that the Sangha River is part of?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Sangha'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (drainageBasin:DrainageBasin)<-[:partOf]-(river:River {name: 'Sangha River'}) RETURN drainageBasin.name, drainageBasin.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and lengths in kilometers of rivers that flow through the Republic of the Congo?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Republic of the Congo'}) WITH DISTINCT n RETURN n.name, n.length_km",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country {name: 'Republic of the Congo'}) RETURN r.name AS RiverName, r.length_km AS RiverLength",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountains either located in the People's Republic of China or part of the Daxue Mountains?",
+    "gold": "CALL { MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}) RETURN n, m0 as m UNION MATCH (n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Daxue Mountains'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country {name: 'People's Republic of China'}) OR (m)-[:partOf]->(mr:MountainRange {name: 'Daxue Mountains'}) RETURN m.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries where both Franklin D. Roosevelt Lake and the Ogeechee River basin are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Franklin D. Roosevelt Lake'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Ogeechee River basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (lake:Lake {name: 'Franklin D. Roosevelt Lake'})-[:partOf]->(lakeBasin:DrainageBasin)-[:locatedIn]->(lakeCountry:Country), (riverBasin:DrainageBasin)-[:locatedIn]->(riverCountry:Country) WHERE riverBasin.name = 'Ogeechee River basin' RETURN lakeCountry.name AS lakeCountryName, lakeCountry.area_km2 AS lakeCountryArea, riverCountry.name AS riverCountryName, riverCountry.area_km2 AS riverCountryArea",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that both flow into the Iguazu River and are fed by the Ampére River?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Iguazu River'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Ampére River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r1:River)-[:flowsInto]->(:Ocean {name: 'Iguazu River'}), (r2:River)-[:flowsInto]->(r1) WHERE (r2)-[:flowsInto]->(:River {name: 'Ampére River'}) RETURN r2.name AS river_name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries have either Lake Tai or Sepu Kangri located in them?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Lake Tai'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Sepu Kangri'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(m:Lake|Mountain)\nWHERE m.name IN ['Lake Tai', 'Sepu Kangri']\nRETURN COUNT(DISTINCT c) AS count\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that the Sangha River is part of?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Sangha'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (drainageBasin:DrainageBasin)<-[:partOf]-(river:River {name: 'Sangha River'}) RETURN drainageBasin.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the shortest river that flows into another river, which then flows into the Atlantic Ocean?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC LIMIT 1",
+    "pred": "MATCH p=shortestPath((r1:River)-[:flowsInto*]->(a:Ocean {label: 'Atlantic Ocean'})) WHERE r1.label <> a.label RETURN r1.label AS shortest_river_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and capitals of countries where both the Nottaway River basin and Selwyn Lake are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Nottaway River basin'}),(n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Selwyn Lake'}) WITH DISTINCT n RETURN n.name, n.capital",
+    "pred": "MATCH (n:Country)<-[:locatedIn]-(r:River)-[:flowsInto*]->(o:Ocean {label: 'Nottaway River basin'}), (n)<-[:locatedIn]-(l:Lake {label: 'Selwyn Lake'}) RETURN n.name, n.capital",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of all mountain ranges that are part of the Karakoram, and how many mountain ranges are part of each of them?",
+    "gold": "MATCH (n:MountainRange)-[r1:partOf]->(m1:MountainRange {name: 'Karakoram'}) OPTIONAL MATCH (n:MountainRange)<-[r0:partOf]-(m0:MountainRange) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (mr:MountainRange)-[:partOf]->(k:MountainRange {name: 'Karakoram'}) RETURN mr.name AS mountainRangeName, COUNT(mr) AS numberOfMountainRanges",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all countries in South America, along with the number of rivers that flow through each.",
+    "gold": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'South America'}) OPTIONAL MATCH (n:Country)<-[r0:flowsThrough]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(sa:Continent {name: 'South America'}), (r:River)-[:flowsThrough]->(c) RETURN c.name as CountryName, COUNT(r) as RiverCount",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes that are part of the Don basin?",
+    "gold": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Don basin'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (l:Lake)-[:partOf]->(db:DrainageBasin) WHERE db.name = 'Don basin' RETURN l.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries that have a lake which is also located in Cameroon?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'Cameroon'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (l:Lake)-[:locatedIn]->(c:Country)<-[:locatedIn]-(lake_country:Country)\n             WHERE lake_country.name = 'Cameroon'\n             RETURN c.name AS country_name, c.area_km2 AS country_area\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Which country that the Tagus Basin is located in has the largest area in square kilometers?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Tagus Basin'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC LIMIT 1",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(dr:DrainageBasin {area_km2: max((db:DrainageBasin).area_km2)})-[:locatedIn]->(c2:Country) RETURN c2.name AS CountryName, c2.area_km2 AS Area",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in Burundi or that Lake Bangweulu is part of?",
+    "gold": "CALL { MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Burundi'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Bangweulu'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (drainageBasin:DrainageBasin)-[:locatedIn]->(country:Country {name: 'Burundi'}) RETURN drainageBasin.name AS drainage_basin_names UNION MATCH (lake:Lake)-[:partOf]->(drainageBasin:DrainageBasin) WHERE lake.name = 'Lake Bangweulu' RETURN drainageBasin.name AS drainage_basin_names",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that both the Kwango River and Lake Mai-Ndombe are part of?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Kwango River'}),(n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Mai-Ndombe'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River {name: 'Kwango'})-[:partOf]->(drainageBasin:DrainageBasin)\n             MATCH (lake:Lake {name: 'Lake Mai-Ndombe'})-[:partOf]->(sameDrainageBasin:DrainageBasin)\n             WHERE drainageBasin = sameDrainageBasin\n             RETURN drainageBasin.name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries in which either the Saint Lawrence River basin or Batiscanie is located?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Saint Lawrence River basin'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Batiscanie'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)<-[:locatedIn]-(b:DrainageBasin)-[:partOf]->(sr:DrainageBasin)\nWHERE sr.name = 'Saint Lawrence River basin' OR sr.name = 'Batiscanie'\nRETURN c.name AS country_name\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and vertical depths of lakes that are part of the Don basin?",
+    "gold": "MATCH (n:Lake)-[r0:partOf]->(m0:DrainageBasin {name: 'Don basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
+    "pred": "MATCH (l:Lake)-[:partOf]->(db:DrainageBasin) WHERE db.name = 'Don basin' RETURN l.name, l.vertical_depth_m",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the drainage basin with the smallest area in square kilometers?",
+    "gold": "MATCH (n:DrainageBasin) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC LIMIT 1",
+    "pred": "MATCH (db:DrainageBasin) RETURN db.name ORDER BY db.area_km2 ASC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that flow into the Atlantic Ocean, along with the count of rivers that flow into each of them.",
+    "gold": "MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Ocean {label: 'Atlantic Ocean'}) RETURN r.label AS river_name, COUNT(r) AS river_count",
+    "graph": "geography"
+  },
+  {
+    "question": "Which ocean, the Pacific or the Indian, has a greater average vertical depth?",
+    "gold": "MATCH (n:Ocean {name: 'Pacific Ocean'}), (m0:Ocean {name: 'Indian Ocean'}) RETURN CASE WHEN n.avg_vertical_depth_m > m0.avg_vertical_depth_m THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (ocean:Ocean)\nWHERE ocean.name IN ['Pacific', 'Indian']\nRETURN ocean.name AS ocean_name, ocean.avg_vertical_depth_m AS avg_vertical_depth\nORDER BY avg_vertical_depth DESC\nLIMIT 1\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries contain either the Gul Lasht Zom or the Choricho mountains?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Gul Lasht Zom'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Choricho'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(cr:Continent)<-[:partOf]-(mr:MountainRange)-[:partOf]->(m:Mountain) WHERE m.name IN ['Gul Lasht Zom', 'Choricho'] RETURN count(distinct c.name) as num_countries",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in square kilometers between the area of the Abarkuh–Sirjan Basin and the Rhône basin?",
+    "gold": "MATCH (n:DrainageBasin {name: 'Abarkuh–Sirjan Basin'}), (m0:DrainageBasin {name: 'Rhône basin'}) RETURN n.area_km2 - m0.area_km2 AS answer",
+    "pred": "MATCH (ab:DrainageBasin {name: 'Abarkuh-Sirjan Basin'}), (rh:DrainageBasin {name: 'Rhone basin'}) RETURN ab.area_km2 - rh.area_km2 AS difference",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers either flow through Brazil or flow into the Apa River?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Brazil'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Apa River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(b:Country {name: 'Brazil'}) OR (r:River)-[:flowsInto]->(a:River {name: 'Apa River'}) RETURN COUNT(r)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries where Playgreen Lake is located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Playgreen Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(db:DrainageBasin)-[:partOf]->(l:Lake {name: 'Playgreen Lake'}) RETURN c.name, c.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where a drainage basin of the river Nerda is located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Nerda'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River {name: 'Nerda'})-[:partOf]->(db:DrainageBasin)-[:locatedIn]->(c:Country) RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries through which rivers that flow into Dongting Lake pass?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean {label: 'Dongting Lake'})-[:flowsThrough]->(c:Country) RETURN c.label AS country_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in Russia that the Tayma River is part of?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Russia'}),(n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Tayma'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (rb:DrainageBasin)-[:locatedIn]->(c:Country {name: 'Russia'})-[:partOf*]->(rb2:DrainageBasin)\n             WHERE (rb:DrainageBasin)-[:partOf]->(rb2:DrainageBasin)\n             RETURN rb2.name AS drainage_basin_names\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the lowest elevation in meters of mountains that are part of the Andes?",
+    "gold": "MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange {name: 'Andes'}) WITH DISTINCT n RETURN min(n.elevation_m)",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange)-[:locatedIn]->(c:Country)\n             WHERE c.name = 'Andes'\n             RETURN MIN(m.elevation_m) AS lowest_elevation\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where drainage basins located in the United States of America are also found?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (basin:DrainageBasin)-[:locatedIn]->(usa:Country {name: 'United States of America'})-[:locatedIn]->(country:Country) RETURN country.name",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all lakes located in the People's Republic of China, along with the number of rivers that flow into each one.",
+    "gold": "MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) OPTIONAL MATCH (n:Lake)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (lake:Lake)-[:locatedIn]->(country:Country) WHERE country.name = 'People's Republic of China' RETURN lake.name, COUNT((lake)-[:flowsInto]->(river:River)) AS num_rivers",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of drainage basins that include rivers flowing into the Pacific Ocean?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (d:DrainageBasin)-[:partOf]->(r:River)-[:flowsInto]->(o:Ocean) WHERE o.label = 'Pacific Ocean' RETURN d.label AS drainage_basin_name, d.area_km2 AS drainage_basin_area",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that receive water from rivers flowing through the Democratic Republic of the Congo?",
+    "gold": "MATCH (n:River)<-[r0:flowsInto]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'Democratic Republic of the Congo'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River)-[:flowsInto*]->(riverThrough:River)-[:flowsThrough]->(country:Country {name: 'Democratic Republic of the Congo'}) RETURN river.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that are part of the Pamir Mountains, and how many mountains are part of each of those ranges?",
+    "gold": "MATCH (n:MountainRange)-[r1:partOf]->(m1:MountainRange {name: 'Pamir Mountains'}) OPTIONAL MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:MountainRange {name: 'Pamir Mountains'})-[:partOf]->(m:MountainRange) RETURN m.name as mountain_range_name, COUNT(m) as num_mountains",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and capitals of countries where Terich Mir is located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Terich Mir'}) WITH DISTINCT n RETURN n.name, n.capital",
+    "pred": "MATCH (r:River)-[:locatedIn]->(c:Country) WHERE r.name = 'Terich Mir' RETURN c.name, c.capital",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into the Arctic Ocean?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Arctic Ocean'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean {name: 'Arctic Ocean'}) RETURN r.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of drainage basins located in the same country as the Siahkuh–Zarrin–Sorkh Basin?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Siahkuh–Zarrin–Sorkh Basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (b:DrainageBasin)-[:locatedIn]->(c:Country)<-[:locatedIn]-(d:DrainageBasin)\n               WHERE b.name = 'Siahkuh-Zarrin-Sorkh Basin'\n               RETURN d.name AS drainage_basin_name, d.area_km2 AS drainage_basin_area\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many mountain ranges include either Mount Jitchu Drake or Cholatse?",
+    "gold": "CALL { MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain {name: 'Mount Jitchu Drake'}) RETURN n, m0 as m UNION MATCH (n:MountainRange)<-[r1:partOf]-(m1:Mountain {name: 'Cholatse'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange) WHERE m.name = 'Mount Jitchu Drake' OR m.name = 'Cholatse' RETURN COUNT(DISTINCT mr) AS num_mountain_ranges",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the area of Frobisher Lake in square kilometers?",
+    "gold": "MATCH (n:Lake {name: 'Frobisher Lake'}) WITH DISTINCT n RETURN n.area_km2",
+    "pred": "MATCH (lake:Lake {name: 'Frobisher Lake'}) RETURN lake.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that are part of the Orinoco basin, along with the count of rivers that flow into each of them.",
+    "gold": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Orinoco basin'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:partOf]->(b:DrainageBasin {name: 'Orinoco'}), (r)-[:flowsInto]->(subRiver:River) RETURN subRiver.name as riverName, count(*) as countOfRivers",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that include a river flowing through Russia and have an area of at least 1,900,000 square kilometers?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'Russia'}) WITH DISTINCT n WHERE n.area_km2 >= 1900000 RETURN n.name",
+    "pred": "{\n  \"cypher\": \"MATCH (drainageBasin:DrainageBasin)-[:partOf*]->(river:River)-[:flowsThrough]->(country:Country {name: 'Russia'})\n               WHERE drainageBasin.area_km2 >= 1900000\n               RETURN drainageBasin.name AS drainageBasinNames\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and capitals of countries where a drainage basin that includes Lake Mweru is located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Mweru'}) WITH DISTINCT n RETURN n.name, n.capital",
+    "pred": "MATCH (lake:Lake {name: 'Lake Mweru'})-[:partOf]->(drainageBasin:DrainageBasin)-[:locatedIn]->(country:Country) RETURN country.name AS country_name, country.capital AS country_capital",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries through which the Taygusa River flows and where Lake Jänisjärvi is located?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Taygusa'}),(n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Jänisjärvi'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (r:River {name: 'Taygusa'})-[:flowsThrough]->(c:Country)-[:locatedIn]->(db:DrainageBasin)-[:partOf]->(l:Lake {name: 'Lake Jänisjärvi'})\n  RETURN c.name AS country_name, c.area_km2 AS country_area\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that are located in the same countries as the Vorskla River Basin, and how many of those countries does each basin span?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Vorskla River Basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (basin:DrainageBasin)-[:locatedIn]->(country:Country)<-[:locatedIn]-(vorsklaBasin:DrainageBasin)\n             WHERE vorsklaBasin.name = 'Vorskla River Basin'\n             RETURN basin.name AS basin_name, COUNT(DISTINCT country.name) AS num_countries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that are situated in both Europe and Asia?",
+    "gold": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Europe'}),(n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Asia'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(cb:Continent {name: 'Europe'})-[:locatedIn]->(c2:Country)-[:locatedIn]->(cb2:Continent {name: 'Asia'}) RETURN c.name AS CountryName",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of countries within the Sava Basin, along with the count of lakes located in each.",
+    "gold": "MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Sava Basin'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:partOf]->(db:DrainageBasin)-[:locatedIn]->(con:Continent {name: 'Sava Basin'})\n             RETURN c.name AS countryName, count((c)<-[:locatedIn]-(:Lake)) AS lakeCount\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of lakes located in Armenia?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Armenia'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (l:Lake)-[r:locatedIn]->(c:Country) WHERE c.name = 'Armenia' RETURN l.name, l.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers are either part of the Tobol basin or flow into the Netva?",
+    "gold": "CALL { MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Tobol basin'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Netva'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:partOf]->(tb:DrainageBasin {name: 'Tobol basin'}) OR (r)-[:flowsInto]->(n:River {name: 'Netva'}) RETURN count(r) AS num_rivers",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the maximum vertical depth in meters of the Indian Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Indian Ocean'}) WITH DISTINCT n RETURN n.max_vertical_depth_m",
+    "pred": "MATCH (o:Ocean {name: 'Indian Ocean'}) RETURN o.max_vertical_depth_m",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all drainage basins located in Spain, along with the number of countries each basin is situated in.",
+    "gold": "MATCH (n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Spain'}) OPTIONAL MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (db:DrainageBasin)-[:locatedIn]->(c:Country {name: 'Spain'}) \" +\n             \"RETURN db.name AS DrainageBasinName, COUNT(c) AS NumberOfCountries \" +\n             \"ORDER BY NumberOfCountries DESC\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that pass through the country where Casa de Piedra Reservoir is located, sorted by their discharge in cubic meters per second from highest to lowest?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Casa de Piedra Reservoir'}) WITH DISTINCT n RETURN n.name ORDER BY n.discharge_m3_s DESC",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country)-[:locatedIn]->(cb:Continent {name: 'South America'})\nRETURN r.name AS river_name, r.discharge_m3_s AS discharge\nORDER BY discharge DESC\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and discharge rates in cubic meters per second of rivers that pass through Zambia and flow into the Atlantic Ocean?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Zambia'}),(n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(z:Country {name: 'Zambia'})-[:flowsInto*]->(a:Ocean {name: 'Atlantic Ocean'}) RETURN r.name AS river_name, r.discharge_m3_s AS discharge_rate",
+    "graph": "geography"
+  },
+  {
+    "question": "Which mountain has a greater elevation, Kharchakund or Denali?",
+    "gold": "MATCH (n:Mountain {name: 'Kharchakund'}), (m0:Mountain {name: 'Denali'}) RETURN CASE WHEN n.elevation_m > m0.elevation_m THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (m1:Mountain {name: 'Kharchakund'}), (m2:Mountain {name: 'Denali'})\nRETURN CASE\n  WHEN m1.elevation_m > m2.elevation_m THEN 'Kharchakund'\n  WHEN m1.elevation_m < m2.elevation_m THEN 'Denali'\n  ELSE 'Both have the same elevation'\nEND AS highest_elevation\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and capitals of countries where Playgreen Lake is located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Playgreen Lake'}) WITH DISTINCT n RETURN n.name, n.capital",
+    "pred": "MATCH (l:Lake {name: 'Playgreen Lake'})-[:locatedIn]->(c:Country) RETURN c.name, c.capital",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in the same country as the mountain Antofalla?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Antofalla'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (drainageBasin:DrainageBasin)-[:locatedIn]->(country:Country)-[:partOf]->(mountainRange:MountainRange)-[:partOf]->(mountain:Mountain {name: 'Antofalla'}) RETURN drainageBasin.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of drainage basins that Gods Lake is part of?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Gods Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (lake:Lake)-[:partOf]->(db:DrainageBasin)\n             WHERE lake.name = 'Gods Lake'\n             RETURN db.name AS drainage_basin_name, db.area_km2 AS drainage_basin_area\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountains in India that are part of the Panjal Range and have an elevation of less than 6,300 meters?",
+    "gold": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'India'}),(n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Panjal Range'}) WITH DISTINCT n WHERE n.elevation_m < 6300 RETURN n.name",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange)-[:locatedIn]->(c:Country {name: 'India'}) WHERE mr.name = 'Panjal Range' AND m.elevation_m < 6300 RETURN m.name AS mountain_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the average area in square kilometers of countries in which both the Léman basin and the Rhône basin are located",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Léman basin'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Rhône basin'}) WITH DISTINCT n RETURN avg(n.area_km2)",
+    "pred": "MATCH (l1:Lake)-[:locatedIn]->(c:Country)-[:partOf]->(db1:DrainageBasin {name: 'Léman basin'}), (l2:Lake)-[:locatedIn]->(c:Country)-[:partOf]->(db2:DrainageBasin {name: 'Rhône basin'}) RETURN avg(c.area_km2) as average_area",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and discharge rates in cubic meters per second of rivers that flow into the Niyap River?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Niyap'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
+    "pred": "MATCH (n:River)-[:flowsInto]->(:River {name: 'Niyap River'}) RETURN n.name, n.discharge_m3_s",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of continents that have countries connected to the Adriatic Sea drainage basin?",
+    "gold": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Adriatic Sea'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Continent)-[:locatedIn]->(db:DrainageBasin)-[:locatedIn]->(co:Country) WHERE db.name = 'Adriatic Sea' RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "Which ocean, the Pacific or the Indian, has the greater maximum vertical depth?",
+    "gold": "MATCH (n:Ocean {name: 'Pacific Ocean'}), (m0:Ocean {name: 'Indian Ocean'}) RETURN CASE WHEN n.max_vertical_depth_m > m0.max_vertical_depth_m THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (pacific:Ocean {name: 'Pacific'}), (indian:Ocean {name: 'Indian'})\n             WHERE pacific.max_vertical_depth_m > indian.max_vertical_depth_m\n             RETURN pacific.name AS ocean_name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that flow through Ecuador, along with the number of countries each river passes through.",
+    "gold": "MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Ecuador'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country)\n               WHERE c.name = 'Ecuador'\n               RETURN r.name AS river_name, COUNT(c) AS country_count\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the mountain, within a mountain range that is part of the Pamir Mountains, with the lowest elevation?",
+    "gold": "MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange)-[r1:partOf]->(m1:MountainRange {name: 'Pamir Mountains'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC LIMIT 1",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange {name: 'Pamir Mountains'}) RETURN m.name ORDER BY m.elevation_m ASC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of the mountain ranges that include Uja Tirche?",
+    "gold": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain {name: 'Uja Tirche'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:MountainRange)-[:partOf]->(mnt:Mountain {name: 'Uja Tirche'}) RETURN m.name",
+    "graph": "geography"
+  },
+  {
+    "question": "Which river is longer, Anerava or Menkere?",
+    "gold": "MATCH (n:River {name: 'Anerava'}), (m0:River {name: 'Menkere'}) RETURN CASE WHEN n.length_km > m0.length_km THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (r1:River {name: 'Anerava'}), (r2:River {name: 'Menkere'})\nWHERE r1.length_km > r2.length_km\nRETURN r1.name AS longer_river\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "Which countries have mountains that are also located in India, and how many of these mountains are located in each of these countries?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain)-[r1:locatedIn]->(m1:Country {name: 'India'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(m:Mountain)<-[:partOf]-(mr:MountainRange)-[:locatedIn]->(i:Country {name: 'India'}) RETURN c.name as Country, count(m) as NumberOfMountains",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers flow into the Tura or have the Chyornaya flowing into them?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Tura'}) RETURN n, m0 as m UNION MATCH (n:River)<-[r1:flowsInto]-(m1:River {name: 'Chyornaya'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r1:River)-[:flowsInto*]->(o:Ocean {name: 'Tura'}) RETURN count(r1) AS rivers_into_tura UNION MATCH (r2:River {name: 'Chyornaya'})-[:flowsInto*]->(o:Ocean) RETURN count(r2) AS rivers_flowing_into_chyornaya",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that pass through countries where Namcha Barwa is located, and how many such countries does each river flow through?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Namcha Barwa'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (river:River)-[:flowsThrough]->(country:Country)<-[:locatedIn]-(namchaBarwa:Mountain {name: 'Namcha Barwa'})\n             RETURN river.name AS riverName, count(country) AS numCountries\n             ORDER BY numCountries DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that Rimo Muztagh or South Ghujerab Mountains are part of?",
+    "gold": "CALL { MATCH (n:MountainRange)<-[r0:partOf]-(m0:MountainRange {name: 'Rimo Muztagh'}) RETURN n, m0 as m UNION MATCH (n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'South Ghujerab Mountains'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (:Mountain {name: 'Rimo Muztagh'})-[:partOf]->(mr:MountainRange) RETURN mr.name AS mountainRangeName UNION MATCH (:Mountain {name: 'South Ghujerab Mountains'})-[:partOf]->(mr:MountainRange) RETURN mr.name AS mountainRangeName",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries where Pik Przhevalsky is located and through which the Dashui Qu river flows?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Pik Przhevalsky'}),(n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Dashui Qu'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (r:River {label: 'Dashui Qu'})-[:flowsThrough]->(c:Country)-[:locatedIn]->(cb:Continent), (p:Mountain {label: 'Pik Przhevalsky'})-[:locatedIn]->(c2:Country)-[:locatedIn]->(cb2:Continent) WHERE cb = cb2 RETURN c.label AS country_name, c.area_km2 AS country_area",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of drainage basins that Lake Kisale is part of?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Lake Kisale'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (lake:Lake)-[:partOf]->(db:DrainageBasin)\n             WHERE lake.name = 'Lake Kisale'\n             RETURN db.name AS drainage_basin_name, db.area_km2 AS drainage_basin_area\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow through countries overlapping with the Orinoco Basin, and how many such countries does each river pass through?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Orinoco basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "{\n  \"cypher\": \"MATCH (r:River)-[:flowsThrough]->(c:Country)-[:locatedIn]->(cb:Continent {name: 'Orinoco Basin'})\n             RETURN r.name AS river_name, COUNT(c) AS num_countries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries located in South America, sorted by their area in square kilometers from largest to smallest?",
+    "gold": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'South America'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(cr:Continent) WHERE cr.name = 'South America' RETURN c.name AS CountryName, c.area_km2 AS Area ORDER BY Area DESC",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the mountain located in both Argentina and Chile that has the lowest elevation?",
+    "gold": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'Argentina'}),(n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'Chile'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC LIMIT 1",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c1:Country {name: 'Argentina'}), (c2:Country {name: 'Chile'}) WHERE c1.name = c2.name RETURN m.name ORDER BY m.elevation_m ASC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where mountains in the Principal Cordillera are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Principal Cordillera'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(mr:MountainRange)-[:partOf]->(m:Mountain) WHERE m.name = 'Principal Cordillera' RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the elevation in meters of the mountain named Gorbunova?",
+    "gold": "MATCH (n:Mountain {name: 'Gorbunova'}) WITH DISTINCT n RETURN n.elevation_m",
+    "pred": "MATCH (m:Mountain {name: 'Gorbunova'}) RETURN m.elevation_m",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that the river Topky is part of?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Topky'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River {name: 'Topky'})-[:partOf]->(db:DrainageBasin) RETURN db.name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many drainage basins are located in either Montenegro or Egypt?",
+    "gold": "CALL { MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Montenegro'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Egypt'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (db:DrainageBasin)-[:locatedIn]->(c:Country) WHERE c.name IN ['Montenegro', 'Egypt'] RETURN count(db) as num_drainage_basins",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in square kilometers between the area of the Republic of Ireland and that of Turkey?",
+    "gold": "MATCH (n:Country {name: 'Republic of Ireland'}), (m0:Country {name: 'Turkey'}) RETURN n.area_km2 - m0.area_km2 AS answer",
+    "pred": "MATCH (ireland:Country {name: 'Republic of Ireland'}), (turkey:Country {name: 'Turkey'})\nRETURN ireland.area_km2 - turkey.area_km2 AS difference_sq_km\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes that are situated in both Turkmenistan and Kazakhstan?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Turkmenistan'}),(n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Kazakhstan'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (l:Lake)-[:locatedIn]->(c1:Country {name: 'Turkmenistan'}), (c2:Country {name: 'Kazakhstan'}) WHERE c1 <> c2 RETURN l.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that the Gulin River flows through or where Mount Everest is located?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Gulin River'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Mount Everest'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River {name: 'Gulin River'})-[:flowsThrough]->(country1:Country), (mountain:Mountain {name: 'Mount Everest'})-[:locatedIn]->(country2:Country)\n               RETURN country1.name as country1_name, country2.name as country2_name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in vertical depth, in meters, between Lake Pontchartrain and Lake Pátzcuaro?",
+    "gold": "MATCH (n:Lake {name: 'Lake Pontchartrain'}), (m0:Lake {name: 'Lake Pátzcuaro'}) RETURN n.vertical_depth_m - m0.vertical_depth_m AS answer",
+    "pred": "MATCH (lake1:Lake {name: 'Lake Pontchartrain'}), (lake2:Lake {name: 'Lake Pátzcuaro'}) RETURN lake1.vertical_depth_m - lake2.vertical_depth_m AS vertical_depth_difference",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers either flow through Uganda or empty into the Atlantic Ocean?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Uganda'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:flowsThrough|flowsInto]->(o:Ocean {name: 'Atlantic Ocean'}) WHERE o.name = 'Atlantic Ocean' RETURN count(r) as numRivers",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries where lakes within the Ottawa River drainage basin are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Ottawa River drainage basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(db:DrainageBasin)-[:partOf*]->(o:Ocean {label: 'Ottawa River'})-[:flowsInto*]->(r:River {label: 'Lake'}) RETURN c.label AS country_name, c.area_km2 AS area_in_sq_km",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that are part of the Tobol basin, flow into the Posyrya, and are at least 14 kilometers long?",
+    "gold": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Tobol basin'}),(n:River)-[r1:flowsInto]->(m1:River {name: 'Posyrya'}) WITH DISTINCT n WHERE n.length_km >= 14 RETURN n.name",
+    "pred": "MATCH (r:River)-[:partOf]->(b:DrainageBasin {area_km2: 'Tobol basin'}), (r)-[:flowsInto]->(o:River {area_km2: 'Posyrya'}) WHERE r.length_km >= 14 RETURN r.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of drainage basins located in both Israel and Tunisia?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Israel'}),(n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Tunisia'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (b:DrainageBasin)-[:locatedIn]->(c:Country) WHERE c.name IN ['Israel', 'Tunisia'] RETURN b.name, b.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of oceans that rivers flow into, sorted by their area in square kilometers from smallest to largest?",
+    "gold": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC",
+    "pred": "MATCH (o:Ocean)<-[r:flowsInto]-(r:River) RETURN o.name AS OceanName, o.area_km2 AS OceanArea ORDER BY OceanArea ASC",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in square kilometers between the area of the Congo basin and the Tobol basin?",
+    "gold": "MATCH (n:DrainageBasin {name: 'Congo basin'}), (m0:DrainageBasin {name: 'Tobol basin'}) RETURN n.area_km2 - m0.area_km2 AS answer",
+    "pred": "{\n  \"cypher\": \"MATCH (c:Country {name: 'Congo'})-[:locatedIn]->(cb:DrainageBasin)-[:partOf*]->(db:DrainageBasin)\n             MATCH (t:Country {name: 'Tobol'})-[:locatedIn]->(tb:DrainageBasin)-[:partOf*]->(db:DrainageBasin)\n             RETURN c.area_km2 - t.area_km2 AS difference_in_km2\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all countries in Africa and the number of rivers that flow through each.",
+    "gold": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Africa'}) OPTIONAL MATCH (n:Country)<-[r0:flowsThrough]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(a:Continent {name: 'Africa'})<-[:flowsThrough]-(r:River)\n             RETURN c.name AS country_name, count(r) AS river_count\n             ORDER BY river_count DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries are either located in Asia or have the Karabolka River flowing through them?",
+    "gold": "CALL { MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'Asia'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Karabolka'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(asia:Continent {name: 'Asia'}) MATCH (c)-[:flowsThrough]->(k:River {name: 'Karabolka River'}) RETURN count(c)",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the longest length in kilometers of a river that flows into the Pacific Ocean?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Pacific Ocean'}) WITH DISTINCT n RETURN max(n.length_km)",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Ocean {label: 'Pacific Ocean'}) RETURN max(r.length_km) AS longest_length",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in average vertical depth between the Pacific Ocean and the Indian Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Pacific Ocean'}), (m0:Ocean {name: 'Indian Ocean'}) RETURN n.avg_vertical_depth_m - m0.avg_vertical_depth_m AS answer",
+    "pred": "MATCH (pacific:Ocean {name: 'Pacific Ocean'}), (indian:Ocean {name: 'Indian Ocean'}) RETURN pacific.avg_vertical_depth_m - indian.avg_vertical_depth_m AS difference_in_avg_vertical_depth",
+    "graph": "geography"
+  },
+  {
+    "question": "Which lake has a greater vertical depth, Lake Pontchartrain or Lake Pátzcuaro?",
+    "gold": "MATCH (n:Lake {name: 'Lake Pontchartrain'}), (m0:Lake {name: 'Lake Pátzcuaro'}) RETURN CASE WHEN n.vertical_depth_m > m0.vertical_depth_m THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (lake1:Lake {name: 'Lake Pontchartrain'}), (lake2:Lake {name: 'Lake Pátzcuaro'})\nWHERE lake1.vertical_depth_m > lake2.vertical_depth_m\nRETURN lake1.name AS Lake_with_greater_vertical_depth\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in area, in square kilometers, between Khyargas Nuur and Lac la Ronge?",
+    "gold": "MATCH (n:Lake {name: 'Khyargas Nuur'}), (m0:Lake {name: 'Lac la Ronge'}) RETURN n.area_km2 - m0.area_km2 AS answer",
+    "pred": "MATCH (k:Lake {name: 'Khyargas Nuur'}), (l:Lake {name: 'Lac la Ronge'}) RETURN k.area_km2 - l.area_km2 AS difference_in_area",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries have either the Irtysh basin or Lake Keta located in them?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Irtysh basin'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Keta'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(b:DrainageBasin {name: 'Irtysh'}) OR (c:Country)-[:locatedIn]->(l:Lake {name: 'Lake Keta'}) RETURN count(c)",
+    "graph": "geography"
+  },
+  {
+    "question": "How many lakes are either located in Iran or part of the Namak Lake Basin?",
+    "gold": "CALL { MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Iran'}) RETURN n, m0 as m UNION MATCH (n:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Namak Lake Basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (lake:Lake)-[:locatedIn|partOf]->(basin:DrainageBasin)\nWHERE basin.name = 'Namak Lake Basin' OR lake.location = 'Iran'\nRETURN COUNT(DISTINCT lake) AS num_lakes\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that pass through the same countries as the Ucayali River, and how many of those countries does each river flow through?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Ucayali River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (u:River {name: 'Ucayali River'})-[:flowsThrough]->(c:Country)<-[:flowsThrough]-(r:River)\nRETURN r.name AS RiverName, count(c) AS NumberOfCountries\nORDER BY RiverName",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries where the Tobol basin is located and through which the Yemnaya River flows?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Tobol basin'}),(n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Yemnaya'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "{\n  \"cypher\": \"MATCH (r:River {label: 'Tobol'})-[:partOf]->(db:DrainageBasin)-[:locatedIn]->(c:Country)\n             WHERE EXISTS((r)-[:flowsThrough]->(c))\n             RETURN c.label AS country_name, c.area_km2 AS area_in_square_kilometers\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and discharge rates in cubic meters per second of rivers that flow into the Arctic Ocean?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Arctic Ocean'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean)\n             WHERE o.label = 'Arctic Ocean'\n             RETURN r.label AS RiverName, r.discharge_m3_s AS DischargeRateInCubicMetersPerSecond\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many mountains are either part of the Pamir Mountains or located in the People's Republic of China?",
+    "gold": "CALL { MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange {name: 'Pamir Mountains'}) RETURN n, m0 as m UNION MATCH (n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(pm:MountainRange), (m)-[:locatedIn]->(c:Country)\n             WHERE pm.name = 'Pamir Mountains' OR c.name = 'People\\'s Republic of China'\n             RETURN COUNT(m) AS count\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where Supung Lake is located, and how many mountains are in each of those countries?",
+    "gold": "MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Supung Lake'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (l:Lake {name: 'Supung Lake'})-[:locatedIn]->(c:Country)-[r:partOf]->(mr:MountainRange)\n             RETURN c.name AS country, COUNT(mr) AS numberOfMountains\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of drainage basins that South Henik Lake and Tulemalu Lake are part of?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'South Henik Lake'}),(n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Tulemalu Lake'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (s:Lake {name: 'South Henik Lake'})-[:partOf]->(db:DrainageBasin)<-[:partOf]-(db2:DrainageBasin)<-[:partOf]-(l:Lake {name: 'Tulemalu Lake'}) RETURN db.name as DrainageBasin1, db.area_km2 as Area1, db2.name as DrainageBasin2, db2.area_km2 as Area2",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountains that are part of either the Kunlun Mountains or the Arkatag Shan?",
+    "gold": "CALL { MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange {name: 'Kunlun Mountains'}) RETURN n, m0 as m UNION MATCH (n:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Arkatag Shan'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange) WHERE mr.name IN ['Kunlun Mountains', 'Arkatag Shan'] RETURN m.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of the drainage basins where Lake Kisale is located?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Lake Kisale'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (l:Lake {name: 'Lake Kisale'})-[:partOf]->(db:DrainageBasin)-[:locatedIn]->(c:Country) RETURN c.name as Country_Name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that are part of the Karakoram and that have Saser Kangri II as a part?",
+    "gold": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Karakoram'}),(n:MountainRange)<-[r1:partOf]-(m1:Mountain {name: 'Saser Kangri II'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (mr:MountainRange)-[:partOf]->(m:Mountain {name: 'Saser Kangri II'}) WHERE mr.name = 'Karakoram' RETURN mr.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in countries on the African continent, and how many such countries does each basin span?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)-[r1:locatedIn]->(m1:Continent {name: 'Africa'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (b:DrainageBasin)-[:locatedIn]->(c:Country)-[:partOf]->(a:Continent) WHERE a.name = 'Africa' RETURN b.name as drainage_basin_name, count(c) as number_of_countries",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers either flow through the People's Republic of China or empty into Dongting Lake?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'People\\'s Republic of China'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:flowsThrough|flowsInto*]->(o:Ocean {label: 'Dongting Lake'})\nWHERE o.label = 'Dongting Lake'\nRETURN count(r)\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of continents where both Russia and Italy are located?",
+    "gold": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country {name: 'Russia'}),(n:Continent)<-[r1:locatedIn]-(m1:Country {name: 'Italy'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:Country {name: 'Russia'})-[:locatedIn]->(c:Continent)<-[:locatedIn]-(i:Country {name: 'Italy'}) RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "Which river has a greater discharge in cubic meters per second, Tokko or Tyukyan?",
+    "gold": "MATCH (n:River {name: 'Tokko'}), (m0:River {name: 'Tyukyan'}) RETURN CASE WHEN n.discharge_m3_s > m0.discharge_m3_s THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (r:River {name: 'Tokko'})-[:flowsInto]->(o:Ocean)\n              MATCH (t:River {name: 'Tyukyan'})-[:flowsInto]->(o:Ocean)\n              WHERE r.discharge_m3_s > t.discharge_m3_s\n              RETURN r.name AS RiverWithGreaterDischarge\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into the Negro River, and how many countries does each of them pass through?",
+    "gold": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Negro River'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (n:River)-[:flowsInto]->(negro:River {name: 'Negro River'})-[:flowsThrough]->(country:Country)\n             RETURN n.name AS riverName, COUNT(country.name) AS numCountries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the highest discharge rate in cubic meters per second of rivers that are part of a drainage basin located in Rwanda?",
+    "gold": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Rwanda'}) WITH DISTINCT n RETURN max(n.discharge_m3_s)",
+    "pred": "MATCH (r:River)-[:partOf]->(db:DrainageBasin)-[:locatedIn]->(c:Country) WHERE c.name = 'Rwanda' RETURN MAX(r.discharge_m3_s) AS max_discharge",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of drainage basins located in Namibia?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Namibia'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (db:DrainageBasin)-[:locatedIn]->(c:Country) WHERE c.name = 'Namibia' RETURN db.name, db.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "Which country has the smallest area in square kilometers?",
+    "gold": "MATCH (n:Country) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC LIMIT 1",
+    "pred": "MATCH (c:Country) RETURN c.label AS Country, c.area_km2 AS Area ORDER BY Area ASC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries have either the mountain Kalurong or Hulun Lake located in them?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Kalurong'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Hulun Lake'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(m:Mountain) WHERE m.name = 'Kalurong' OR m.name = 'Hulun' RETURN count(distinct c)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where both Pangong Tso and Lunpo Gangri are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Pangong Tso'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Lunpo Gangri'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (country:Country)-[:locatedIn]->(drainageBasin:DrainageBasin)-[:partOf]->(lake:Lake)\n             WHERE lake.name = 'Pangong Tso'\n             MATCH (country)-[:locatedIn]->(drainageBasin)-[:partOf]->(lake:Lake)\n             WHERE lake.name = 'Lunpo Gangri'\n             RETURN DISTINCT country.name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that the Novosibirsk Reservoir or the Noska River are part of?",
+    "gold": "CALL { MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Novosibirsk Reservoir'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Noska'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (d:DrainageBasin)<-[:partOf]-(n:River|:Lake) WHERE n.name IN ['Novosibirsk Reservoir', 'Noska River'] RETURN d.name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries is Nevado Tres Cruces or Salar de Talar located in?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Nevado Tres Cruces'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Salar de Talar'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country)\n             WHERE m.name IN ['Nevado Tres Cruces', 'Salar de Talar']\n             RETURN c.name AS Country, COUNT(*) AS Count\n             ORDER BY Count DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that include both Cho Polu and Mount Gya?",
+    "gold": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain {name: 'Cho Polu'}),(n:MountainRange)<-[r1:partOf]-(m1:Mountain {name: 'Mount Gya'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (mr:MountainRange)-[:partOf]->(m1:Mountain {name: 'Cho Polu'})-[:partOf]->(mr2:MountainRange), (mr:MountainRange)-[:partOf]->(m2:Mountain {name: 'Mount Gya'})-[:partOf]->(mr3:MountainRange) WHERE mr2 = mr3 RETURN DISTINCT mr.name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers flow into the Kwango River and are part of the Congo basin?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Kwango River'}),(n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Congo basin'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:River {name: 'Kwango River'})-[:partOf]->(:DrainageBasin {name: 'Congo basin'}) RETURN count(r) as num_rivers",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into the same ocean as the Nile, sorted by their discharge in cubic meters per second from the smallest to the largest?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean)<-[r1:flowsInto]-(m1:River {name: 'Nile'}) WITH DISTINCT n RETURN n.name ORDER BY n.discharge_m3_s ASC",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean)\n             WHERE o.name = 'Nile'\n             RETURN r.name AS river_name, r.discharge_m3_s AS discharge\n             ORDER BY discharge ASC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of all rivers in the Ob Basin, and how many countries does each river flow through?",
+    "gold": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Ob Basin'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country)-[:locatedIn]->(ob:Ocean {name: 'Ob Basin'})\n             RETURN r.name as river_name, count(c) as num_countries\n             ORDER BY num_countries DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that both the Vyazovka and Tura flow into?",
+    "gold": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Vyazovka'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Tura'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (v:River {name: 'Vyazovka'})-[:flowsInto]->(river:River), (t:River {name: 'Tura'})-[:flowsInto]->(river) RETURN river.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in discharge rate in cubic meters per second between the Tokko and Tyukyan rivers?",
+    "gold": "MATCH (n:River {name: 'Tokko'}), (m0:River {name: 'Tyukyan'}) RETURN n.discharge_m3_s - m0.discharge_m3_s AS answer",
+    "pred": "MATCH (t:River {name: 'Tokko'}), (ty:River {name: 'Tyukyan'}) RETURN t.discharge_m3_s - ty.discharge_m3_s AS difference_in_discharge_rate",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into the same lake as the Yuan River?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake)<-[r1:flowsInto]-(m1:River {name: 'Yuan River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(l:Lake)<-[:flowsInto]-(other_r:River) WHERE r.name = 'Yuan River' RETURN other_r.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries through which the Nanbang River flows and where Urdok III is located?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Nanbang River'}),(n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Urdok III'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River {name: 'Nanbang River'})-[:flowsThrough]->(country:Country)\n             MATCH (ocean:Ocean)-[:locatedIn]->(urdok_country:Country {name: 'Urdok III'})\n             RETURN country.name AS country_name, urdok_country.name AS urdok_country_name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the longest river that shares a drainage basin with the Atyus River?",
+    "gold": "MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Atyus'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km DESC LIMIT 1",
+    "pred": "MATCH (r:River)-[:partOf]->(db:DrainageBasin)-[:partOf]->(r2:River) WHERE r.label = 'Atyus River' RETURN r2.label AS longest_river_name",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that flow into the Pacific Ocean, along with the count of rivers that flow into each of them.",
+    "gold": "MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Ocean {label: 'Pacific Ocean'})-[:flowsInto*]->(subRiver:River)\nRETURN subRiver.label, count(subRiver) as count\nORDER BY count DESC\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes into which rivers flowing through the People's Republic of China empty?",
+    "gold": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country {name: 'People's Republic of China'})-[:flowsInto]->(l:Lake) RETURN l.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries through which a river flows before it empties into the Keyzes River?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:River {name: 'Keyzes'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country)-[:locatedIn]->(cr:Continent {name: 'Keyzes River'})\nRETURN c.name, c.area_km2\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of continents where a country containing the lake Namtso is located?",
+    "gold": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Namtso'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (lake:Lake)-[:locatedIn]->(country:Country)-[:locatedIn]->(continent:Continent) WHERE lake.name = 'Namtso' RETURN continent.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of lakes that rivers flow into?",
+    "gold": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (lake:Lake)-[:flowsInto]->(river:River)-[:partOf]->(drainageBasin:DrainageBasin) RETURN lake.name, drainageBasin.area_km2 as area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in the same countries as Loenpo Gang, and how many such countries are they located in?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Loenpo Gang'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (drainageBasin:DrainageBasin)-[:locatedIn]->(country:Country)<-[:locatedIn]-(loenpoGang:River {name: 'Loenpo Gang'})\n             RETURN collect(drainageBasin.name) as drainageBasinNames, count(distinct country.name) as countryCount\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that are part of the Yellow River Basin, along with the number of countries each river flows through.",
+    "gold": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Yellow River Basin'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:partOf]->(b:DrainageBasin {area_km2: 1960000}), (r)-[f:flowsThrough]->(c:Country) RETURN r.label AS RiverName, count(c) AS NumberOfCountries",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and lengths in kilometers of rivers that flow into the Atlantic Ocean and are also fed by the Cajari River?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}),(n:River)<-[r1:flowsInto]-(m1:River {name: 'Cajari River'}) WITH DISTINCT n RETURN n.name, n.length_km",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Ocean {name: 'Atlantic Ocean'})-[:flowsInto]->(r2:River)<-[:flowsInto]-(:River {name: 'Cajari River'}) RETURN r.name, r.length_km",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers have other rivers flowing into them?",
+    "gold": "MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (r1:River)-[:flowsInto]->(r2:River) RETURN COUNT(r1) as num_rivers_with_flowing_into_rivers",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries that are located in North America and have Lake Texcoco located in them?",
+    "gold": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'North America'}),(n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Lake Texcoco'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(n:Continent) WHERE n.name = 'North America' AND (c)<-[:locatedIn]-(:Lake {name: 'Lake Texcoco'}) RETURN c.name AS CountryName, c.area_km2 AS AreaInSquareKilometers",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the average vertical depth in meters of the Indian Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Indian Ocean'}) WITH DISTINCT n RETURN n.avg_vertical_depth_m",
+    "pred": "MATCH (o:Ocean {name: 'Indian Ocean'}) RETURN o.avg_vertical_depth_m",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries through which the Chipiriri River flows?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Chipiriri River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (r:River {name: 'Chipiriri River'})-[:flowsThrough]->(c:Country) RETURN c.name, c.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries does either the Balda River or the Krush River flow through?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Balda'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Krush'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River {name: 'Balda'})-[:flowsThrough]->(c:Country) RETURN COUNT(c) as num_countries UNION MATCH (r2:River {name: 'Krush'})-[:flowsThrough]->(c2:Country) RETURN COUNT(c2) as num_countries",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in Chile, and how many lakes are part of each?",
+    "gold": "MATCH (n:DrainageBasin)-[r1:locatedIn]->(m1:Country {name: 'Chile'}) OPTIONAL MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (d:DrainageBasin)-[:locatedIn]->(c:Country {name: 'Chile'})-[:partOf*]->(o:Ocean)\n               OPTIONAL MATCH (d)<-[:partOf]-(l:Lake)\n               RETURN d.name AS drainage_basin, COUNT(l) AS num_lakes\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that rivers flow through?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)<-[:locatedIn]-(:River) RETURN c.name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many mountains are located in the same country as the lake Namtso?",
+    "gold": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Namtso'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country)<-[:locatedIn]-(l:Lake {name: 'Namtso'}) RETURN count(m)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where the Tagus Basin is located and whose capital is not Madrid?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Tagus Basin'}) WITH DISTINCT n WHERE n.capital <> 'Madrid' RETURN n.name",
+    "pred": "MATCH (country:Country)-[:locatedIn]->(drainageBasin:DrainageBasin {area_km2: 42328})\n             WHERE country.capital <> 'Madrid'\n             RETURN country.name AS country_name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Which countries are traversed by rivers that flow into the Pacific Ocean, and how many such rivers pass through each country?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)<-[:locatedIn]-(d:DrainageBasin)-[:flowsInto*]->(:Ocean {label: 'Pacific Ocean'})\nRETURN c.label AS Country, COUNT(d) AS NumberOfRivers\nORDER BY NumberOfRivers DESC\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "List the names of all countries located in Europe, along with the number of lakes situated in each.",
+    "gold": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Europe'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(e:Continent) WHERE e.name = 'Europe' WITH c.name AS country_name, COUNT((c)-[:locatedIn]->(l:Lake)) AS num_lakes RETURN country_name, num_lakes",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where both Singhi Kangri and Zhelin Reservoir are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Singhi Kangri'}),(n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Zhelin Reservoir'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)<-[:locatedIn]-(m:Mountain)-[:partOf]->(mr:MountainRange)<-[:partOf]-(d:DrainageBasin)-[:locatedIn]->(cn:Country)\nWHERE m.name = 'Singhi Kangri' AND mr.name = 'Zhelin Reservoir'\nRETURN c.name\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that the Gangotri Group is part of?",
+    "gold": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:MountainRange {name: 'Gangotri Group'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (mr:MountainRange)-[:partOf]->(:DrainageBasin)-[:locatedIn]->(c:Country {name: 'Gangotri Group'}) RETURN mr.name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers do the Kainsas or the Shaytanka flow into?",
+    "gold": "CALL { MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Kainsas'}) RETURN n, m0 as m UNION MATCH (n:River)<-[r1:flowsInto]-(m1:River {name: 'Shaytanka'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean) WHERE r.name = 'Kainsas' OR r.name = 'Shaytanka' RETURN COUNT(DISTINCT o)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in the same countries as South Henik Lake, and how many such countries does each basin span?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'South Henik Lake'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (db:DrainageBasin)-[:locatedIn]->(c:Country)<-[:locatedIn]-(l:Lake {name: 'South Henik Lake'}) RETURN db.name, count(c)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that Gods Lake are part of?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Gods Lake'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (lake:Lake)-[:partOf]->(db:DrainageBasin) WHERE lake.name = 'Gods Lake' RETURN db.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of the countries in which Kangto is located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Kangto'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (k:River {name: 'Kangto'})-[:locatedIn]->(c:Country) RETURN c.name, c.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow through the Republic of the Congo, sorted by their discharge in cubic meters per second from highest to lowest?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Republic of the Congo'}) WITH DISTINCT n RETURN n.name ORDER BY n.discharge_m3_s DESC",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(:Country {name: 'Republic of the Congo'}) \" +\n            \"RETURN r.name AS river_name, r.discharge_m3_s AS discharge \" +\n            \"ORDER BY discharge DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many mountains are situated in the same country as the Salar del Huasco drainage basin?",
+    "gold": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Salar del Huasco'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country)<-[:locatedIn]-(db:DrainageBasin {name: 'Salar del Huasco'}) RETURN count(m)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes into which a river that the Lei River flows into empties?",
+    "gold": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Lei River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (lake:Lake)<-[:partOf]-(:DrainageBasin)<-[:flowsInto]-(:River)<-[:flowsInto]-(:River {name: 'Lei River'}) RETURN lake.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in Namibia?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Namibia'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (db:DrainageBasin)-[:locatedIn]->(co:Country {name: 'Namibia'}) RETURN db.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that both Tharkot and Annapurna are part of?",
+    "gold": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain {name: 'Tharkot'}),(n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Annapurna'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange) WHERE m.name IN ['Tharkot', 'Annapurna'] RETURN DISTINCT mr.name",
+    "graph": "geography"
+  },
+  {
+    "question": "Which lake has a larger area, Khyargas Nuur or Lac la Ronge?",
+    "gold": "MATCH (n:Lake {name: 'Khyargas Nuur'}), (m0:Lake {name: 'Lac la Ronge'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (lake1:Lake {name: 'Khyargas Nuur'}), (lake2:Lake {name: 'Lac la Ronge'})\n             WHERE lake1.area_km2 > lake2.area_km2\n             RETURN lake1.name AS LargerLake\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into the Atlantic Ocean and pass through the Republic of the Congo?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'Republic of the Congo'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River)-[:flowsInto]->(:Ocean {name: 'Atlantic Ocean'})-[:flowsThrough]->(:Country {name: 'Republic of the Congo'}) RETURN river.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that the Atbarah River flows into?",
+    "gold": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:River) WHERE r.name = 'Atbarah' RETURN o.name AS river_name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers flow through either Nigeria or Cameroon?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Nigeria'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Cameroon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country) WHERE c.name IN ['Nigeria', 'Cameroon'] RETURN count(distinct r)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and capitals of countries through which the Chipiriri River flows?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Chipiriri River'}) WITH DISTINCT n RETURN n.name, n.capital",
+    "pred": "MATCH (r:River {name: 'Chipiriri River'})-[:flowsThrough]->(c:Country) RETURN c.name, c.capital",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the capital city of South Korea?",
+    "gold": "MATCH (n:Country {name: 'South Korea'}) WITH DISTINCT n RETURN n.capital",
+    "pred": "MATCH (c:Country {name: 'South Korea'}) RETURN c.capital",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in Spain?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country {name: 'Spain'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (db:DrainageBasin)-[:locatedIn]->(c:Country {name: 'Spain'}) RETURN db.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the drainage basin in a North American country that has the smallest area in square kilometers?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)-[r1:locatedIn]->(m1:Continent {name: 'North America'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC LIMIT 1",
+    "pred": "MATCH (d:DrainageBasin)-[:locatedIn]->(c:Country {continent: 'North America'}) RETURN d.name ORDER BY d.area_km2 ASC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries are located in North America or in which the Los Angeles River watershed is located?",
+    "gold": "CALL { MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'North America'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Los Angeles River watershed'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(continent:Continent {name: 'North America'}) OR (c)<-[:flowsThrough]-(r:River {name: 'Los Angeles River'})-[:locatedIn]->(continent) RETURN count(c)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that are part of the Karakoram and have the Gasherbrum as a part of them?",
+    "gold": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Karakoram'}),(n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Gasherbrum'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (mr:MountainRange)-[:partOf]->(m:Mountain) WHERE m.name = 'Gasherbrum' AND mr.name = 'Karakoram' RETURN mr.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that both Lake Kisale and the Lwama River are part of?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake {name: 'Lake Kisale'}),(n:DrainageBasin)<-[r1:partOf]-(m1:River {name: 'Lwama River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (b:DrainageBasin)<-[:partOf]-(l:Lake {name: 'Lake Kisale'})<-[:partOf]-(r:River {name: 'Lwama River'}) RETURN b.name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many lakes are there that are located in either Jordan or Israel?",
+    "gold": "CALL { MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'Jordan'}) RETURN n, m0 as m UNION MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Israel'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (lake:Lake)-[:locatedIn]->(country:Country) WHERE country.name IN ['Jordan', 'Israel'] RETURN COUNT(lake) AS lake_count",
+    "graph": "geography"
+  },
+  {
+    "question": "Which country has a larger area in square kilometers, Jordan or Paraguay?",
+    "gold": "MATCH (n:Country {name: 'Jordan'}), (m0:Country {name: 'Paraguay'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (j:Country {name: 'Jordan'}), (p:Country {name: 'Paraguay'}) WHERE j.area_km2 > p.area_km2 RETURN j.name AS country_with_larger_area",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that either flow into Dongting Lake or into which the Juan River flows?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}) RETURN n, m0 as m UNION MATCH (n:River)<-[r1:flowsInto]-(m1:River {name: 'Juan River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(d:Lake {name: 'Dongting Lake'}) OR (r:River {name: 'Juan River'})-[:flowsInto]->(d:River) RETURN r.name",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of lakes situated in Argentina, along with the count of countries each lake is located in.",
+    "gold": "MATCH (n:Lake)-[r1:locatedIn]->(m1:Country {name: 'Argentina'}) OPTIONAL MATCH (n:Lake)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (l:Lake)-[:locatedIn]->(c:Country) WHERE c.name = 'Argentina' RETURN l.name AS lakeName, COUNT(c) AS countryCount",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the area of South Korea in square kilometers?",
+    "gold": "MATCH (n:Country {name: 'South Korea'}) WITH DISTINCT n RETURN n.area_km2",
+    "pred": "MATCH (c:Country {name: 'South Korea'}) RETURN c.area_km2 AS area",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in area, in square kilometers, between the Arctic Ocean and the Pacific Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Arctic Ocean'}), (m0:Ocean {name: 'Pacific Ocean'}) RETURN n.area_km2 - m0.area_km2 AS answer",
+    "pred": "MATCH (o1:Ocean {label: 'Arctic Ocean'}), (o2:Ocean {label: 'Pacific Ocean'}) RETURN o1.area_km2 - o2.area_km2 AS area_difference",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that are located in South America and have the Camarones basin located in them?",
+    "gold": "MATCH (n:Country)-[r0:locatedIn]->(m0:Continent {name: 'South America'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Camarones basin'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(cb:DrainageBasin)-[:locatedIn]->(co:Continent {name: 'South America'}) WHERE cb.name = 'Camarones' RETURN c.name AS country_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of continents where a country containing Lungser Kangri is located?",
+    "gold": "MATCH (n:Continent)<-[r0:locatedIn]-(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Lungser Kangri'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (country:Country)-[:locatedIn]->(continent:Continent)\n             WHERE country.name = 'Lungser Kangri'\n             RETURN continent.name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in elevation between Kharchakund and Denali?",
+    "gold": "MATCH (n:Mountain {name: 'Kharchakund'}), (m0:Mountain {name: 'Denali'}) RETURN n.elevation_m - m0.elevation_m AS answer",
+    "pred": "MATCH (m1:Mountain {name: 'Kharchakund'}), (m2:Mountain {name: 'Denali'}) RETURN m1.elevation_m - m2.elevation_m as elevation_difference",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and discharge rates in cubic meters per second of rivers that flow into the Kondinka and pass through Russia?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Kondinka'}),(n:River)-[r1:flowsThrough]->(m1:Country {name: 'Russia'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:River {name: 'Kondinka'})-[:flowsThrough]->(c:Country {name: 'Russia'}) RETURN r.name, r.discharge_m3_s",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that pass through the People's Republic of China and flow into Dongting Lake?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'People\\'s Republic of China'}),(n:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River)-[:flowsThrough]->(:Country {name: 'People's Republic of China'})-[:flowsInto]->(:Lake {name: 'Dongting Lake'}) RETURN river.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that the Achairka River flows through or where the Gorky Reservoir is located?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Achairka'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Gorky Reservoir'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River {name: 'Achairka River'})-[:flowsThrough]->(country1:Country), (lake:Lake {name: 'Gorky Reservoir'})-[:locatedIn]->(country2:Country) RETURN country1.name, country2.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of all the continents?",
+    "gold": "MATCH (n:Continent) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Continent) RETURN c.name AS continent_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins situated in countries through which the Sant'Ana River flows, and how many such countries does each basin span?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Sant\\'Ana River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (sb:DrainageBasin)-[:locatedIn]->(c:Country)-[:flowsThrough]->(s:River {label: 'Sant\\'Ana River'})\nRETURN sb.label as drainage_basin_name, count(c) as number_of_countries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many mountain ranges are part of the same mountain range as Kanchenjunga?",
+    "gold": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange)<-[r1:partOf]-(m1:Mountain {name: 'Kanchenjunga'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (kanchenjunga:Mountain)-[:partOf]->(range:MountainRange)<-[:partOf]-(otherMountain:Mountain) WHERE kanchenjunga.name = 'Kanchenjunga' RETURN count(distinct otherMountain) as count",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of drainage basins along with their areas in square kilometers.",
+    "gold": "MATCH (n:DrainageBasin) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (db:DrainageBasin) RETURN db.name, db.area_km2",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all mountains located in India, along with the number of countries each mountain is situated in.",
+    "gold": "MATCH (n:Mountain)-[r1:locatedIn]->(m1:Country {name: 'India'}) OPTIONAL MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country) WHERE c.name = 'India' RETURN m.name AS mountain_name, COUNT(c) AS num_countries",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and lengths in kilometers of rivers that flow through Thailand?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Thailand'}) WITH DISTINCT n RETURN n.name, n.length_km",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country {name: 'Thailand'}) RETURN r.name, r.length_km",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into the Unini River, and how many countries does each of them pass through?",
+    "gold": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Unini River'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (river:River)-[:flowsInto]->(unini:River {name: 'Unini River'})-[:flowsThrough]->(country:Country)\n             RETURN river.name AS riverName, COUNT(country) AS numCountries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that the Niyap River flows into?",
+    "gold": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Niyap'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (n:River {name: 'Niyap River'})-[:flowsInto]->(r:River) RETURN r.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that are either part of the Lena basin or flow into the Arctic Ocean?",
+    "gold": "CALL { MATCH (n:River)-[r0:partOf]->(m0:DrainageBasin {name: 'Lena basin'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Arctic Ocean'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:partOf]->(l:DrainageBasin {name: 'Lena basin'}) RETURN r.name AS LenaBasinRivers UNION MATCH (r:River)-[:flowsInto]->(o:Ocean {name: 'Arctic Ocean'}) RETURN r.name AS ArcticOceanRivers",
+    "graph": "geography"
+  },
+  {
+    "question": "How many mountains are located in the same country as Bitkaya Peak?",
+    "gold": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Bitkaya Peak'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country)<-[:locatedIn]-(bm:Mountain {name: 'Bitkaya Peak'}) RETURN count(m)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes that the Yuan River flows into?",
+    "gold": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River {name: 'Yuan River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River {name: 'Yuan River'})-[:flowsInto]->(lake:Lake) RETURN lake.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that are part of the Baltoro Muztagh?",
+    "gold": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Baltoro Muztagh'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (mr:MountainRange)-[:partOf]->(baltoroMuztagh:MountainRange {name: 'Baltoro Muztagh'}) RETURN mr.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that either flow into the Paraguay River or pass through Brazil?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Paraguay River'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Brazil'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Ocean {name: 'Paraguay River'}) OR (r:River)-[:flowsThrough]->(:Country {name: 'Brazil'}) RETURN r.name AS river_name",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers either flow into Dongting Lake or pass through the People's Republic of China?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'People\\'s Republic of China'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Lake {name: 'Dongting Lake'}) OR (r:River)-[:flowsThrough]->(:Country {name: 'People''s Republic of China'}) RETURN count(r)",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries have either the Yellow River Basin or Mount Genyen located within them?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Yellow River Basin'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Mount Genyen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(dr:DrainageBasin {name: 'Yellow River Basin'}) OR (c:Country)-[:locatedIn]->(m:Mountain {name: 'Mount Genyen'}) RETURN count(c)",
+    "graph": "geography"
+  },
+  {
+    "question": "List the names of all countries in South America, along with the number of mountains located in each.",
+    "gold": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'South America'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(sa:Continent {name: 'South America'}), (c)-[:locatedIn]->(m:Mountain)\n             RETURN c.name AS country_name, count(m) AS number_of_mountains\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountains located in Nepal, sorted by elevation from lowest to highest?",
+    "gold": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'Nepal'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country {name: 'Nepal'}) \" +\n            \"RETURN m.name AS mountain_name, m.elevation_m AS elevation \" +\n            \"ORDER BY m.elevation_m ASC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into Dongting Lake and are 1,000 kilometers or shorter?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake {name: 'Dongting Lake'}) WITH DISTINCT n WHERE n.length_km <= 1000 RETURN n.name",
+    "pred": "MATCH (river:River)-[:flowsInto]->(ocean:Ocean {label: 'Dongting Lake'})\n             WHERE river.length_km <= 1000\n             RETURN river.name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that include lakes located in Canada, and how many such lakes are part of each basin?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'Canada'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (b:DrainageBasin)-[:partOf]->(l:Lake)-[:locatedIn]->(c:Country {name: 'Canada'})\n               RETURN b.name as basin_name, count(l) as num_lakes\n               ORDER BY num_lakes DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in maximum vertical depth between the Atlantic Ocean and the Arctic Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Atlantic Ocean'}), (m0:Ocean {name: 'Arctic Ocean'}) RETURN n.max_vertical_depth_m - m0.max_vertical_depth_m AS answer",
+    "pred": "MATCH (a:Ocean {name: 'Atlantic Ocean'}), (b:Ocean {name: 'Arctic Ocean'}) RETURN a.max_vertical_depth_m - b.max_vertical_depth_m as difference",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of the oceans that the Mekong River flows into?",
+    "gold": "MATCH (n:Ocean)<-[r0:flowsInto]-(m0:River {name: 'Mekong River'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (m:River {label: 'Mekong'})-[:flowsInto]->(o:Ocean) RETURN o.label AS Ocean, o.area_km2 AS Area",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in maximum vertical depth between the Pacific Ocean and the Indian Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Pacific Ocean'}), (m0:Ocean {name: 'Indian Ocean'}) RETURN n.max_vertical_depth_m - m0.max_vertical_depth_m AS answer",
+    "pred": "MATCH (p:Ocean {label: 'Pacific Ocean'}), (i:Ocean {label: 'Indian Ocean'}) RETURN p.max_vertical_depth_m - i.max_vertical_depth_m as difference",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where both Ojos del Salado and the Uruguay River Basin are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Ojos del Salado'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Uruguay River Basin'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Ocean)-[:locatedIn]->(country:Country)<-[:locatedIn]-(:DrainageBasin)-[:partOf]->(drainageBasin:DrainageBasin {name: 'Uruguay River Basin'})\n             WHERE (o:Ocean {name: 'Ojos del Salado'})-[:locatedIn]->(country)\n             RETURN country.name\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the average vertical depth in meters of the Arctic Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Arctic Ocean'}) WITH DISTINCT n RETURN n.avg_vertical_depth_m",
+    "pred": "MATCH (o:Ocean {name: 'Arctic Ocean'}) RETURN o.avg_vertical_depth_m",
+    "graph": "geography"
+  },
+  {
+    "question": "How many mountain ranges are either part of the Karakoram or have Gasherbrum as a part of them?",
+    "gold": "CALL { MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange {name: 'Karakoram'}) RETURN n, m0 as m UNION MATCH (n:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Gasherbrum'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (mr:MountainRange)-[:partOf*0..]->(p:MountainRange {name: 'Karakoram'}) WHERE ANY(x IN nodes(p) WHERE x.name = 'Gasherbrum') RETURN count(mr) as num_mountain_ranges",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that include mountains also part of the Himalayas, and how many such mountains are there in each range?",
+    "gold": "MATCH (n:MountainRange)<-[r0:partOf]-(m0:Mountain)-[r1:partOf]->(m1:MountainRange {name: 'Himalayas'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange)-[:partOf]->(h:MountainRange {name: 'Himalayas'})\n             RETURN mr.name as MountainRangeName, count(m) as NumberOfMountains\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of oceans with a maximum vertical depth greater than 7,400 meters?",
+    "gold": "MATCH (n:Ocean) WITH DISTINCT n WHERE n.max_vertical_depth_m > 7400 RETURN n.name",
+    "pred": "MATCH (o:Ocean) WHERE o.max_vertical_depth_m > 7400 RETURN o.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the lowest discharge rate in cubic meters per second of rivers that flow into the Atbarah River?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN min(n.discharge_m3_s)",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:River {name: 'Atbarah River'}) RETURN min(r.discharge_m3_s) as lowest_discharge",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and discharge rates in cubic meters per second of rivers that flow into the Atlantic Ocean and are part of the Congo basin?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean {name: 'Atlantic Ocean'}),(n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Congo basin'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
+    "pred": "MATCH (r:River)-[:flowsInto]->(atlantic:Ocean {name: 'Atlantic Ocean'})-[:flowsInto]->(c:Continent {name: 'Africa'})-[:partOf]->(db:DrainageBasin)\n  WHERE db.name = 'Congo basin'\n  RETURN r.name AS river_name, r.discharge_m3_s AS discharge_rate\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Which drainage basins contain rivers that the Durnitsa flows into?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)<-[r1:flowsInto]-(m1:River {name: 'Durnitsa'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (d:DrainageBasin)-[:partOf*]->(r:River)-[:flowsInto]->(:River {name: 'Durnitsa'}) RETURN d.name AS drainage_basin_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the shortest river that flows into an ocean?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Ocean) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC LIMIT 1",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean) RETURN r.name ORDER BY r.length_km ASC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "Which mountain has a greater elevation, Gyachung Kang or Chamar?",
+    "gold": "MATCH (n:Mountain {name: 'Gyachung Kang'}), (m0:Mountain {name: 'Chamar'}) RETURN CASE WHEN n.elevation_m > m0.elevation_m THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (g:Mountain {name: 'Gyachung Kang'}), (c:Mountain {name: 'Chamar'}) RETURN CASE WHEN g.elevation_m > c.elevation_m THEN g ELSE c END AS mountain_with_greater_elevation",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in elevation, in meters, between Gyachung Kang and Chamar?",
+    "gold": "MATCH (n:Mountain {name: 'Gyachung Kang'}), (m0:Mountain {name: 'Chamar'}) RETURN n.elevation_m - m0.elevation_m AS answer",
+    "pred": "MATCH (g:Mountain {name: 'Gyachung Kang'}), (c:Mountain {name: 'Chamar'}) RETURN g.elevation_m - c.elevation_m AS elevation_difference",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of the countries where Lac Manouane is located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:Lake {name: 'Lac Manouane'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (l:Lake {name: 'Lac Manouane'})-[:locatedIn]->(c:Country) RETURN c.name AS country_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in area, in square kilometers, between Lac Burton and Portnyagino Lake?",
+    "gold": "MATCH (n:Lake {name: 'Lac Burton'}), (m0:Lake {name: 'Portnyagino Lake'}) RETURN n.area_km2 - m0.area_km2 AS answer",
+    "pred": "MATCH (lake1:Lake {name: 'Lac Burton'}), (lake2:Lake {name: 'Portnyagino Lake'}) RETURN lake1.area_km2 - lake2.area_km2 AS difference",
+    "graph": "geography"
+  },
+  {
+    "question": "How many rivers either flow into the Obukhovka or are part of the Tobol basin?",
+    "gold": "CALL { MATCH (n:River)-[r0:flowsInto]->(m0:River {name: 'Obukhovka'}) RETURN n, m0 as m UNION MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Tobol basin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (r:River)-[:flowsInto|partOf]->(db:DrainageBasin) WHERE db.name = 'Obukhovka' OR db.name = 'Tobol' RETURN COUNT(r)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes into which both the Yuan River and the Xiang River flow?",
+    "gold": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River {name: 'Yuan River'}),(n:Lake)<-[r1:flowsInto]-(m1:River {name: 'Xiang River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (yuan:River {name: 'Yuan River'})-[:flowsInto]->(lake:Lake)<-[:flowsInto]-(xuan:River {name: 'Xiang River'}) RETURN lake.name",
+    "graph": "geography"
+  },
+  {
+    "question": "Which lake has a larger area, Lac Burton or Portnyagino Lake?",
+    "gold": "MATCH (n:Lake {name: 'Lac Burton'}), (m0:Lake {name: 'Portnyagino Lake'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (lake1:Lake {name: 'Lac Burton'}), (lake2:Lake {name: 'Portnyagino Lake'})\n             RETURN CASE\n                    WHEN lake1.area_km2 > lake2.area_km2 THEN lake1\n                    WHEN lake1.area_km2 < lake2.area_km2 THEN lake2\n                    ELSE 'Both have the same area'\n                    END AS largerLake\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Which lake has a greater vertical depth, Lake Sartlan or Lake Sasykkol?",
+    "gold": "MATCH (n:Lake {name: 'Lake Sartlan'}), (m0:Lake {name: 'Lake Sasykkol'}) RETURN CASE WHEN n.vertical_depth_m > m0.vertical_depth_m THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (lake1:Lake {name: 'Lake Sartlan'}), (lake2:Lake {name: 'Lake Sasykkol'})\n             WHERE lake1.vertical_depth_m > lake2.vertical_depth_m\n             RETURN lake1.name AS lake_with_greater_depth\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many lakes does the Xiang River or the Yuan River flow into?",
+    "gold": "CALL { MATCH (n:Lake)<-[r0:flowsInto]-(m0:River {name: 'Xiang River'}) RETURN n, m0 as m UNION MATCH (n:Lake)<-[r1:flowsInto]-(m1:River {name: 'Yuan River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (x:River {name: 'Xiang River'})-[:flowsInto]->(lake:Lake)\n              MATCH (y:River {name: 'Yuan River'})-[:flowsInto]->(lake)\n              RETURN COUNT(DISTINCT lake)\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that flow into the Pacific Ocean, along with the number of countries each river passes through.",
+    "gold": "MATCH (n:River)-[r1:flowsInto]->(m1:Ocean {name: 'Pacific Ocean'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean)<-[:locatedIn]-(c:Country)\n             WHERE o.label = 'Pacific Ocean'\n             RETURN r.label AS river_name, count(c) AS num_countries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "List the names of all countries located in Africa, along with the number of drainage basins situated in each.",
+    "gold": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Africa'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(a:Continent {name: 'Africa'})\n               MATCH (c)-[:partOf]->(db:DrainageBasin)\n               RETURN c.name AS country_name, COUNT(db) AS drainage_basin_count\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into the Maly Turtas, and how many rivers flow into each of them?",
+    "gold": "MATCH (n:River)-[r1:flowsInto]->(m1:River {name: 'Maly Turtas'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean {name: 'Maly Turtas'})\nRETURN r.name AS river_name, COUNT(r) AS num_rivers\nORDER BY num_rivers DESC\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow through Mali, and how many rivers flow into each of them?",
+    "gold": "MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Mali'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Country {name: 'Mali'})<-[:flowsThrough]-(r:River)-[:flowsInto]->(o:Ocean)\n             RETURN r.name AS river_name, COUNT(r) AS num_rivers_into\n             ORDER BY num_rivers_into DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Which countries are traversed by rivers that also flow through Paraguay, and how many such rivers pass through each of these countries?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsThrough]->(m1:Country {name: 'Paraguay'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that flow through Ethiopia, along with the number of countries each river passes through.",
+    "gold": "MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Ethiopia'}) OPTIONAL MATCH (n:River)-[r0:flowsThrough]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:flowsThrough]->(c:Country)\n             WHERE c.name = 'Ethiopia'\n             RETURN r.name AS river_name, COUNT(DISTINCT c) AS num_countries\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of the countries through which the Malyye Tugry River flows?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Malyye Tugry'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (river:River {name: 'Malyye Tugry'})-[:flowsThrough]->(country:Country)\n             RETURN country.name, country.area_km2\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many continents are there?",
+    "gold": "MATCH (n:Continent) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "",
+    "graph": "geography"
+  },
+  {
+    "question": "List the names of all countries located in Europe, along with the number of drainage basins situated in each.",
+    "gold": "MATCH (n:Country)-[r1:locatedIn]->(m1:Continent {name: 'Europe'}) OPTIONAL MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(e:Continent) WHERE e.name = 'Europe' RETURN c.name AS CountryName, size((c)-[:partOf]->(db:DrainageBasin)) AS NumberOfDrainageBasins",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in length in kilometers between the Bandeya River and the Sultunka River?",
+    "gold": "MATCH (n:River {name: 'Bandeya'}), (m0:River {name: 'Sultunka'}) RETURN n.length_km - m0.length_km AS answer",
+    "pred": "MATCH (r1:River {name: 'Bandeya River'})-[:flowsInto*]->(o:Ocean)\nMATCH (r2:River {name: 'Sultunka River'})-[:flowsInto*]->(o)\nRETURN r1.length_km - r2.length_km AS length_difference\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all lakes that are part of the Congo basin, along with the number of countries each lake is located in.",
+    "gold": "MATCH (n:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Congo basin'}) OPTIONAL MATCH (n:Lake)-[r0:locatedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (l:Lake)-[:partOf]->(db:DrainageBasin)-[:locatedIn]->(c:Country) WHERE db.name = 'Congo basin' RETURN l.name AS lakeName, count(c) AS numberOfCountries",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries through which rivers that flow into the Madre de Dios River pass, and how many such rivers flow through each country?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River)-[r1:flowsInto]->(m1:River {name: 'Madre de Dios River'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (river:River)-[:flowsThrough]->(country:Country)\n             WHERE (river)-[:flowsInto*]->(:Ocean {name: 'Madre de Dios River'})\n             RETURN country.name AS CountryName, COUNT(river) AS NumRivers\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the mountain, located in a country through which the Belaya-Berel' River flows, that has the lowest elevation?",
+    "gold": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country)<-[r1:flowsThrough]-(m1:River {name: 'Belaya-Berel\\''}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m ASC LIMIT 1",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country)-[:flowsThrough]->(r:River {label: 'Belaya-Berel' River'}) RETURN m.label AS name ORDER BY m.elevation_m ASC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "Which has a larger area in square kilometers, the Congo basin or the Tobol basin?",
+    "gold": "MATCH (n:DrainageBasin {name: 'Congo basin'}), (m0:DrainageBasin {name: 'Tobol basin'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (cb:DrainageBasin {name: 'Congo basin'}), (tb:DrainageBasin {name: 'Tobol basin'})\n             RETURN CASE\n                    WHEN cb.area_km2 > tb.area_km2 THEN 'Congo basin'\n                    WHEN cb.area_km2 < tb.area_km2 THEN 'Tobol basin'\n                    ELSE 'Both have the same area'\n                    END AS larger_area\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Which river has a greater discharge in cubic meters per second, the Olyokma or the Kasai River?",
+    "gold": "MATCH (n:River {name: 'Olyokma'}), (m0:River {name: 'Kasai River'}) RETURN CASE WHEN n.discharge_m3_s > m0.discharge_m3_s THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (river1:River {name: 'Olyokma'}), (river2:River {name: 'Kasai River'})\n             WHERE river1.discharge_m3_s > river2.discharge_m3_s\n             RETURN river1.name AS river_with_greater_discharge\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "Provide the names of all rivers that are part of the Lena basin, along with the count of rivers that flow into each of them.",
+    "gold": "MATCH (n:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Lena basin'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (r:River)-[:partOf]->(l:DrainageBasin {area_km2: 656380.0})-[:flowsInto*]->(o:River)\nRETURN o.label AS river_name, COUNT(o) AS count_of_rivers\nORDER BY count_of_rivers DESC\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries that rivers flow through, sorted by their area in square kilometers from smallest to largest?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 ASC",
+    "pred": "MATCH (c:Country)<-[:locatedIn]-(:River)\n             RETURN c.name AS CountryName, c.area_km2 AS Area\n             ORDER BY Area ASC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the lowest elevation of mountains located in Nepal?",
+    "gold": "MATCH (n:Mountain)-[r0:locatedIn]->(m0:Country {name: 'Nepal'}) WITH DISTINCT n RETURN min(n.elevation_m)",
+    "pred": "MATCH (m:Mountain)-[:locatedIn]->(c:Country {name: 'Nepal'}) RETURN min(m.elevation_m) as lowest_elevation",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that include rivers flowing into the Atlantic Ocean, and how many such rivers are part of each basin?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River)-[r1:flowsInto]->(m1:Ocean {name: 'Atlantic Ocean'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (db:DrainageBasin)-[:partOf*0..]->(o:Ocean {label: 'Atlantic Ocean'})-[:flowsInto]->(r:River)\nRETURN db.label AS drainage_basin_name, count(r) AS num_rivers\nORDER BY num_rivers DESC\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "Which ocean has a larger area in square kilometers, the Arctic Ocean or the Pacific Ocean?",
+    "gold": "MATCH (n:Ocean {name: 'Arctic Ocean'}), (m0:Ocean {name: 'Pacific Ocean'}) RETURN CASE WHEN n.area_km2 > m0.area_km2 THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (arctic:Ocean {name: 'Arctic Ocean'}), (pacific:Ocean {name: 'Pacific Ocean'})\n             RETURN CASE\n                    WHEN arctic.area_km2 > pacific.area_km2 THEN 'Arctic Ocean'\n                    WHEN arctic.area_km2 < pacific.area_km2 THEN 'Pacific Ocean'\n                    ELSE 'Both oceans have the same area'\n                    END AS larger_ocean\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where the Terek River Basin is located or through which the Mayzas River flows?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin {name: 'Terek River Basin'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Mayzas'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)-[:locatedIn]->(db:DrainageBasin)-[:partOf]->(:DrainageBasin {name: 'Terek River Basin'}) RETURN c.name AS countryName UNION MATCH (c:Country)-[:flowsThrough]->(r:River {name: 'Mayzas River'}) RETURN c.name AS countryName",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow through Cameroon, and how many rivers flow into each of them?",
+    "gold": "MATCH (n:River)-[r1:flowsThrough]->(m1:Country {name: 'Cameroon'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Country {name: 'Cameroon'})-[:flowsThrough]->(r:River)\n             RETURN r.name as RiverName, COUNT((r)<-[:flowsInto]-()) as NumberOfRivers\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and lengths in kilometers of rivers that the Atbarah River flows into?",
+    "gold": "MATCH (n:River)<-[r0:flowsInto]-(m0:River {name: 'Atbarah River'}) WITH DISTINCT n RETURN n.name, n.length_km",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:River {name: 'Atbarah River'}) RETURN r.name, r.length_km",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges?",
+    "gold": "MATCH (n:MountainRange) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (mr:MountainRange) RETURN mr.name AS mountainRangeName",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the area of the Barycz Basin in square kilometers?",
+    "gold": "MATCH (n:DrainageBasin {name: 'Barycz Basin'}) WITH DISTINCT n RETURN n.area_km2",
+    "pred": "MATCH (b:DrainageBasin {name: 'Barycz Basin'}) RETURN b.area_km2 AS area",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of lakes that the Xiang River flows into?",
+    "gold": "MATCH (n:Lake)<-[r0:flowsInto]-(m0:River {name: 'Xiang River'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (river:River {name: 'Xiang River'})-[:flowsInto]->(lake:Lake) RETURN lake.name",
+    "graph": "geography"
+  },
+  {
+    "question": "List the names of drainage basins located in the same countries as Makalu, and for each basin, provide the number of such countries.",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Mountain {name: 'Makalu'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (db:DrainageBasin)-[:locatedIn]->(c:Country)<-[:locatedIn]-(m:Mountain {name: 'Makalu'}) RETURN db.name AS drainage_basin_name, count(distinct c.name) AS num_countries",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and discharge rates in cubic meters per second of rivers that pass through Kazakhstan and flow into the Irtysh?",
+    "gold": "MATCH (n:River)-[r0:flowsThrough]->(m0:Country {name: 'Kazakhstan'}),(n:River)-[r1:flowsInto]->(m1:River {name: 'Irtysh'}) WITH DISTINCT n RETURN n.name, n.discharge_m3_s",
+    "pred": "MATCH (r:River)-[:flowsInto]->(o:Ocean {label: 'Irtysh'})-[:flowsInto]->(c:Country {label: 'Kazakhstan'}) RETURN r.label AS river_name, r.discharge_m3_s AS discharge_rate",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that are fed by rivers within the Lena basin, and how many such rivers flow into each of them?",
+    "gold": "MATCH (n:River)<-[r0:flowsInto]-(m0:River)-[r1:partOf]->(m1:DrainageBasin {name: 'Lena basin'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (l:River)-[:partOf]->(lb:DrainageBasin {name: 'Lena basin'})-[:partOf*0..]->(r:River)\n             RETURN r.name AS river_name, COUNT(*) AS num_fed_rivers\n             ORDER BY num_fed_rivers DESC\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the shortest river that flows into a lake located in the People's Republic of China?",
+    "gold": "MATCH (n:River)-[r0:flowsInto]->(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n RETURN n.name ORDER BY n.length_km ASC LIMIT 1",
+    "pred": "MATCH (r:River)-[:flowsInto]->(:Lake)-[:locatedIn]->(c:Country {name: 'People''s Republic of China'}) RETURN r.name ORDER BY r.length_km ASC LIMIT 1",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of rivers that flow into Dongting Lake, and how many rivers flow into each of them?",
+    "gold": "MATCH (n:River)-[r1:flowsInto]->(m1:Lake {name: 'Dongting Lake'}) OPTIONAL MATCH (n:River)<-[r0:flowsInto]-(m0:River) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (river:River)-[:flowsInto]->(ocean:Ocean {name: 'Dongting Lake'})\n             WITH river.name as riverName, count(*) as numRivers\n             RETURN riverName, numRivers\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the difference in square kilometers between the area of Jordan and that of Paraguay?",
+    "gold": "MATCH (n:Country {name: 'Jordan'}), (m0:Country {name: 'Paraguay'}) RETURN n.area_km2 - m0.area_km2 AS answer",
+    "pred": "MATCH (jordan:Country {name: 'Jordan'}), (paraguay:Country {name: 'Paraguay'})\nRETURN jordan.area_km2 - paraguay.area_km2 AS difference_in_sq_km\"}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many lakes are either located in the People's Republic of China or have the Xiang River flowing into them?",
+    "gold": "CALL { MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}) RETURN n, m0 as m UNION MATCH (n:Lake)<-[r1:flowsInto]-(m1:River {name: 'Xiang River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (lake:Lake)-[:locatedIn|flowsInto]->(country:Country {name: 'People's Republic of China'}) RETURN COUNT(lake) AS lake_count",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and vertical depths of lakes situated in the People's Republic of China that are part of the Yellow River Basin?",
+    "gold": "MATCH (n:Lake)-[r0:locatedIn]->(m0:Country {name: 'People\\'s Republic of China'}),(n:Lake)-[r1:partOf]->(m1:DrainageBasin {name: 'Yellow River Basin'}) WITH DISTINCT n RETURN n.name, n.vertical_depth_m",
+    "pred": "MATCH (l:Lake)-[:partOf]->(d:DrainageBasin)-[:locatedIn]->(c:Country) WHERE c.name = 'People's Republic of China' RETURN l.name, l.vertical_depth_m",
+    "graph": "geography"
+  },
+  {
+    "question": "Which ocean, the Atlantic or the Arctic, has a greater maximum vertical depth?",
+    "gold": "MATCH (n:Ocean {name: 'Atlantic Ocean'}), (m0:Ocean {name: 'Arctic Ocean'}) RETURN CASE WHEN n.max_vertical_depth_m > m0.max_vertical_depth_m THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (a:Ocean {name: 'Atlantic'}), (arctic:Ocean {name: 'Arctic'})\n             WHERE a.max_vertical_depth_m > arctic.max_vertical_depth_m\n             RETURN a.name AS ocean_name, a.max_vertical_depth_m AS max_vertical_depth\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "How many countries either contain the mountain Pik 100 years Russian Geographical Society or are traversed by the Dan River?",
+    "gold": "CALL { MATCH (n:Country)<-[r0:locatedIn]-(m0:Mountain {name: 'Pik 100 years Russian Geographical Society'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:flowsThrough]-(m1:River {name: 'Dan River'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Country) WHERE (c)<-[:locatedIn]-(:Mountain {name: 'Pik 100 years Russian Geographical Society'}) OR (c)<-[:flowsThrough]-(:River {name: 'Dan River'}) RETURN count(c)",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of countries where drainage basins are located?",
+    "gold": "MATCH (n:Country)<-[r0:locatedIn]-(m0:DrainageBasin) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Country)<-[:locatedIn]-(db:DrainageBasin) RETURN c.name AS CountryName",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names and areas in square kilometers of countries through which the Kyrtau River flows and in which the Narva basin is located?",
+    "gold": "MATCH (n:Country)<-[r0:flowsThrough]-(m0:River {name: 'Kyrtau'}),(n:Country)<-[r1:locatedIn]-(m1:DrainageBasin {name: 'Narva basin'}) WITH DISTINCT n RETURN n.name, n.area_km2",
+    "pred": "MATCH (kyrtauRiver:River {name: 'Kyrtau River'})-[:flowsThrough]->(country:Country)-[:partOf]->(drainageBasin:DrainageBasin {name: 'Narva basin'})\nRETURN country.name, country.area_km2\"\n}",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of mountain ranges that are part of the same range as Arkatag Shan?",
+    "gold": "MATCH (n:MountainRange)-[r0:partOf]->(m0:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Arkatag Shan'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (mr:MountainRange)-[:partOf]->(mr2:MountainRange)<-[:partOf]-(m:Mountain {name: 'Arkatag Shan'}) RETURN mr.name as mountain_range_name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins located in the same country as Keller Lake, sorted by their area in square kilometers from largest to smallest?",
+    "gold": "MATCH (n:DrainageBasin)-[r0:locatedIn]->(m0:Country)<-[r1:locatedIn]-(m1:Lake {name: 'Keller Lake'}) WITH DISTINCT n RETURN n.name ORDER BY n.area_km2 DESC",
+    "pred": "MATCH (db:DrainageBasin)-[:locatedIn]->(c:Country)<-[:locatedIn]-(l:Lake {name: 'Keller Lake'}) RETURN db.name AS drainage_basin_name, db.area_km2 AS area ORDER BY area DESC",
+    "graph": "geography"
+  },
+  {
+    "question": "What is the name of the tallest mountain that is part of a mountain range which the Saser Muztagh mountain range is part of?",
+    "gold": "MATCH (n:Mountain)-[r0:partOf]->(m0:MountainRange)<-[r1:partOf]-(m1:MountainRange {name: 'Saser Muztagh'}) WITH DISTINCT n RETURN n.name ORDER BY n.elevation_m DESC LIMIT 1",
+    "pred": "MATCH (m:Mountain)-[:partOf]->(mr:MountainRange)-[:partOf]->(mr2:MountainRange) WHERE mr.name = 'Saser Muztagh' RETURN m.name AS tallest_mountain",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that the Lukaya River or Lake Mweru are part of?",
+    "gold": "CALL { MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:River {name: 'Lukaya River'}) RETURN n, m0 as m UNION MATCH (n:DrainageBasin)<-[r1:partOf]-(m1:Lake {name: 'Lake Mweru'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (b:DrainageBasin)<-[:partOf]-(n:River|Lake {name: 'Lukaya River' OR 'Lake Mweru'}) RETURN b.name",
+    "graph": "geography"
+  },
+  {
+    "question": "What are the names of drainage basins that have lakes located in the People's Republic of China as part of them?",
+    "gold": "MATCH (n:DrainageBasin)<-[r0:partOf]-(m0:Lake)-[r1:locatedIn]->(m1:Country {name: 'People\\'s Republic of China'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (db:DrainageBasin)-[:partOf*]->(country:Country {name: 'People's Republic of China'})-[:locatedIn]->(:Continent)<-[:locatedIn]-(lake:Lake) RETURN db.name AS drainage_basin_names",
+    "graph": "geography"
+  }
+]

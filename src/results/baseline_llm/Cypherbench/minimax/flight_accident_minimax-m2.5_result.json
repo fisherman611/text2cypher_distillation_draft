@@ -1,0 +1,1136 @@
+[
+  {
+    "question": "Which aircraft model is longer, the Dash 7 or the Bell 206?",
+    "gold": "MATCH (n:AircraftModel {name: 'Dash 7'}), (m0:AircraftModel {name: 'Bell 206'}) RETURN CASE WHEN n.length_metre > m0.length_metre THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (d:AircraftModel), (b:AircraftModel) RETURN d.length_metre AS Dash7_Length, b.length_metre AS Bell206_Length, CASE WHEN d.length_metre > b.length_metre THEN 'Dash 7 is longer' WHEN b.length_metre > d.length_metre THEN 'Bell 206 is longer' ELSE 'They are the same length' END AS Result",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the earliest launch year among aircraft manufacturers?",
+    "gold": "MATCH (n:AircraftManufacturer) WITH DISTINCT n RETURN min(n.launch_year)",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the name of the airport from which South African Airways Flight 201 departed?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'South African Airways Flight 201'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of operators involved in flight accidents that were headed to Strasbourg Airport?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Strasbourg Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Airport {location: 'Strasbourg'})<-[:destinedFor]-(fa:FlightAccident)-[:operatedBy]->(op:Operator) RETURN op.name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in range, in kilometers, between the Antonov An-12 and the ATR 42?",
+    "gold": "MATCH (n:AircraftModel {name: 'Antonov An-12'}), (m0:AircraftModel {name: 'ATR 42'}) RETURN n.range_km - m0.range_km AS answer",
+    "pred": "MATCH (a:AircraftModel), (b:AircraftModel) WHERE a.model = 'Antonov An-12' AND b.model = 'ATR 42' RETURN abs(a.range_km - b.range_km) AS range_difference_km",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Do Tara Air Flight 193 and USAir Flight 1493 have an equal number of fatalities?",
+    "gold": "MATCH (n:FlightAccident {name: 'Tara Air Flight 193'}), (m0:FlightAccident {name: 'USAir Flight 1493'}) RETURN n.number_of_deaths = m0.number_of_deaths AS answer",
+    "pred": "MATCH (f1:FlightAccident {flight_number: 'Flight 193'})\nMATCH (f2:FlightAccident {flight_number: 'Flight 1493'})\nRETURN f1.number_of_deaths AS tara_air_deaths, f2.number_of_deaths AS usair_deaths, f1.number_of_deaths = f2.number_of_deaths AS equal_fatalities",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and lengths in meters of aircraft models involved in the 2015 Juba plane crash?",
+    "gold": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident {name: '2015 Juba plane crash'}) WITH DISTINCT n RETURN n.name, n.length_metre",
+    "pred": "MATCH (fa:FlightAccident)-[:involves]->(am:AircraftModel) WHERE fa.location CONTAINS 'Juba' AND fa.date CONTAINS '2015' RETURN am",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many more survivors were there on Noar Linhas Aéreas Flight 4896 compared to Air Moorea Flight 1121?",
+    "gold": "MATCH (n:FlightAccident {name: 'Noar Linhas Aéreas Flight 4896'}), (m0:FlightAccident {name: 'Air Moorea Flight 1121'}) RETURN n.number_of_survivors - m0.number_of_survivors AS answer",
+    "pred": "MATCH (a:FlightAccident {flight_number: 'Noar Linhas Aéreas Flight 4896'}), (b:FlightAccident {flight_number: 'Air Moorea Flight 1121'}) RETURN a.number_of_survivors - b.number_of_survivors AS more_survivors",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Where did the FlyMontserrat Flight 107 accident occur?",
+    "gold": "MATCH (n:FlightAccident {name: 'FlyMontserrat Flight 107'}) WITH DISTINCT n RETURN n.location",
+    "pred": "MATCH (fa:FlightAccident {flight_number: 'FlyMontserrat Flight 107'}) RETURN fa.location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many distinct aircraft manufacturers are there?",
+    "gold": "MATCH (n:AircraftManufacturer) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (m:AircraftManufacturer) RETURN count(m) AS numberOfManufacturers",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft has a greater length in meters, the Airbus A380 or the Beechcraft 99 Airliner?",
+    "gold": "MATCH (n:AircraftModel {name: 'Airbus A380'}), (m0:AircraftModel {name: 'Beechcraft 99 Airliner'}) RETURN CASE WHEN n.length_metre > m0.length_metre THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (a1:AircraftModel), MATCH (a2:AircraftModel)\nWHERE a1.length_metre > a2.length_metre\nRETURN a1.length_metre AS longer_aircraft_length, a2.length_metre AS shorter_aircraft_length\nORDER BY a1.length_metre DESC\nLIMIT 1",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Who are the operators of Aeroflot Flight 3603, and what countries are they from?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident {name: 'Aeroflot Flight 3603'}) WITH DISTINCT n RETURN n.name, n.country",
+    "pred": "MATCH (f:FlightAccident {flight_number: 'Aeroflot Flight 3603'})-[:operatedBy]->(o:Operator) RETURN o, o.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and locations of aviation accidents operated by ADC Airlines?",
+    "gold": "MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'ADC Airlines'}) WITH DISTINCT n RETURN n.name, n.location",
+    "pred": "MATCH (f:FlightAccident)-[:operatedBy]->(o:Operator) WHERE o.country = 'ADC Airlines' RETURN f.flight_number AS name, f.location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many airports are either the departure point for Pan Am Flight 217 or the destination for Avianca Flight 052?",
+    "gold": "CALL { MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'Pan Am Flight 217'}) RETURN n, m0 as m UNION MATCH (n:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'Avianca Flight 052'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (fa:FlightAccident {flight_number: 'Pan Am Flight 217'})-[:departsFrom]->(a1:Airport)\nOPTIONAL MATCH (fb:FlightAccident {flight_number: 'Avianca Flight 052'})-[:destinedFor]->(a2:Airport)\nWITH COLLECT(DISTINCT a1) + COLLECT(DISTINCT a2) AS airports\nUNWIND airports AS airport\nRETURN count(DISTINCT airport)",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft has a greater wingspan, the North American P-51 Mustang or the Boeing 737-500?",
+    "gold": "MATCH (n:AircraftModel {name: 'North American P-51 Mustang'}), (m0:AircraftModel {name: 'Boeing 737-500'}) RETURN CASE WHEN n.wingspan_metre > m0.wingspan_metre THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (m:AircraftModel)\nWHERE m.name IN ['North American P-51 Mustang', 'Boeing 737-500']\nRETURN m.name, m.wingspan_metre",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and service entry dates of aircraft models involved in the Pegasus Airlines Flight 2193 accident?",
+    "gold": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident {name: 'Pegasus Airlines Flight 2193'}) WITH DISTINCT n RETURN n.name, n.service_entry",
+    "pred": "MATCH (fa:FlightAccident {flight_number: '2193'})-[:involves]->(am:AircraftModel) RETURN am.service_entry",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were both destined for and departed from the same airport, sorted by the number of deaths from highest to lowest?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport),(n:FlightAccident)-[r1:departsFrom]->(m0:Airport) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_deaths DESC",
+    "pred": "MATCH (f:FlightAccident)-[d:departsFrom]->(airport:Airport), (f)-[dest:destinedFor]->(airport) RETURN f.flight_number AS flight_name, f.number_of_deaths, f.location, f.date ORDER BY f.number_of_deaths DESC",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and injury counts of aviation accidents that took off from Yinchuan Hedong International Airport?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Yinchuan Hedong International Airport'}) WITH DISTINCT n RETURN n.name, n.number_of_injuries",
+    "pred": "MATCH (airport:Airport)\nWHERE airport.location CONTAINS 'Yinchuan Hedong International Airport' OR airport.iata_code = 'INC' OR airport.icao_code = 'ZLIC'\nMATCH (accident:FlightAccident)-[:departsFrom]->(airport)\nRETURN accident.flight_number AS name, accident.number_of_injuries AS injury_count",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and IATA codes of airports that were destinations for flights associated with the assassination of Juvénal Habyarimana and Cyprien Ntaryamira?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'assassination of Juvénal Habyarimana and Cyprien Ntaryamira'}) WITH DISTINCT n RETURN n.name, n.iata_code",
+    "pred": "MATCH (fa:FlightAccident)-[:destinedFor]->(a:Airport) WHERE fa.date = date('1994-04-06') OR fa.location CONTAINS 'Kigali' OR fa.flight_number CONTAINS '116' RETURN a.name, a.iata_code",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Provide the names and IATA codes of airports.",
+    "gold": "MATCH (n:Airport) WITH DISTINCT n RETURN n.name, n.iata_code",
+    "pred": "MATCH (a:Airport) RETURN a.location AS name, a.iata_code",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of operators involved in flight accidents departing from Skopje International Airport?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Skopje International Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Airport {iata_code: 'SKP'})<-[:departsFrom]-(fa:FlightAccident)-[:operatedBy]->(o:Operator) RETURN DISTINCT o",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the earliest launch year of operators that operated flights involved in accidents with the Saab 340 aircraft?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'Saab 340'}) WITH DISTINCT n RETURN min(n.launch_year)",
+    "pred": "MATCH (a:AircraftModel)<-[:involves]-(fa:FlightAccident)-[:operatedBy]->(o:Operator) WHERE a.length_metre IS NOT NULL OR a.wingspan_metre IS NOT NULL OPTIONAL MATCH (a:AircraftModel) WHERE any(prop IN ['saab340', 'saab 340', 'saab-340'] WHERE lower(toString(prop)) CONTAINS 'saab 340') RETURN min(o.launch_year) AS earliest_launch_year",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the height difference in meters between the Douglas A-26 Invader and the Junkers Ju 52?",
+    "gold": "MATCH (n:AircraftModel {name: 'Douglas A-26 Invader'}), (m0:AircraftModel {name: 'Junkers Ju 52'}) RETURN n.height_metre - m0.height_metre AS answer",
+    "pred": "MATCH (a1:AircraftModel), (a2:AircraftModel) WHERE a1.height_metre IS NOT NULL AND a2.height_metre IS NOT NULL RETURN a1.height_metre AS douglas_a26_height, a2.height_metre AS junkers_ju52_height, abs(a1.height_metre - a2.height_metre) AS height_difference",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the highest number of fatalities in aviation accidents that departed from Tan Son Nhat International Airport and were operated by Vietnam Airlines?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Tan Son Nhat International Airport'}),(n:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'Vietnam Airlines'}) WITH DISTINCT n RETURN max(n.number_of_deaths)",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(airport:Airport)\nWHERE airport.location CONTAINS 'Tan Son Nhat' OR airport.iata_code = 'SGN'\nMATCH (fa)-[:operatedBy]->(op:Operator)\nWHERE op.country = 'Vietnam'\nRETURN fa.flight_number, fa.date, fa.location, fa.number_of_deaths\nORDER BY fa.number_of_deaths DESC\nLIMIT 1",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of the manufacturers of the Antonov An-32, and how many aircraft models has each of them produced?",
+    "gold": "MATCH (n:AircraftManufacturer)<-[r1:manufacturedBy]-(m1:AircraftModel {name: 'Antonov An-32'}) OPTIONAL MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (am:AircraftModel {name: 'Antonov An-32'})-[:manufacturedBy]->(manufacturer:AircraftManufacturer) OPTIONAL MATCH (allModels:AircraftModel)-[:manufacturedBy]->(manufacturer) RETURN manufacturer.name AS manufacturer_name, COUNT(allModels) AS number_of_models",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in length, in meters, between the Dash 7 and the Bell 206?",
+    "gold": "MATCH (n:AircraftModel {name: 'Dash 7'}), (m0:AircraftModel {name: 'Bell 206'}) RETURN n.length_metre - m0.length_metre AS answer",
+    "pred": "MATCH (dash7:AircraftModel {name: 'Dash 7'}), (bell206:AircraftModel {name: 'Bell 206'}) RETURN dash7.length_metre - bell206.length_metre AS length_difference",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Provide the names and injury counts of aviation accidents that both departed from and were destined for the same airport.",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport),(n:FlightAccident)-[r1:destinedFor]->(m0:Airport) WITH DISTINCT n RETURN n.name, n.number_of_injuries",
+    "pred": "MATCH (a:FlightAccident)-[:departsFrom]->(airport:Airport), (a)-[:destinedFor]->(airport) RETURN a.location AS accident_name, a.number_of_injuries AS injury_count",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports that were the destination for flight accidents involving the Ford Trimotor?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'Ford Trimotor'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:involves]->(am:AircraftModel) WHERE am.name = 'Ford Trimotor' MATCH (fa)-[:destinedFor]->(airport:Airport) RETURN DISTINCT airport.location AS airport_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aircraft models produced by PZL Mielec?",
+    "gold": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'PZL Mielec'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (am:AircraftManufacturer)<-[:manufacturedBy]-( aircraftModel:AircraftModel) WHERE am.country = 'Poland' OR am.launch_year IS NOT NULL RETURN aircraftModel",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aircraft models produced by Bombardier?",
+    "gold": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'Bombardier'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (am:AircraftManufacturer {name: 'Bombardier'})<-[:manufacturedBy]-(amodel:AircraftModel) RETURN amodel.name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that either departed from Aeroparque Jorge Newbery or were headed to Ingeniero Aeronáutico Ambrosio L.V. Taravella International Airport?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Aeroparque Jorge Newbery'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Ingeniero Aeronáutico Ambrosio L.V. Taravella International Airport'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a1:Airport {location: 'Aeroparque Jorge Newbery'})\nMATCH (a2:Airport {location: 'Ingeniero Aeronáutico Ambrosio L.V. Taravella International Airport'})\nMATCH (fa:FlightAccident)\nWHERE (fa)-[:departsFrom]->(a1) OR (fa)-[:destinedFor]->(a2)\nRETURN DISTINCT fa.flight_number as accident_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the wingspan in meters of the MD-80 family aircraft model?",
+    "gold": "MATCH (n:AircraftModel {name: 'MD-80 family'}) WITH DISTINCT n RETURN n.wingspan_metre",
+    "pred": "MATCH (a:AircraftModel) RETURN a.wingspan_metre AS wingspan_metre",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents involving the Douglas DC-7 that departed from Douala International Airport?",
+    "gold": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Douglas DC-7'}),(n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Douala International Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (accident:FlightAccident)-[:departsFrom]->(airport:Airport) WHERE airport.iata_code = 'DLA' MATCH (accident)-[:involves]->(aircraft:AircraftModel) WHERE aircraft.model = 'Douglas DC-7' RETURN accident.flight_number AS accident_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft model is taller, the Douglas A-26 Invader or the Junkers Ju 52?",
+    "gold": "MATCH (n:AircraftModel {name: 'Douglas A-26 Invader'}), (m0:AircraftModel {name: 'Junkers Ju 52'}) RETURN CASE WHEN n.height_metre > m0.height_metre THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (m:AircraftModel)\nWHERE m.name IN ['Douglas A-26 Invader', 'Junkers Ju 52']\nRETURN m.name, m.height_metre\nORDER BY m.height_metre DESC",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many survivors were there from FlyMontserrat Flight 107?",
+    "gold": "MATCH (n:FlightAccident {name: 'FlyMontserrat Flight 107'}) WITH DISTINCT n RETURN n.number_of_survivors",
+    "pred": "MATCH (fa:FlightAccident {flight_number: 'FlyMontserrat Flight 107'}) RETURN fa.number_of_survivors AS survivors",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports that were the destination for Pan Am Flight 830 and the departure point for Pacific Southwest Airlines Flight 1771?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'Pan Am Flight 830'}),(n:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Pacific Southwest Airlines Flight 1771'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Airport) WHERE (a)<-[:destinedFor]-(:FlightAccident {flight_number: 'Pan Am Flight 830'}) AND (a)<-[:departsFrom]-(:FlightAccident {flight_number: 'Pacific Southwest Airlines Flight 1771'}) RETURN a.location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Who are the manufacturers of the S-92, and what are their launch years?",
+    "gold": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'S-92'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that occurred in the year 1988?",
+    "gold": "MATCH (n:FlightAccident) WITH DISTINCT n WHERE n.date.year = 1988 RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident) WHERE year(fa.date) = 1988 RETURN fa.flight_number",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that either involve the L-410 Turbolet aircraft or depart from Ramón Villeda Morales International Airport?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'L-410 Turbolet'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Ramón Villeda Morales International Airport'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)\nMATCH (fa)-[inv:involves]->(am:AircraftModel)\nMATCH (fa)-[dep:departsFrom]->(air:Airport)\nWHERE am.model_name = 'L-410 Turbolet' OR air.name = 'Ramón Villeda Morales International Airport'\nRETURN fa.flight_number AS accident_name, fa.date AS date, fa.location AS location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in launch years between Transair Sweden and LOT Polish Airlines?",
+    "gold": "MATCH (n:Operator {name: 'Transair Sweden'}), (m0:Operator {name: 'LOT Polish Airlines'}) RETURN n.launch_year - m0.launch_year AS answer",
+    "pred": "MATCH (op1:Operator {name: 'Transair Sweden'})\nMATCH (op2:Operator {name: 'LOT Polish Airlines'})\nRETURN op1.name AS Transair_Sweden, op1.launch_year AS Transair_Sweden_launch_year, op2.name AS LOT_Polish_Airlines, op2.launch_year AS LOT_Polish_Airlines_launch_year, abs(op1.launch_year - op2.launch_year) AS difference_in_years",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and launch years of operators that were involved in both TWA Flight 800 and TWA Flight 514?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident {name: 'TWA Flight 800'}),(n:Operator)<-[r1:operatedBy]-(m1:FlightAccident {name: 'TWA Flight 514'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "MATCH (a:FlightAccident)-[:operatedBy]->(op:Operator)\nWHERE a.flight_number IN ['TWA Flight 800', 'TWA Flight 514']\nWITH op, collect(a.flight_number) AS accidents\nWHERE size(accidents) = 2\nRETURN op.launch_year, op.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports from which flight accidents have departed?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(a:Airport)\nRETURN DISTINCT a.location AS airport_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports involved in flight accidents that both departed from and were destined for them?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident),(n:Airport)<-[r1:departsFrom]-(m0:FlightAccident) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(airport:Airport)<-[:destinedFor]-(fa) RETURN airport.location AS airport_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft had its first flight later, the Eurocopter AS350 Écureuil or the Eurocopter AS332 Super Puma?",
+    "gold": "MATCH (n:AircraftModel {name: 'Eurocopter AS350 Écureuil'}), (m0:AircraftModel {name: 'Eurocopter AS332 Super Puma'}) RETURN CASE WHEN n.first_flight > m0.first_flight THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (a1:AircraftModel) WHERE a1.name CONTAINS 'AS350' MATCH (a2:AircraftModel) WHERE a2.name CONTAINS 'AS332' RETURN a1.name AS aircraft_1, a1.first_flight AS first_flight_1, a2.name AS aircraft_2, a2.first_flight AS first_flight_2",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and wingspans in meters of aircraft models produced by PZL Mielec?",
+    "gold": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'PZL Mielec'}) WITH DISTINCT n RETURN n.name, n.wingspan_metre",
+    "pred": "MATCH (am:AircraftManufacturer)-[:manufacturedBy]->(model:AircraftModel) WHERE am.name = 'PZL Mielec' RETURN model.name AS name, model.wingspan_metre AS wingspan_metre",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Provide the names and death tolls of aviation accidents operated by ADC Airlines.",
+    "gold": "MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'ADC Airlines'}) WITH DISTINCT n RETURN n.name, n.number_of_deaths",
+    "pred": "MATCH (a:FlightAccident)-[r:operatedBy]->(o:Operator)\nWHERE o.name = 'ADC Airlines' OR o.country = 'ADC Airlines'\nRETURN a.flight_number AS accident_name, a.number_of_deaths AS death_toll",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and locations of airports from which Atlas Air Flight 3591 departed and to which American Airlines Flight 383 was headed?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'Atlas Air Flight 3591'}),(n:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'American Airlines Flight 383'}) WITH DISTINCT n RETURN n.name, n.location",
+    "pred": "MATCH (a1:FlightAccident {flight_number: 'Atlas Air Flight 3591'})-[:departsFrom]->(airport1:Airport) MATCH (a2:FlightAccident {flight_number: 'American Airlines Flight 383'})-[:destinedFor]->(airport2:Airport) RETURN airport1.iata_code AS departure_airport_name, airport1.location AS departure_airport_location, airport2.iata_code AS destination_airport_name, airport2.location AS destination_airport_location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports from which either Sriwijaya Air Flight 182 or Adam Air Flight 574 departed?",
+    "gold": "CALL { MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'Sriwijaya Air Flight 182'}) RETURN n, m0 as m UNION MATCH (n:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Adam Air Flight 574'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(a:Airport)\nWHERE fa.flight_number IN ['Sriwijaya Air Flight 182', 'Adam Air Flight 574']\nRETURN a.location AS airport_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which flight, American Eagle Flight 5456 or All Nippon Airways Flight 60, occurred more recently?",
+    "gold": "MATCH (n:FlightAccident {name: 'American Eagle Flight 5456'}), (m0:FlightAccident {name: 'All Nippon Airways Flight 60'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (fa:FlightAccident) WHERE fa.flight_number IN ['American Eagle Flight 5456', 'All Nippon Airways Flight 60'] RETURN fa.flight_number, fa.date ORDER BY fa.date DESC",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the name of the airport that was the destination for Air Ontario Flight 1363?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'Air Ontario Flight 1363'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (f:FlightAccident {flight_number: 'Air Ontario Flight 1363'})-[:destinedFor]->(a:Airport) RETURN a.location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and dates of aviation accidents involving aircraft models manufactured by Fiat Aviazione?",
+    "gold": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel)-[r1:manufacturedBy]->(m1:AircraftManufacturer {name: 'Fiat Aviazione'}) WITH DISTINCT n RETURN n.name, n.date",
+    "pred": "MATCH (fa:FlightAccident)-[:involves]->(am:AircraftModel)-[:manufacturedBy]->(mf:AircraftManufacturer)\nWHERE mf.name = 'Fiat Aviazione'\nRETURN fa.flight_number AS name, fa.date",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which country is home to the Ulan-Ude Aviation Plant?",
+    "gold": "MATCH (n:AircraftManufacturer {name: 'Ulan-Ude Aviation Plant'}) WITH DISTINCT n RETURN n.country",
+    "pred": "MATCH (m:AircraftManufacturer {name: 'Ulan-Ude Aviation Plant'}) RETURN m.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Who are the operators of American Airlines Flight 383, and what countries are they from?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident {name: 'American Airlines Flight 383'}) WITH DISTINCT n RETURN n.name, n.country",
+    "pred": "MATCH (fa:FlightAccident {flight_number: 'American Airlines Flight 383'})-[:operatedBy]->(op:Operator) RETURN op.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "When did the Emirates Flight 521 accident occur?",
+    "gold": "MATCH (n:FlightAccident {name: 'Emirates Flight 521'}) WITH DISTINCT n RETURN n.date",
+    "pred": "MATCH (a:FlightAccident {flight_number: 'EK521'}) RETURN a.date",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Who are the operators by whom Aeroflot Flight 3603 is operated?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident {name: 'Aeroflot Flight 3603'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (f:FlightAccident {flight_number: 'Aeroflot Flight 3603'})-[:operatedBy]->(o:Operator) RETURN o",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and dates of aviation accidents that departed from the same airport as Austral Líneas Aéreas Flight 046?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Austral Líneas Aéreas Flight 046'}) WITH DISTINCT n RETURN n.name, n.date",
+    "pred": "MATCH (accident:FlightAccident {flight_number: 'Austral Líneas Aéreas Flight 046'})-[:departsFrom]->(airport:Airport)<-[:departsFrom]-(other_accident:FlightAccident)\nWHERE other_accident.flight_number <> 'Austral Líneas Aéreas Flight 046'\nRETURN other_accident.flight_number AS name, other_accident.date AS date",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports from which both Lufthansa Flight 540 and Avianca Flight 011 departed?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'Lufthansa Flight 540'}),(n:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Avianca Flight 011'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Airport)<-[:departsFrom]-(f:FlightAccident) WHERE f.flight_number IN ['Lufthansa Flight 540', 'Avianca Flight 011'] WITH a, collect(f) AS flights WHERE size(flights)=2 RETURN a.location AS airport_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Do Tatarstan Airlines Flight 363 and Mandala Airlines Flight 091 have an equal number of injuries?",
+    "gold": "MATCH (n:FlightAccident {name: 'Tatarstan Airlines Flight 363'}), (m0:FlightAccident {name: 'Mandala Airlines Flight 091'}) RETURN n.number_of_injuries = m0.number_of_injuries AS answer",
+    "pred": "MATCH (fa:FlightAccident) WHERE fa.flight_number IN ['363', '091'] RETURN fa.flight_number, fa.number_of_injuries ORDER BY fa.flight_number",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and countries of the airports that were the destination for Air Ontario Flight 1363?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'Air Ontario Flight 1363'}) WITH DISTINCT n RETURN n.name, n.country",
+    "pred": "MATCH (fa:FlightAccident {flight_number: 'Air Ontario Flight 1363'})-[:destinedFor]->(airport:Airport) RETURN airport.iata_code AS name, airport.country AS country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports from which flights involved in accidents were departing, if they were headed to Dalian Zhoushuizi International Airport?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Dalian Zhoushuizi International Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:destinedFor]->(dest:Airport {location: 'Dalian Zhoushuizi International Airport'}) MATCH (fa)-[:departsFrom]->(dep:Airport) RETURN DISTINCT dep.location AS departureAirport",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that departed from the airport where BOAC Flight 911 was headed?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'BOAC Flight 911'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (boac:FlightAccident {flight_number: 'BOAC Flight 911'})\nMATCH (boac)-[:destinedFor]->(destAirport:Airport)\nMATCH (accident:FlightAccident)-[:departedFrom]->(destAirport)\nRETURN accident.flight_number as accident_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which country is Girona-Costa Brava Airport located in?",
+    "gold": "MATCH (n:Airport {name: 'Girona-Costa Brava Airport'}) WITH DISTINCT n RETURN n.country",
+    "pred": "MATCH (a:Airport {iata_code: 'GRO'}) RETURN a.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that took off from Gregorio Luperón International Airport and were headed to Frankfurt Airport?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Gregorio Luperón International Airport'}),(n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Frankfurt Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(departure:Airport {iata_code: 'PUJ'})\nMATCH (fa)-[:destinedFor]->(destination:Airport {iata_code: 'FRA'})\nRETURN fa.location AS accident_name, fa.flight_number AS flight_number",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports from which a flight accident involving an Airbus A300 departed?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'Airbus A300'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:involves]->(am:AircraftModel) WHERE am.model = 'A300' OR am.name = 'A300' MATCH (fa)-[:departsFrom]->(airport:Airport) RETURN DISTINCT airport.location AS airport_name, airport.iata_code AS iata_code",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the lowest number of injuries in flight accidents operated by LOT Polish Airlines?",
+    "gold": "MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'LOT Polish Airlines'}) WITH DISTINCT n RETURN min(n.number_of_injuries)",
+    "pred": "MATCH (fa:FlightAccident)-[:operatedBy]->(o:Operator)\nWHERE o.name = 'LOT Polish Airlines'\nRETURN min(fa.number_of_injuries) AS lowest_number_of_injuries",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Provide the names and dates of aviation accidents.",
+    "gold": "MATCH (n:FlightAccident) WITH DISTINCT n RETURN n.name, n.date",
+    "pred": "MATCH (fa:FlightAccident) RETURN fa.flight_number, fa.date",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many more injuries were there in the Tatarstan Airlines Flight 363 incident compared to the Mandala Airlines Flight 091 incident?",
+    "gold": "MATCH (n:FlightAccident {name: 'Tatarstan Airlines Flight 363'}), (m0:FlightAccident {name: 'Mandala Airlines Flight 091'}) RETURN n.number_of_injuries - m0.number_of_injuries AS answer",
+    "pred": "MATCH (tatar:FlightAccident {flight_number: 'Flight 363'}), (mandala:FlightAccident {flight_number: 'Flight 091'}) RETURN tatar.number_of_injuries - mandala.number_of_injuries AS injury_difference",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Provide the names of all aircraft models manufactured by ATR, along with the number of flight accidents each has been involved in.",
+    "gold": "MATCH (n:AircraftModel)-[r1:manufacturedBy]->(m1:AircraftManufacturer {name: 'ATR'}) OPTIONAL MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:AircraftManufacturer)<-[:manufacturedBy]-(am:AircraftModel) WHERE m.name = 'ATR' OPTIONAL MATCH (fa:FlightAccident)-[:involves]-(am) RETURN am.name AS aircraft_model_name, count(fa) AS number_of_accidents",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many aviation accidents either departed from Narita International Airport or were operated by Korean Air?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Narita International Airport'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'Korean Air'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (fa:FlightAccident)\nOPTIONAL MATCH (fa)-[:departsFrom]->(airport:Airport)\nOPTIONAL MATCH (fa)-[:operatedBy]->(operator:Operator)\nWHERE airport.location = 'Narita International Airport' OR operator.country = 'South Korea'\nRETURN COUNT(DISTINCT fa)",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which country is home to the Novosibirsk Aircraft Production Association?",
+    "gold": "MATCH (n:AircraftManufacturer {name: 'Novosibirsk Aircraft Production Association'}) WITH DISTINCT n RETURN n.country",
+    "pred": "MATCH (m:AircraftManufacturer {name: 'Novosibirsk Aircraft Production Association'})\nRETURN m.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the name of the aircraft model, made by the same manufacturer as the B-52 Stratofortress, that had its first flight the earliest?",
+    "gold": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer)<-[r1:manufacturedBy]-(m1:AircraftModel {name: 'B-52 Stratofortress'}) WITH DISTINCT n RETURN n.name ORDER BY n.first_flight ASC LIMIT 1",
+    "pred": "MATCH (b52:AircraftModel) WHERE b52.name CONTAINS 'B-52 Stratofortress' MATCH (b52)-[:manufacturedBy]->(manufacturer:AircraftManufacturer) MATCH (other:AircraftModel)-[:manufacturedBy]->(manufacturer) WHERE other.first_flight IS NOT NULL RETURN other.name ORDER BY other.first_flight ASC LIMIT 1",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many aviation accidents either departed from Stockholm Arlanda Airport or involved a McDonnell Douglas MD-81?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Stockholm Arlanda Airport'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'McDonnell Douglas MD-81'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (a:FlightAccident)\nWHERE (a)-[:departsFrom]->(:Airport {iata_code: 'ARN'})\n   OR (a)-[:involves]->(:AircraftModel {name: 'McDonnell Douglas MD-81'})\nRETURN count(DISTINCT a)",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Did Production Corporation Polyot and Saab Group start operations in the same year?",
+    "gold": "MATCH (n:AircraftManufacturer {name: 'Production Corporation Polyot'}), (m0:AircraftManufacturer {name: 'Saab Group'}) RETURN n.launch_year = m0.launch_year AS answer",
+    "pred": "MATCH (op1:Operator {name: 'Production Corporation Polyot'})\nMATCH (op2:Operator {name: 'Saab Group'})\nRETURN op1.launch_year AS polyot_year, op2.launch_year AS saab_year, CASE WHEN op1.launch_year = op2.launch_year THEN 'Yes' ELSE 'No' END AS same_year",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Who are the operators of the American Airlines Flight 383?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident {name: 'American Airlines Flight 383'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident {flight_number: 'American Airlines Flight 383'})-[:operatedBy]->(op:Operator) RETURN op",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in wingspan, in meters, between the Constellation and the Anson aircraft models?",
+    "gold": "MATCH (n:AircraftModel {name: 'Constellation'}), (m0:AircraftModel {name: 'Anson'}) RETURN n.wingspan_metre - m0.wingspan_metre AS answer",
+    "pred": "MATCH (c:AircraftModel {name:'Constellation'}), (a:AircraftModel {name:'Anson'}) RETURN abs(c.wingspan_metre - a.wingspan_metre) AS difference",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and flight numbers of aviation accidents that departed from Malatya Erhaç Airport and involved the McDonnell Douglas F-4 Phantom II aircraft model?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Malatya Erhaç Airport'}),(n:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'McDonnell Douglas F-4 Phantom II'}) WITH DISTINCT n RETURN n.name, n.flight_number",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(a:Airport {location: 'Malatya Erhaç Airport'}), (fa)-[:involves]->(am:AircraftModel) RETURN fa.flight_number",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that both departed from and were destined for the same airport, occurring after August 1st, 1943?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport),(n:FlightAccident)-[r1:destinedFor]->(m0:Airport) WITH DISTINCT n WHERE n.date > date('1943-08-01') RETURN n.name",
+    "pred": "MATCH (f:FlightAccident)-[:departsFrom]->(a:Airport), (f)-[:destinedFor]->(a) WHERE f.date > date('1943-08-01') RETURN f.flight_number AS name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Did Transair Sweden and LOT Polish Airlines start operations in the same year?",
+    "gold": "MATCH (n:Operator {name: 'Transair Sweden'}), (m0:Operator {name: 'LOT Polish Airlines'}) RETURN n.launch_year = m0.launch_year AS answer",
+    "pred": "MATCH (o:Operator)\nWHERE o.launch_year IS NOT NULL\nRETURN o.launch_year AS Transair_Sweden_Year, o.launch_year AS LOT_Polish_Airlines_Year\nLIMIT 2",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and dates of aviation accidents involving Korean Air that were headed to Mactan–Cebu International Airport?",
+    "gold": "MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'Korean Air'}),(n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Mactan–Cebu International Airport'}) WITH DISTINCT n RETURN n.name, n.date",
+    "pred": "MATCH (fa:FlightAccident)-[:operatedBy]->(op:Operator)\nWHERE op.name = 'Korean Air'\nMATCH (fa)-[:destinedFor]->(airport:Airport)\nWHERE airport.iata_code = 'CEB'\nRETURN fa.location AS name, fa.date AS date",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "List the names of operators that have flights involved in accidents with the Il-62 aircraft, and for each, provide the number of such incidents they operated.",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'Il-62'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (aircraft:AircraftModel {name: 'Il-62'})<-[:involves]-(accident:FlightAccident)-[:operatedBy]->(operator:Operator) RETURN operator.name AS operator_name, count(accident) AS incident_count ORDER BY incident_count DESC",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of the operators?",
+    "gold": "MATCH (n:Operator) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Operator) RETURN o.country AS name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports that were destinations for either LOT Polish Airlines Flight 16 or Scandinavian Airlines System Flight 751?",
+    "gold": "CALL { MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'LOT Polish Airlines Flight 16'}) RETURN n, m0 as m UNION MATCH (n:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'Scandinavian Airlines System Flight 751'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Airport)<-[:destinedFor]-(f:FlightAccident) WHERE f.flight_number IN ['LOT Polish Airlines Flight 16', 'Scandinavian Airlines System Flight 751'] RETURN a.location AS airport_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft had its first flight later, the Boeing 720 or the DC-9?",
+    "gold": "MATCH (n:AircraftModel {name: 'Boeing 720'}), (m0:AircraftModel {name: 'DC-9'}) RETURN CASE WHEN n.first_flight > m0.first_flight THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (b720:AircraftModel {name: 'Boeing 720'})\nMATCH (dc9:AircraftModel {name: 'DC-9'})\nRETURN CASE WHEN b720.first_flight > dc9.first_flight THEN 'Boeing 720' ELSE 'DC-9' END AS aircraft_with_later_first_flight",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "When was Líneas Aéreas Nacionales S. A. launched?",
+    "gold": "MATCH (n:Operator {name: 'Líneas Aéreas Nacionales S. A.'}) WITH DISTINCT n RETURN n.launch_year",
+    "pred": "MATCH (o:Operator {name: 'Líneas Aéreas Nacionales S. A.'}) RETURN o.launch_year AS launch_year",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the ICAO code for Iwakuni Air Base?",
+    "gold": "MATCH (n:Airport {name: 'Iwakuni Air Base'}) WITH DISTINCT n RETURN n.icao_code",
+    "pred": "MATCH (a:Airport {location: 'Iwakuni Air Base'}) RETURN a.icao_code",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports from which flights involving the Airbus A321 have departed, and how many such flight accidents have occurred at each of these airports?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'Airbus A321'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (a:Airport)<-[:departsFrom]-(fa:FlightAccident)-[:involves]->(am:AircraftModel) WHERE am.name = 'Airbus A321' OR am.model = 'Airbus A321' RETURN a.location AS airport_name, count(fa) AS accident_count ORDER BY accident_count DESC",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were either headed to or departed from Mojave Air and Space Port at Rutan Field?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Mojave Air and Space Port at Rutan Field'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Mojave Air and Space Port at Rutan Field'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Airport) WHERE a.iata_code = 'MHV' OR a.icao_code = 'KMHV' OR a.location CONTAINS 'Mojave' OR a.location CONTAINS 'Rutan' MATCH (fa:FlightAccident)-[:departsFrom|destinedFor]->(a) RETURN DISTINCT fa.flight_number AS accident_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents operated by Air New Zealand that departed from Auckland Airport?",
+    "gold": "MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'Air New Zealand'}),(n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Auckland Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(a:Airport {iata_code: 'AKL'})\nMATCH (fa)-[:operatedBy]->(op:Operator {country: 'New Zealand'})\nRETURN fa.flight_number as name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which has a later launch year, the 380th Air Expeditionary Wing or Air Botswana?",
+    "gold": "MATCH (n:Operator {name: '380th Air Expeditionary Wing'}), (m0:Operator {name: 'Air Botswana'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (op1:Operator {name: '380th Air Expeditionary Wing'})\nMATCH (op2:Operator {name: 'Air Botswana'})\nRETURN op1.name AS operator1, op1.launch_year AS operator1_launch_year, op2.name AS operator2, op2.launch_year AS operator2_launch_year, \nCASE WHEN op1.launch_year > op2.launch_year THEN op1.name WHEN op2.launch_year > op1.launch_year THEN op2.name ELSE 'Same' END AS later_launch_year",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aircraft models either produced by LET Aircraft Industries or involved in the 2021 Parachute Kemerovo Let L-410UVP-E crash?",
+    "gold": "CALL { MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'LET Aircraft Industries'}) RETURN n, m0 as m UNION MATCH (n:AircraftModel)<-[r1:involves]-(m1:FlightAccident {name: '2021 Parachute Kemerovo Let L-410UVP-E crash'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (am:AircraftModel)\nOPTIONAL MATCH (am)<-[:manufacturedBy]-(mfr:AircraftManufacturer)\nOPTIONAL MATCH (am)<-[:involves]-(fa:FlightAccident)\nWHERE mfr.name = 'LET Aircraft Industries' OR (year(fa.date) = 2021 AND fa.location CONTAINS 'Kemerovo')\nRETURN DISTINCT am.name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of different aircraft models?",
+    "gold": "MATCH (n:AircraftModel) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (am:AircraftModel) RETURN am",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in length, in meters, between the Airbus A380 and the Beechcraft 99 Airliner?",
+    "gold": "MATCH (n:AircraftModel {name: 'Airbus A380'}), (m0:AircraftModel {name: 'Beechcraft 99 Airliner'}) RETURN n.length_metre - m0.length_metre AS answer",
+    "pred": "MATCH (a:AircraftModel {model: 'Airbus A380'}), (b:AircraftModel {model: 'Beechcraft 99 Airliner'}) RETURN abs(a.length_metre - b.length_metre) AS length_difference_in_meters",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports where a flight accident both departed from and was destined for?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident),(n:Airport)<-[r1:destinedFor]-(m0:FlightAccident) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Airport)<-[:departsFrom]-(f:FlightAccident)-[:destinedFor]->(a) RETURN DISTINCT a.location AS airport_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and flight numbers of aviation accidents involving the Bombardier CRJ100/200 and operated by Endeavor Air?",
+    "gold": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Bombardier CRJ100/200'}),(n:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'Endeavor Air'}) WITH DISTINCT n RETURN n.name, n.flight_number",
+    "pred": "MATCH (fa:FlightAccident)-[:operatedBy]->(op:Operator), (fa)-[:involves]->(am:AircraftModel) WHERE op.name = 'Endeavor Air' AND am.name = 'Bombardier CRJ100/200' RETURN fa.flight_number, fa.location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the name of the flight accident headed to Samui Airport that had the fewest survivors?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Samui Airport'}) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_survivors ASC LIMIT 1",
+    "pred": "MATCH (fa:FlightAccident)-[:destinedFor]->(a:Airport {location: 'Samui'}) RETURN fa.flight_number AS name ORDER BY fa.number_of_survivors ASC LIMIT 1",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports that were destinations for both China Airlines Flight 006 and American Airlines Flight 191?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'China Airlines Flight 006'}),(n:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'American Airlines Flight 191'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a1:FlightAccident {flight_number: 'China Airlines Flight 006'})-[:destinedFor]->(airport:Airport)\nWITH airport\nMATCH (a2:FlightAccident {flight_number: 'American Airlines Flight 191'})-[:destinedFor]->(airport)\nRETURN airport.location AS airport_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and locations of aviation accidents involving the Dash 7 aircraft model?",
+    "gold": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Dash 7'}) WITH DISTINCT n RETURN n.name, n.location",
+    "pred": "MATCH (fa:FlightAccident)-[:involves]->(am:AircraftModel) RETURN fa.flight_number AS accident_name, fa.location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the name of the airport that was the destination for the assassination of Juvénal Habyarimana and Cyprien Ntaryamira?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'assassination of Juvénal Habyarimana and Cyprien Ntaryamira'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident {date: date('1994-04-06')})-[:destinedFor]->(airport:Airport) RETURN airport.location AS airportName",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Do Noar Linhas Aéreas Flight 4896 and Air Moorea Flight 1121 have an equal number of survivors?",
+    "gold": "MATCH (n:FlightAccident {name: 'Noar Linhas Aéreas Flight 4896'}), (m0:FlightAccident {name: 'Air Moorea Flight 1121'}) RETURN n.number_of_survivors = m0.number_of_survivors AS answer",
+    "pred": "MATCH (f1:FlightAccident {flight_number: 'Noar Linhas Aéreas Flight 4896'}), (f2:FlightAccident {flight_number: 'Air Moorea Flight 1121'}) RETURN f1.number_of_survivors AS noar_survivors, f2.number_of_survivors AS moorea_survivors, f1.number_of_survivors = f2.number_of_survivors AS equal_survivors",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What year did the Novosibirsk Aircraft Production Association launch?",
+    "gold": "MATCH (n:AircraftManufacturer {name: 'Novosibirsk Aircraft Production Association'}) WITH DISTINCT n RETURN n.launch_year",
+    "pred": "MATCH (a:AircraftManufacturer {name: 'Novosibirsk Aircraft Production Association'}) RETURN a.launch_year",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were headed to Winnipeg James Armstrong Richardson International Airport and departed from Toronto Pearson International Airport?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Winnipeg James Armstrong Richardson International Airport'}),(n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Toronto Pearson International Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (departure:Airport {iata_code: 'YYZ'})<-[:departsFrom]-(accident:FlightAccident)-[:destinedFor]->(arrival:Airport {iata_code: 'YWG'}) RETURN accident.flight_number",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and locations of airports from which flight accidents have departed?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident) WITH DISTINCT n RETURN n.name, n.location",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(a:Airport)\nRETURN DISTINCT a.iata_code AS name, a.location AS location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents operated by the same airline that operated Iberia Airlines Flight 1456?",
+    "gold": "MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator)<-[r1:operatedBy]-(m1:FlightAccident {name: 'Iberia Airlines Flight 1456'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (accident:FlightAccident {flight_number: 'Iberia Airlines Flight 1456'})-[:operatedBy]->(operator:Operator) MATCH (other_accident:FlightAccident)-[:operatedBy]->(operator) RETURN other_accident.flight_number AS flight_number",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft has a greater range, the B-25 Mitchell or the Airbus A340?",
+    "gold": "MATCH (n:AircraftModel {name: 'B-25 Mitchell'}), (m0:AircraftModel {name: 'Airbus A340'}) RETURN CASE WHEN n.range_km > m0.range_km THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (b25:AircraftModel), (a340:AircraftModel) \nWHERE b25.name = 'B-25 Mitchell' AND a340.name = 'Airbus A340'\nRETURN CASE WHEN b25.range_km > a340.range_km THEN b25.name WHEN a340.range_km > b25.range_km THEN a340.name ELSE 'They have equal range' END AS aircraft_with_greater_range, b25.range_km AS B25_range, a340.range_km AS A340_range",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents either operated by the Philippine Air Force or headed for Jolo Airport?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'Philippine Air Force'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Jolo Airport'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)\nOPTIONAL MATCH (fa)-[:operatedBy]->(op:Operator)\nOPTIONAL MATCH (fa)-[:destinedFor]->(airport:Airport)\nWHERE op.name = 'Philippine Air Force' OR airport.iata_code = 'JOL'\nRETURN fa.flight_number, fa.date, fa.location, fa.number_of_deaths, fa.number_of_survivors",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and flight numbers of aviation accidents that involve the same aircraft model as Southern Airways Flight 242?",
+    "gold": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel)<-[r1:involves]-(m1:FlightAccident {name: 'Southern Airways Flight 242'}) WITH DISTINCT n RETURN n.name, n.flight_number",
+    "pred": "MATCH (fa:FlightAccident)-[:involves]->(am:AircraftModel)<-[:involves]-(fa2:FlightAccident) WHERE fa.flight_number = '242' RETURN fa2.flight_number",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aircraft models, sorted by wingspan in meters from smallest to largest?",
+    "gold": "MATCH (n:AircraftModel) WITH DISTINCT n RETURN n.name ORDER BY n.wingspan_metre ASC",
+    "pred": "MATCH (am:AircraftModel) RETURN am.wingspan_metre AS wingspan ORDER BY am.wingspan_metre ASC",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which country is Ukraine International Airlines based in?",
+    "gold": "MATCH (n:Operator {name: 'Ukraine International Airlines'}) WITH DISTINCT n RETURN n.country",
+    "pred": "MATCH (op:Operator {name: 'Ukraine International Airlines'}) RETURN op.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in wingspan, in meters, between the North American P-51 Mustang and the Boeing 737-500?",
+    "gold": "MATCH (n:AircraftModel {name: 'North American P-51 Mustang'}), (m0:AircraftModel {name: 'Boeing 737-500'}) RETURN n.wingspan_metre - m0.wingspan_metre AS answer",
+    "pred": "MATCH (m1:AircraftModel), (m2:AircraftModel) WHERE m1.model CONTAINS 'P-51 Mustang' AND m2.model CONTAINS '737-500' RETURN m1.wingspan_metre - m2.wingspan_metre AS wingspan_difference",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of operators involved in aviation accidents destined for Mehrabad International Airport, and how many such accidents did each operator handle?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Mehrabad International Airport'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which company, Hawker Siddeley or Tupolev, was launched later?",
+    "gold": "MATCH (n:AircraftManufacturer {name: 'Hawker Siddeley'}), (m0:AircraftManufacturer {name: 'Tupolev'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were either headed to Gimpo International Airport or involved a Boeing 707?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Gimpo International Airport'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'Boeing 707'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:destinedFor]->(a:Airport) WHERE a.iata_code = 'GMP' OR a.location CONTAINS 'Gimpo' RETURN fa.flight_number AS accident_name, fa.date AS date, fa.location AS location UNION MATCH (fa:FlightAccident)-[:involves]->(am:AircraftModel)-[:manufacturedBy]->(mfg:AircraftManufacturer) WHERE mfg.country CONTAINS 'Boeing' OR mfg.launch_year = 1916 RETURN fa.flight_number AS accident_name, fa.date AS date, fa.location AS location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aircraft models made by Bombardier that had their first flight after 1978?",
+    "gold": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'Bombardier'}) WITH DISTINCT n WHERE n.first_flight.year > 1978 RETURN n.name",
+    "pred": "MATCH (am:AircraftModel)-[:manufacturedBy]->(mfr:AircraftManufacturer) WHERE am.first_flight > date('1978-01-01') RETURN am",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft has a greater wingspan, the Constellation or the Anson?",
+    "gold": "MATCH (n:AircraftModel {name: 'Constellation'}), (m0:AircraftModel {name: 'Anson'}) RETURN CASE WHEN n.wingspan_metre > m0.wingspan_metre THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (c:AircraftModel), (a:AircraftModel) RETURN c.wingspan_metre AS Constellation_wingspan, a.wingspan_metre AS Anson_wingspan",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft has a greater range in kilometers, the Antonov An-12 or the ATR 42?",
+    "gold": "MATCH (n:AircraftModel {name: 'Antonov An-12'}), (m0:AircraftModel {name: 'ATR 42'}) RETURN CASE WHEN n.range_km > m0.range_km THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (a1:AircraftModel {name: 'Antonov An-12'}) MATCH (a2:AircraftModel {name: 'ATR 42'}) RETURN a1.name AS antonov_an12, a1.range_km AS antonov_range_km, a2.name AS atr_42, a2.range_km AS atr42_range_km, CASE WHEN a1.range_km > a2.range_km THEN 'Antonov An-12' WHEN a2.range_km > a1.range_km THEN 'ATR 42' ELSE 'Equal' END AS aircraft_with_greater_range",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that either involved the McDonnell Douglas DC-10 or were headed to Aeropuerto Internacional Benito Juárez?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'McDonnell Douglas DC-10'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Aeropuerto Internacional Benito Juárez'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that originated from Yinchuan Hedong International Airport?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Yinchuan Hedong International Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in range, in kilometers, between the B-25 Mitchell and the Airbus A340?",
+    "gold": "MATCH (n:AircraftModel {name: 'B-25 Mitchell'}), (m0:AircraftModel {name: 'Airbus A340'}) RETURN n.range_km - m0.range_km AS answer",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and launch years of aircraft manufacturers that produced models involved in the Yeti Airlines Flight 103 accident?",
+    "gold": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel)<-[r1:involves]-(m1:FlightAccident {name: 'Yeti Airlines Flight 103'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aircraft models made by McDonnell Douglas that were involved in the Austral Líneas Aéreas Flight 2553 accident?",
+    "gold": "MATCH (n:AircraftModel)-[r0:manufacturedBy]->(m0:AircraftManufacturer {name: 'McDonnell Douglas'}),(n:AircraftModel)<-[r1:involves]-(m1:FlightAccident {name: 'Austral Líneas Aéreas Flight 2553'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:involves]->(am:AircraftModel)-[:manufacturedBy]->(amf:AircraftManufacturer) WHERE fa.flight_number = '2553' OR fa.flight_number CONTAINS '2553' RETURN am",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Do FedEx Express Flight 14 and the 2021 Piedade de Caratinga Beechcraft King Air crash result in the same number of fatalities?",
+    "gold": "MATCH (n:FlightAccident {name: 'FedEx Express Flight 14'}), (m0:FlightAccident {name: '2021 Piedade de Caratinga Beechcraft King Air crash'}) RETURN n.number_of_deaths = m0.number_of_deaths AS answer",
+    "pred": "MATCH (a1:FlightAccident)\nWHERE a1.flight_number CONTAINS 'FedEx Express' AND a1.flight_number CONTAINS '14'\nMATCH (a2:FlightAccident)\nWHERE a2.location CONTAINS 'Piedade de Caratinga' AND a2.date STARTS WITH '2021' AND a2.flight_number CONTAINS 'Beechcraft King Air'\nRETURN a1.flight_number AS fedEx_flight, a2.flight_number AS piedade_flight,\n       a1.number_of_deaths AS fedEx_deaths, a2.number_of_deaths AS piedade_deaths,\n       a1.number_of_deaths = a2.number_of_deaths AS same_fatalities",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Provide the names of all aircraft models produced by Sukhoi, along with the number of flight accidents each has been involved in.",
+    "gold": "MATCH (n:AircraftModel)-[r1:manufacturedBy]->(m1:AircraftManufacturer {name: 'Sukhoi'}) OPTIONAL MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (am:AircraftModel)-[:manufacturedBy]->(man:AircraftManufacturer {name: 'Sukhoi'}) OPTIONAL MATCH (fa:FlightAccident)-[:involves]->(am) RETURN am.name AS aircraft_model, count(fa) AS number_of_accidents",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that departed from Zvartnots International Airport, along with the number of survivors in each?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Zvartnots International Airport'}) WITH DISTINCT n RETURN n.name, n.number_of_survivors",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(a:Airport {location: 'Zvartnots International Airport'}) RETURN fa.flight_number, fa.number_of_survivors",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the name of the flight accident operated by LOT Polish Airlines that resulted in the fewest injuries?",
+    "gold": "MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'LOT Polish Airlines'}) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_injuries ASC LIMIT 1",
+    "pred": "MATCH (acc:FlightAccident)-[:operatedBy]->(op:Operator)\nWHERE op.name = 'LOT Polish Airlines'\nRETURN acc.flight_number AS flight_accident_name\nORDER BY acc.number_of_injuries ASC\nLIMIT 1",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many more fatalities occurred in Tara Air Flight 193 compared to USAir Flight 1493?",
+    "gold": "MATCH (n:FlightAccident {name: 'Tara Air Flight 193'}), (m0:FlightAccident {name: 'USAir Flight 1493'}) RETURN n.number_of_deaths - m0.number_of_deaths AS answer",
+    "pred": "MATCH (t:FlightAccident {flight_number: 'Tara Air Flight 193'}), (u:FlightAccident {flight_number: 'USAir Flight 1493'}) RETURN t.number_of_deaths AS TaraDeaths, u.number_of_deaths AS USAirDeaths, t.number_of_deaths - u.number_of_deaths AS FatalityDifference",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and dates of aviation accidents that were headed to the same airport as Iberia Airlines Flight 610?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport)<-[r1:destinedFor]-(m1:FlightAccident {name: 'Iberia Airlines Flight 610'}) WITH DISTINCT n RETURN n.name, n.date",
+    "pred": "MATCH (fa1:FlightAccident)-[:operatedBy]->(op:Operator), (fa1)-[:destinedFor]->(airport:Airport)\nWHERE op.country = 'Spain' AND fa1.flight_number = '610'\nMATCH (fa2:FlightAccident)-[:destinedFor]->(airport)\nWHERE fa2 <> fa1\nRETURN fa2.flight_number AS flight_number, fa2.date AS date, airport.location AS destination_airport",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents involving the ATR 72 aircraft that were headed to Kinmen Airport, along with the number of survivors in each incident?",
+    "gold": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'ATR 72'}),(n:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Kinmen Airport'}) WITH DISTINCT n RETURN n.name, n.number_of_survivors",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents where the departure and destination airports are the same?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport),(n:FlightAccident)-[r1:departsFrom]->(m0:Airport) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports from which flights involved in accidents were departing, with each flight destined for Simón Bolívar International Airport, and how many such flights departed from each airport?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Simón Bolívar International Airport'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft entered service later, the Lockheed L-1011 TriStar or the Vought A-7 Corsair II?",
+    "gold": "MATCH (n:AircraftModel {name: 'Lockheed L-1011 TriStar'}), (m0:AircraftModel {name: 'Vought A-7 Corsair II'}) RETURN CASE WHEN n.service_entry > m0.service_entry THEN n.name ELSE m0.name END AS answer",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many more survivors were there on Cougar Helicopters Flight 91 compared to Yemenia Flight 626?",
+    "gold": "MATCH (n:FlightAccident {name: 'Cougar Helicopters Flight 91'}), (m0:FlightAccident {name: 'Yemenia Flight 626'}) RETURN n.number_of_survivors - m0.number_of_survivors AS answer",
+    "pred": "MATCH (f1:FlightAccident {flight_number: 'Cougar Helicopters Flight 91'})\nMATCH (f2:FlightAccident {flight_number: 'Yemenia Flight 626'})\nRETURN f1.number_of_survivors - f2.number_of_survivors AS more_survivors",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and locations of airports that were the destination for any flight accident departing from Kandahar International Airport?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Kandahar International Airport'}) WITH DISTINCT n RETURN n.name, n.location",
+    "pred": "MATCH (dep:Airport {location: 'Kandahar International Airport'})<-[:departsFrom]-(acc:FlightAccident)-[:destinedFor]->(dest:Airport) RETURN DISTINCT dest.iata_code AS name, dest.location AS location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which flight, British Airways Flight 268 or Austral Líneas Aéreas Flight 2553, occurred more recently?",
+    "gold": "MATCH (n:FlightAccident {name: 'British Airways Flight 268'}), (m0:FlightAccident {name: 'Austral Líneas Aéreas Flight 2553'}) RETURN CASE WHEN n.date > m0.date THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (f1:FlightAccident {flight_number: 'British Airways Flight 268'}), (f2:FlightAccident {flight_number: 'Austral Líneas Aéreas Flight 2553'}) RETURN CASE WHEN f1.date > f2.date THEN f1.flight_number ELSE f2.flight_number END AS moreRecentFlight",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft has a greater height, the B-25 Mitchell or the Fokker F28 Fellowship?",
+    "gold": "MATCH (n:AircraftModel {name: 'B-25 Mitchell'}), (m0:AircraftModel {name: 'Fokker F28 Fellowship'}) RETURN CASE WHEN n.height_metre > m0.height_metre THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (b25:AircraftModel), (f28:AircraftModel)\nWHERE b25.height_metre IS NOT NULL AND f28.height_metre IS NOT NULL\nRETURN b25.height_metre AS B25_Mitchell_Height, f28.height_metre AS Fokker_F28_Fellowship_Height, \nCASE WHEN b25.height_metre > f28.height_metre THEN 'B-25 Mitchell' ELSE 'Fokker F28 Fellowship' END AS Higher_Aircraft",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft, the Boeing 737 or the BAC One-Eleven, entered service later?",
+    "gold": "MATCH (n:AircraftModel {name: 'Boeing 737'}), (m0:AircraftModel {name: 'BAC One-Eleven'}) RETURN CASE WHEN n.service_entry > m0.service_entry THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (a:AircraftModel)\nWHERE a.service_entry IS NOT NULL\nWITH a\nORDER BY a.service_entry DESC\nRETURN a.service_entry, a.first_flight\nLIMIT 2",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that originated from Zvartnots International Airport?",
+    "gold": "MATCH (n:FlightAccident)-[r0:departsFrom]->(m0:Airport {name: 'Zvartnots International Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Airport {location: 'Zvartnots International Airport'})<-[:departsFrom]-(fa:FlightAccident) RETURN fa.flight_number AS accident_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Provide the names and countries of airports where a flight accident both departed from and was destined for.",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident),(n:Airport)<-[r1:destinedFor]-(m0:FlightAccident) WITH DISTINCT n RETURN n.name, n.country",
+    "pred": "MATCH (fa:FlightAccident)-[:departsFrom]->(a:Airport)<-[:destinedFor]-(fa) RETURN DISTINCT a.name, a.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Who are the manufacturers of the de Havilland Canada DHC-2 Beaver aircraft model?",
+    "gold": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'de Havilland Canada DHC-2 Beaver'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (am:AircraftModel {name: 'de Havilland Canada DHC-2 Beaver'})-[:manufacturedBy]->(manufacturer:AircraftManufacturer) RETURN manufacturer",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aircraft models involved in both the Ryanair Flight 4978 incident and the 1983 TAAG Angola Airlines 737 Boeing crash?",
+    "gold": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident {name: 'Ryanair Flight 4978'}),(n:AircraftModel)<-[r1:involves]-(m1:FlightAccident {name: '1983 TAAG Angola Airlines 737 Boeing crash'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa1:FlightAccident)-[:involves]->(am:AircraftModel)<-[:involves]-(fa2:FlightAccident)\nWHERE fa1.flight_number = '4978' AND fa1.location CONTAINS 'Ryanair'\nOR fa2.date = '1983' AND fa2.location CONTAINS 'TAAG Angola Airlines'\nRETURN am",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which country is Líneas Aéreas Nacionales S. A. based in?",
+    "gold": "MATCH (n:Operator {name: 'Líneas Aéreas Nacionales S. A.'}) WITH DISTINCT n RETURN n.country",
+    "pred": "MATCH (o:Operator {name: 'Líneas Aéreas Nacionales S. A.'}) RETURN o.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aircraft models involved in flight accidents departing from Crnl. FAP Francisco Secada Vignetta International Airport?",
+    "gold": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Crnl. FAP Francisco Secada Vignetta International Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of the manufacturers of either the Lockheed L-1049 Super Constellation or the KC-130 Hercules?",
+    "gold": "CALL { MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'Lockheed L-1049 Super Constellation'}) RETURN n, m0 as m UNION MATCH (n:AircraftManufacturer)<-[r1:manufacturedBy]-(m1:AircraftModel {name: 'KC-130 Hercules'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:AircraftModel)-[:manufacturedBy]->(man:AircraftManufacturer) WHERE m.name IN ['Lockheed L-1049 Super Constellation', 'KC-130 Hercules'] RETURN man",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "When was Ukraine International Airlines launched?",
+    "gold": "MATCH (n:Operator {name: 'Ukraine International Airlines'}) WITH DISTINCT n RETURN n.launch_year",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in launch years between Hawker Siddeley and Tupolev?",
+    "gold": "MATCH (n:AircraftManufacturer {name: 'Hawker Siddeley'}), (m0:AircraftManufacturer {name: 'Tupolev'}) RETURN n.launch_year - m0.launch_year AS answer",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and locations of airports that were the intended destinations of flight accidents?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident) WITH DISTINCT n RETURN n.name, n.location",
+    "pred": "MATCH (airport:Airport)<-[:destinedFor]-(flightAccident:FlightAccident)\nRETURN DISTINCT airport.iata_code AS name, airport.location",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in launch years between the 380th Air Expeditionary Wing and Air Botswana?",
+    "gold": "MATCH (n:Operator {name: '380th Air Expeditionary Wing'}), (m0:Operator {name: 'Air Botswana'}) RETURN n.launch_year - m0.launch_year AS answer",
+    "pred": "MATCH (op1:Operator {name: '380th Air Expeditionary Wing'}), (op2:Operator {name: 'Air Botswana'}) RETURN abs(op1.launch_year - op2.launch_year) AS difference",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the name of the aircraft model involved in a Swissair flight accident that has the shortest range in kilometers?",
+    "gold": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'Swissair'}) WITH DISTINCT n RETURN n.name ORDER BY n.range_km ASC LIMIT 1",
+    "pred": "MATCH (fa:FlightAccident)-[:operatedBy]->(op:Operator) WHERE op.name = 'Swissair' MATCH (fa)-[:involves]->(am:AircraftModel) RETURN am.name AS aircraft_model_name ORDER BY am.range_km ASC LIMIT 1",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were headed to Yichun Lindu Airport and operated by Henan Airlines?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Yichun Lindu Airport'}),(n:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'Henan Airlines'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (accident:FlightAccident)-[:destinedFor]->(airport:Airport)\nWHERE airport.location = 'Yichun Lindu Airport'\nMATCH (accident)-[:operatedBy]->(operator:Operator)\nWHERE operator.country CONTAINS 'Henan'\nRETURN accident.flight_number AS accident_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which had more injuries: the 2008 Mexico City Learjet crash or PIA Flight 705?",
+    "gold": "MATCH (n:FlightAccident {name: '2008 Mexico City Learjet crash'}), (m0:FlightAccident {name: 'PIA Flight 705'}) RETURN CASE WHEN n.number_of_injuries > m0.number_of_injuries THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (a:FlightAccident), (b:FlightAccident) WHERE (a.location CONTAINS 'Mexico City' AND a.date >= date('2008-01-01') AND a.date <= date('2008-12-31')) OR (a.flight_number CONTAINS '705' AND a.location CONTAINS 'Pakistan') WITH a, b WHERE (b.location CONTAINS 'Mexico City' AND b.date >= date('2008-01-01') AND b.date <= date('2008-12-31')) OR (b.flight_number CONTAINS '705' AND b.location CONTAINS 'Pakistan') RETURN a.location, a.date, a.flight_number, a.number_of_injuries, b.location, b.date, b.flight_number, b.number_of_injuries",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents involving the Antonov An-124 Ruslan aircraft model?",
+    "gold": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Antonov An-124 Ruslan'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports involved in flight accidents as both departure and destination points, excluding those located in New Zealand?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident),(n:Airport)<-[r1:departsFrom]-(m0:FlightAccident) WITH DISTINCT n WHERE n.country <> 'New Zealand' RETURN n.name",
+    "pred": "MATCH (a:Airport)\nWHERE a.country <> 'New Zealand'\nAND (a)<-[:departsFrom]-(:FlightAccident)\nAND (a)<-[:destinedFor]-(:FlightAccident)\nRETURN DISTINCT a.iata_code, a.icao_code, a.location, a.country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of the airports?",
+    "gold": "MATCH (n:Airport) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Airport) RETURN a.iata_code AS airport_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports that were either the destination for BOAC Flight 781 or the departure point for Pan Am Flight 103?",
+    "gold": "CALL { MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident {name: 'BOAC Flight 781'}) RETURN n, m0 as m UNION MATCH (n:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Pan Am Flight 103'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were headed to Heathrow Airport, sorted by the number of injuries from highest to lowest?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Heathrow Airport'}) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_injuries DESC",
+    "pred": "MATCH (fa:FlightAccident)-[:destinedFor]->(a:Airport)\nWHERE a.iata_code = 'LHR'\nRETURN fa.flight_number AS accident_name\nORDER BY fa.number_of_injuries DESC",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Do the 2008 Mexico City Learjet crash and PIA Flight 705 have an identical number of injuries?",
+    "gold": "MATCH (n:FlightAccident {name: '2008 Mexico City Learjet crash'}), (m0:FlightAccident {name: 'PIA Flight 705'}) RETURN n.number_of_injuries = m0.number_of_injuries AS answer",
+    "pred": "MATCH (a:FlightAccident) WHERE a.location CONTAINS 'Mexico City' AND a.date >= date('2008-01-01') AND a.date <= date('2008-12-31') MATCH (b:FlightAccident) WHERE b.flight_number = '705' RETURN a.number_of_injuries AS mexInjuries, b.number_of_injuries AS piaInjuries, a.number_of_injuries = b.number_of_injuries AS identical",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many aviation accidents involved the Douglas DC-7 or were operated by Northwest Airlines?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Douglas DC-7'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'Northwest Airlines'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (fa:FlightAccident) WHERE (fa)-[:involves]->(:AircraftModel {model_name: 'Douglas DC-7'}) OR (fa)-[:operatedBy]->(:Operator {name: 'Northwest Airlines'}) RETURN count(DISTINCT fa)",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and first flight dates of aircraft models involved in the Pegasus Airlines Flight 2193 accident?",
+    "gold": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident {name: 'Pegasus Airlines Flight 2193'}) WITH DISTINCT n RETURN n.name, n.first_flight",
+    "pred": "MATCH (fa:FlightAccident {flight_number: 'Pegasus Airlines Flight 2193'})-[:involves]->(am:AircraftModel) RETURN am.name, am.first_flight",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were headed to Heathrow Airport, sorted by the number of survivors from the fewest to the most?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Heathrow Airport'}) WITH DISTINCT n RETURN n.name ORDER BY n.number_of_survivors ASC",
+    "pred": "MATCH (f:FlightAccident)-[:destinedFor]->(a:Airport {iata_code: 'LHR'}) RETURN f.flight_number AS flight_accident_name ORDER BY f.number_of_survivors ASC",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aircraft models involved in flight accidents that were headed to Singapore Changi Airport?",
+    "gold": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident)-[r1:destinedFor]->(m1:Airport {name: 'Singapore Changi Airport'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:destinedFor]->(airport:Airport)\nWHERE airport.iata_code = 'SIN' OR airport.icao_code = 'WSSS'\nMATCH (fa)-[:involves]->(aircraftModel:AircraftModel)\nRETURN aircraftModel",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and death tolls of aviation accidents involving a Boeing 737 that were headed to Francisco Bangoy International Airport?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Francisco Bangoy International Airport'}),(n:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'Boeing 737'}) WITH DISTINCT n RETURN n.name, n.number_of_deaths",
+    "pred": "MATCH (fa:FlightAccident)-[df:destinedFor]->(a:Airport)\nMATCH (fa)-[inv:involves]->(am:AircraftModel)\nWHERE am.model_name CONTAINS '737' AND (a.iata_code = 'DVO' OR a.icao_code = 'RPMD' OR a.location CONTAINS 'Francisco Bangoy' OR a.location CONTAINS 'Davao')\nRETURN fa.flight_number AS name, fa.number_of_deaths AS death_toll",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were either headed to Manchester Airport or operated by British Midland Airways Limited?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Manchester Airport'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'British Midland Airways Limited'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:destinedFor]->(a:Airport {iata_code: 'MAN'})\nRETURN fa.flight_number AS accident_name\nUNION\nMATCH (fa:FlightAccident)-[:operatedBy]->(op:Operator)\nWHERE op.name = 'British Midland Airways Limited'\nRETURN fa.flight_number AS accident_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and locations of aviation accidents involving the Antonov An-124 Ruslan?",
+    "gold": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Antonov An-124 Ruslan'}) WITH DISTINCT n RETURN n.name, n.location",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many aviation accidents involved either Southwest Airlines as the operator or a Boeing 737 aircraft?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'Southwest Airlines'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'Boeing 737'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that involved the Dash 7 aircraft model?",
+    "gold": "MATCH (n:FlightAccident)-[r0:involves]->(m0:AircraftModel {name: 'Dash 7'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many aircraft models are involved in either the Cubana de Aviación Flight 972 or the Malaysian Airline System Flight 653?",
+    "gold": "CALL { MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident {name: 'Cubana de Aviación Flight 972'}) RETURN n, m0 as m UNION MATCH (n:AircraftModel)<-[r1:involves]-(m1:FlightAccident {name: 'Malaysian Airline System Flight 653'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of operators responsible for aviation accidents departing from Chongqing Jiangbei International Airport, and how many such accidents has each operator been involved in?",
+    "gold": "MATCH (n:Operator)<-[r0:operatedBy]-(m0:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Chongqing Jiangbei International Airport'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (a:FlightAccident)-[:departsFrom]->(airport:Airport)\nWHERE airport.iata_code = 'CKG' OR airport.location = 'Chongqing Jiangbei International Airport'\nMATCH (a)-[:operatedBy]->(op:Operator)\nRETURN op.name AS operator_name, count(a) AS accident_count\nORDER BY accident_count DESC",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the ICAO code for Girona-Costa Brava Airport?",
+    "gold": "MATCH (n:Airport {name: 'Girona-Costa Brava Airport'}) WITH DISTINCT n RETURN n.icao_code",
+    "pred": "MATCH (a:Airport {location: 'Girona-Costa Brava'}) RETURN a.icao_code",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which aircraft model is involved in the 2015 Juba plane crash?",
+    "gold": "MATCH (n:AircraftModel)<-[r0:involves]-(m0:FlightAccident {name: '2015 Juba plane crash'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (fa:FlightAccident)-[:involves]->(am:AircraftModel) WHERE fa.location = 'Juba' AND year(fa.date) = 2015 RETURN am",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which airport did West Caribbean Airways Flight 9955 departed from?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'West Caribbean Airways Flight 9955'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (f:FlightAccident {flight_number: '9955'})-[:departsFrom]->(a:Airport) RETURN a.location, a.iata_code, a.icao_code",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and countries of airports from which a flight accident operated by Conviasa departed?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'Conviasa'}) WITH DISTINCT n RETURN n.name, n.country",
+    "pred": "MATCH (fa:FlightAccident)-[:operatedBy]->(op:Operator)\nWHERE op.name = 'Conviasa'\nMATCH (fa)-[:departsFrom]->(air:Airport)\nRETURN air.location AS name, air.country AS country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Who are the manufacturers of the S-92 aircraft model?",
+    "gold": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'S-92'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:AircraftModel {model: 'S-92'})<-[:manufacturedBy]-(m:AircraftManufacturer) RETURN m",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the difference in height, in meters, between the B-25 Mitchell and the Fokker F28 Fellowship?",
+    "gold": "MATCH (n:AircraftModel {name: 'B-25 Mitchell'}), (m0:AircraftModel {name: 'Fokker F28 Fellowship'}) RETURN n.height_metre - m0.height_metre AS answer",
+    "pred": "MATCH (b25:AircraftModel {model: 'B-25 Mitchell'}), (f28:AircraftModel {model: 'Fokker F28 Fellowship'}) RETURN b25.height_metre AS b25_height, f28.height_metre AS f28_height, abs(b25.height_metre - f28.height_metre) AS height_difference",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Do Cougar Helicopters Flight 91 and Yemenia Flight 626 have an equal number of survivors?",
+    "gold": "MATCH (n:FlightAccident {name: 'Cougar Helicopters Flight 91'}), (m0:FlightAccident {name: 'Yemenia Flight 626'}) RETURN n.number_of_survivors = m0.number_of_survivors AS answer",
+    "pred": "MATCH (f1:FlightAccident {flight_number: 'Cougar Helicopters Flight 91'}), (f2:FlightAccident {flight_number: 'Yemenia Flight 626'}) RETURN f1.flight_number AS flight1, f2.flight_number AS flight2, f1.number_of_survivors AS survivors1, f2.number_of_survivors AS survivors2, f1.number_of_survivors = f2.number_of_survivors AS equal_survivors",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many injuries were reported in the Emirates Flight 521 incident?",
+    "gold": "MATCH (n:FlightAccident {name: 'Emirates Flight 521'}) WITH DISTINCT n RETURN n.number_of_injuries",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "How many aviation accidents were either operated by China Eastern Airlines or departed from Kunming Changshui International Airport?",
+    "gold": "CALL { MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'China Eastern Airlines'}) RETURN n, m0 as m UNION MATCH (n:FlightAccident)-[r1:departsFrom]->(m1:Airport {name: 'Kunming Changshui International Airport'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which company, between Production Corporation Polyot and Saab Group, was launched more recently?",
+    "gold": "MATCH (n:AircraftManufacturer {name: 'Production Corporation Polyot'}), (m0:AircraftManufacturer {name: 'Saab Group'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were headed to Samui Airport and occurred in the year 2009?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport {name: 'Samui Airport'}) WITH DISTINCT n WHERE n.date.year = 2009 RETURN n.name",
+    "pred": "MATCH (a:FlightAccident)-[:destinedFor]->(airport:Airport)\nWHERE airport.iata_code = 'USM' \nAND a.date >= date('2009-01-01') AND a.date <= date('2009-12-31')\nRETURN a.flight_number AS accident_name, a.location, a.date",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and ICAO codes of airports that were destinations for flight accidents operated by Ukraine International Airlines?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident)-[r1:operatedBy]->(m1:Operator {name: 'Ukraine International Airlines'}) WITH DISTINCT n RETURN n.name, n.icao_code",
+    "pred": "MATCH (fa:FlightAccident)-[:operatedBy]->(op:Operator)-[:hasCountry]->(opc:Country {name: 'Ukraine'}), (fa)-[:destinedFor]->(airport:Airport) RETURN airport.location AS name, airport.icao_code AS icao_code",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents operated by LATAM Airlines that involve the BAe 146 / Avro RJ aircraft model?",
+    "gold": "MATCH (n:FlightAccident)-[r0:operatedBy]->(m0:Operator {name: 'LATAM Airlines'}),(n:FlightAccident)-[r1:involves]->(m1:AircraftModel {name: 'BAe 146 / Avro RJ'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:FlightAccident)-[:operatedBy]->(o:Operator) MATCH (a:FlightAccident)-[:involves]->(am:AircraftModel) WHERE o.name = 'LATAM Airlines' AND am.name = 'BAe 146 / Avro RJ' RETURN a.flight_number AS accident_name",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Who is the operator with the earliest launch year?",
+    "gold": "MATCH (n:Operator) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC LIMIT 1",
+    "pred": "MATCH (o:Operator) RETURN o ORDER BY o.launch_year ASC LIMIT 1",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "Which had more fatalities: FedEx Express Flight 14 or the 2021 Piedade de Caratinga Beechcraft King Air crash?",
+    "gold": "MATCH (n:FlightAccident {name: 'FedEx Express Flight 14'}), (m0:FlightAccident {name: '2021 Piedade de Caratinga Beechcraft King Air crash'}) RETURN CASE WHEN n.number_of_deaths > m0.number_of_deaths THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (fa:FlightAccident) WHERE fa.flight_number = 'FedEx Express Flight 14' OR fa.flight_number = '2021 Piedade de Caratinga Beechcraft King Air crash' RETURN fa.flight_number, fa.number_of_deaths",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of manufacturers that produced both the B-52 Stratofortress and the Boeing 737?",
+    "gold": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'B-52 Stratofortress'}),(n:AircraftManufacturer)<-[r1:manufacturedBy]-(m1:AircraftModel {name: 'Boeing 737'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and countries of the manufacturers of the de Havilland Canada DHC-2 Beaver?",
+    "gold": "MATCH (n:AircraftManufacturer)<-[r0:manufacturedBy]-(m0:AircraftModel {name: 'de Havilland Canada DHC-2 Beaver'}) WITH DISTINCT n RETURN n.name, n.country",
+    "pred": "MATCH (am:AircraftModel)-[:manufacturedBy]->(manufacturer:AircraftManufacturer) WHERE am.name CONTAINS 'DHC-2 Beaver' OR am.name CONTAINS 'de Havilland Canada' RETURN manufacturer.name AS manufacturer_name, manufacturer.country AS country",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What is the IATA code for Iwakuni Air Base?",
+    "gold": "MATCH (n:Airport {name: 'Iwakuni Air Base'}) WITH DISTINCT n RETURN n.iata_code",
+    "pred": "MATCH (a:Airport {location: 'Iwakuni Air Base'}) RETURN a.iata_code",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What year was the Ulan-Ude Aviation Plant launched?",
+    "gold": "MATCH (n:AircraftManufacturer {name: 'Ulan-Ude Aviation Plant'}) WITH DISTINCT n RETURN n.launch_year",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of airports that were destinations for flight accidents, excluding those with the ICAO code OMAA?",
+    "gold": "MATCH (n:Airport)<-[r0:destinedFor]-(m0:FlightAccident) WITH DISTINCT n WHERE n.icao_code <> 'OMAA' RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and IATA codes of the airports from which South African Airways Flight 201 departed?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'South African Airways Flight 201'}) WITH DISTINCT n RETURN n.name, n.iata_code",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names of aviation accidents that were headed to the same airport from which Avianca Flight 671 departed, occurring after June 24th, 1975?",
+    "gold": "MATCH (n:FlightAccident)-[r0:destinedFor]->(m0:Airport)<-[r1:departsFrom]-(m1:FlightAccident {name: 'Avianca Flight 671'}) WITH DISTINCT n WHERE n.date > date('1975-06-24') RETURN n.name",
+    "pred": "",
+    "graph": "flight_accident"
+  },
+  {
+    "question": "What are the names and ICAO codes of the airports from which West Caribbean Airways Flight 9955 departed?",
+    "gold": "MATCH (n:Airport)<-[r0:departsFrom]-(m0:FlightAccident {name: 'West Caribbean Airways Flight 9955'}) WITH DISTINCT n RETURN n.name, n.icao_code",
+    "pred": "MATCH (fa:FlightAccident {flight_number: 'West Caribbean Airways Flight 9955'})-[:departsFrom]->(airport:Airport) RETURN airport.location AS name, airport.icao_code AS icao_code",
+    "graph": "flight_accident"
+  }
+]

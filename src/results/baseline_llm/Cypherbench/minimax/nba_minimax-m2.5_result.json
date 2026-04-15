@@ -1,0 +1,1622 @@
+[
+  {
+    "question": "What are the names of positions played by players who have received the ACB Most Valuable Player Award, and how many such players are there for each position?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'ACB Most Valuable Player Award'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:receivesAward]->(a:Award)\nWHERE a.name = 'ACB Most Valuable Player'\nMATCH (p)-[:playsPosition]->(pos:Position)\nRETURN pos.name AS position_name, COUNT(DISTINCT p) AS player_count\nORDER BY player_count DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the teams Robert Reid played for during the year 1983?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Robert Reid'}) WHERE r0.start_year <= 1983 AND (r0.end_year >= 1983 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player {name: 'Robert Reid'})-[r:playsFor]->(t:Team) WHERE r.start_year <= 1983 AND (r.end_year IS NULL OR r.end_year >= 1983) RETURN DISTINCT t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "How many players have been part of either the Sacramento Kings or the Chicago Bulls at any time?",
+    "gold": "CALL { MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Sacramento Kings'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Chicago Bulls'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player)-[:playsFor]->(t:Team) WHERE t.name IN ['Sacramento Kings', 'Chicago Bulls'] RETURN count(DISTINCT p)",
+    "graph": "nba"
+  },
+  {
+    "question": "How many players are there who play as either a shooting guard or a swingman?",
+    "gold": "CALL { MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'shooting guard'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position) WHERE pos.name IN ['Shooting Guard', 'Swingman'] RETURN count(DISTINCT p) AS numberOfPlayers",
+    "graph": "nba"
+  },
+  {
+    "question": "How many conferences are there?",
+    "gold": "MATCH (n:Conference) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Conference) RETURN count(c) AS numberOfConferences",
+    "graph": "nba"
+  },
+  {
+    "question": "How many awards have been received by either Wilt Chamberlain or Bob Lanier?",
+    "gold": "CALL { MATCH (n:Award)<-[r0:receivesAward]-(m0:Player {name: 'Wilt Chamberlain'}) RETURN n, m0 as m UNION MATCH (n:Award)<-[r1:receivesAward]-(m1:Player {name: 'Bob Lanier'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player)-[:receivesAward]->(a:Award) WHERE p.name IN ['Wilt Chamberlain', 'Bob Lanier'] RETURN count(a) AS totalAwards",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of players who have been part of teams in the Central Division, along with the number of such teams each has played for.",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)-[r1:partOfDivision]->(m1:Division {name: 'Central Division'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[r:playsFor]->(t:Team)-[:partOfDivision]->(d:Division) RETURN p.name AS player_name, COUNT(DISTINCT t) AS number_of_central_division_teams ORDER BY number_of_central_division_teams DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have had the Chicago Coliseum and the International Amphitheatre as their home venues at some point, and who are their head coaches?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Chicago Coliseum'}),(n:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'International Amphitheatre'}) WITH DISTINCT n RETURN n.name, n.head_coach",
+    "pred": "MATCH (team:Team)-[:hasHomeVenue]->(venue:Venue)\nWHERE venue.name IN ['Chicago Coliseum', 'International Amphitheatre']\nWITH team, collect(venue.name) AS venues\nWHERE 'Chicago Coliseum' IN venues AND 'International Amphitheatre' IN venues\nRETURN team.name AS team_name, team.head_coach AS head_coach",
+    "graph": "nba"
+  },
+  {
+    "question": "How many positions are played by either Buddy Hield or John Laskowski?",
+    "gold": "CALL { MATCH (n:Position)<-[r0:playsPosition]-(m0:Player {name: 'Buddy Hield'}) RETURN n, m0 as m UNION MATCH (n:Position)<-[r1:playsPosition]-(m1:Player {name: 'John Laskowski'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position)\nWHERE p.name = 'Buddy Hield' OR p.name = 'John Laskowski'\nRETURN count(DISTINCT pos) AS numberOfPositions",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players who have been part of the Detroit Pistons?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Detroit Pistons'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team {name: 'Detroit Pistons'})<-[:playsFor]-(p:Player)-[:receivesAward]->(a:Award) RETURN DISTINCT a.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have received the ACB Most Valuable Player Award, along with the number of positions each player has played.",
+    "gold": "MATCH (n:Player)-[r1:receivesAward]->(m1:Award {name: 'ACB Most Valuable Player Award'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (player:Player)-[:receivesAward]->(award:Award) WHERE award.name = 'ACB Most Valuable Player' RETURN player.name AS playerName, size((player)-[:playsPosition]->(:Position)) AS positionsPlayed ORDER BY playerName",
+    "graph": "nba"
+  },
+  {
+    "question": "How many divisions have teams that Howard Eisley has played for?",
+    "gold": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Howard Eisley'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (p:Player {name: 'Howard Eisley'})-[:playsFor]->(team:Team)-[:partOfDivision]->(division:Division) RETURN count(DISTINCT division) AS numberOfDivisions",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players drafted by the same team that drafted James Ray, sorted by their date of birth from the most recent to the oldest?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'James Ray'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC",
+    "pred": "MATCH (player:Player)-[:draftedBy]->(team:Team)<-[:draftedBy]-(james:Player {name: 'James Ray'}) RETURN player.name ORDER BY player.date_of_birth DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Who is the oldest player drafted by the Miami Heat?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'Miami Heat'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth ASC LIMIT 1",
+    "pred": "MATCH (p:Player)-[:draftedBy]->(t:Team) WHERE t.name = 'Miami Heat' RETURN p ORDER BY p.date_of_birth ASC LIMIT 1",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of all teams in the Northwest Division, and how many venues have each of them called home at any time, past or present?",
+    "gold": "MATCH (n:Team)-[r1:partOfDivision]->(m1:Division {name: 'Northwest Division'}) OPTIONAL MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that Walt Hazzard has played for, excluding those owned by Joe Lacob?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Walt Hazzard'}) WITH DISTINCT n WHERE NOT 'Joe Lacob' IN n.owners RETURN n.name",
+    "pred": "MATCH (p:Player {name: 'Walt Hazzard'})-[:playsFor]->(t:Team) WHERE NOT 'Joe Lacob' IN t.owners RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players drafted by the New York Knicks, listed from the oldest to the youngest based on their date of birth?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'New York Knicks'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth ASC",
+    "pred": "MATCH (player:Player)-[d:draftedBy]->(team:Team)\nWHERE team.name = 'New York Knicks'\nRETURN player.date_of_birth, player\nORDER BY player.date_of_birth ASC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams in the Western Conference?",
+    "gold": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division)-[r1:partOfConference]->(m1:Conference {name: 'Western Conference'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (team:Team)-[:partOfDivision]->(division:Division)-[:partOfConference]->(conference:Conference) WHERE conference.name = 'Western Conference' RETURN team.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What is the earliest founding year of teams that have had players drafted by the San Antonio Spurs?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'San Antonio Spurs'}) WITH DISTINCT n RETURN min(n.inception_year)",
+    "pred": "MATCH (spurs:Team {name: 'San Antonio Spurs'}) MATCH (player:Player)-[:draftedBy]->(spurs) MATCH (player)-[:playsFor]->(team:Team) RETURN MIN(team.inception_year) AS earliest_founding_year",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by swingman players, and how many swingman players have received each award?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position {name: 'Swingman'}) MATCH (p)-[:receivesAward]->(award:Award) RETURN award.name AS award, count(DISTINCT p) AS num_swingman_players ORDER BY num_swingman_players DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have players who were drafted by the Utah Jazz, and how many such players have played for each team at any time?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'Utah Jazz'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (player:Player)-[:draftedBy]->(team:Team {name: 'Utah Jazz'})\nMATCH (player)-[:playsFor]->(otherTeam:Team)\nRETURN otherTeam.name AS team, count(DISTINCT player) AS playersDraftedByUtahJazzCount\nORDER BY playersDraftedByUtahJazzCount DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the positions played by players who have been part of the Portland Trail Blazers, and how many players have played each position?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Portland Trail Blazers'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (player:Player)-[:playsFor]->(team:Team)\nWHERE team.name = 'Portland Trail Blazers'\nMATCH (player)-[:playsPosition]->(position:Position)\nRETURN position.name AS position, COUNT(DISTINCT player) AS playerCount\nORDER BY playerCount DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and owners of teams that both Herm Gilliam and Scoot Henderson have played for at any time?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Herm Gilliam'}),(n:Team)<-[r1:playsFor]-(m1:Player {name: 'Scoot Henderson'}) WITH DISTINCT n RETURN n.name, n.owners",
+    "pred": "MATCH (p1:Player)-[:playsFor]->(t:Team)\nWHERE p1.name = 'Herm Gilliam'\nMATCH (p2:Player)-[:playsFor]->(t)\nWHERE p2.name = 'Scoot Henderson'\nRETURN t.name AS team_name, t.owners AS owners",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams in the Southeast Division and who are their head coaches?",
+    "gold": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Southeast Division'}) WITH DISTINCT n RETURN n.name, n.head_coach",
+    "pred": "MATCH (t:Team)-[:partOfDivision]->(d:Division)\nWHERE d.name = 'Southeast'\nRETURN t.name AS team_name, t.head_coach AS head_coach",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of all the awards received by Russell Westbrook, and how many players have received each of those awards?",
+    "gold": "MATCH (n:Award)<-[r1:receivesAward]-(m1:Player {name: 'Russell Westbrook'}) OPTIONAL MATCH (n:Award)<-[r0:receivesAward]-(m0:Player) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (player:Player {name: 'Russell Westbrook'})-[:receivesAward]->(award:Award) WITH award MATCH (p:Player)-[:receivesAward]->(award) RETURN award.name AS award_name, COUNT(DISTINCT p) AS player_count",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and owners of teams that have used Toyota Coliseum as their home venue at any time?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Toyota Coliseum'}) WITH DISTINCT n RETURN n.name, n.owners",
+    "pred": "MATCH (team:Team)-[:hasHomeVenue]->(venue:Venue) WHERE venue.name = 'Toyota Coliseum' RETURN team.name AS name, team.owners AS owners",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams currently call Ball Arena their home venue?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Ball Arena'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (team:Team)-[r:hasHomeVenue]->(venue:Venue) WHERE venue.name = 'Ball Arena' AND (r.end_year IS NULL OR r.end_year >= 2024) RETURN team",
+    "graph": "nba"
+  },
+  {
+    "question": "How many teams are either part of the Southwest Division or have drafted Lucious Harris?",
+    "gold": "CALL { MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Southwest Division'}) RETURN n, m0 as m UNION MATCH (n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Lucious Harris'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "How many teams are either part of the Atlantic Division or have had Jim McMillian as a player at some point?",
+    "gold": "CALL { MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Atlantic Division'}) RETURN n, m0 as m UNION MATCH (n:Team)<-[r1:playsFor]-(m1:Player {name: 'Jim McMillian'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (t:Team)\nWHERE (t)-[:partOfDivision]->(d:Division) AND d.name = 'Atlantic'\n   OR (t)<-[:playsFor]-(:Player {name: 'Jim McMillian'})\nRETURN count(DISTINCT t) AS totalTeams",
+    "graph": "nba"
+  },
+  {
+    "question": "List the names of players who have received the same awards as Buddy Hield, along with the count of such awards each has received.",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award)<-[r1:receivesAward]-(m1:Player {name: 'Buddy Hield'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (buddy:Player {name: 'Buddy Hield'})-[:receivesAward]->(award:Award) WITH buddy, COLLECT(DISTINCT award) AS buddyAwards MATCH (player:Player)-[:receivesAward]->(award:Award) WHERE award IN buddyAwards AND player <> buddy RETURN player.name AS playerName, COUNT(DISTINCT award) AS awardCount ORDER BY awardCount DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Who is younger, Jim Burns or Jean Prioleau?",
+    "gold": "MATCH (n:Player {name: 'Jim Burns'}), (m0:Player {name: 'Jean Prioleau'}) RETURN CASE WHEN n.date_of_birth > m0.date_of_birth THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (p1:Player {name: 'Jim Burns'}), (p2:Player {name: 'Jean Prioleau'}) RETURN CASE WHEN p1.date_of_birth > p2.date_of_birth THEN p1.name ELSE p2.name END AS youngerPlayer",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players drafted by the Indiana Pacers, along with the number of positions each player plays.",
+    "gold": "MATCH (n:Player)-[r1:draftedBy]->(m1:Team {name: 'Indiana Pacers'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:draftedBy]->(t:Team {name: 'Indiana Pacers'})\nOPTIONAL MATCH (p)-[:playsPosition]->(pos:Position)\nWITH p, count(pos) AS positionCount\nRETURN p.name AS playerName, positionCount\nORDER BY playerName",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have players who have received the Champion des champions français de L'Équipe award, and how many such players have been part of each team?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'Champion des champions français de L\\'Équipe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (award:Award {name: 'Champion des champions français de L'Équipe'})\nMATCH (player:Player)-[:receivesAward]->(award)\nMATCH (player)-[:playsFor]->(team:Team)\nRETURN team.name AS team, count(DISTINCT player) AS playerCount\nORDER BY playerCount DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams drafted Bob Dandridge, and who are their head coaches?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player {name: 'Bob Dandridge'}) WITH DISTINCT n RETURN n.name, n.head_coach",
+    "pred": "MATCH (player:Player {name: 'Bob Dandridge'})-[:draftedBy]->(team:Team) RETURN team.name AS team, team.head_coach AS head_coach",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players who play the small forward position?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'small forward'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position)\nWHERE pos.name = 'Small Forward'\nMATCH (p)-[:receivesAward]->(aw:Award)\nRETURN DISTINCT aw.name AS award_name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who weighs more, JaVale McGee or Kevin Grevey?",
+    "gold": "MATCH (n:Player {name: 'JaVale McGee'}), (m0:Player {name: 'Kevin Grevey'}) RETURN CASE WHEN n.mass_kg > m0.mass_kg THEN n.name ELSE m0.name END AS answer",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players who were part of the Washington Wizards roster in the year 1964?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Washington Wizards'}) WHERE r0.start_year <= 1964 AND (r0.end_year >= 1964 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the teams that LeBron James is currently playing for?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'LeBron James'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have drafted players who have played for the Brooklyn Nets, listed from the earliest to the most recent inception year?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Brooklyn Nets'}) WITH DISTINCT n RETURN n.name ORDER BY n.inception_year ASC",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the unique owners of teams in the Southeast Division?",
+    "gold": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Southeast Division'}) WITH DISTINCT n UNWIND n.owners AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (team:Team)-[:partOfDivision]->(division:Division)\nWHERE division.name = 'Southeast Division'\nUNWIND team.owners AS owner\nRETURN DISTINCT owner",
+    "graph": "nba"
+  },
+  {
+    "question": "How many players have either played for the Houston Rockets at some point or have received the NBA Coach of the Year Award?",
+    "gold": "CALL { MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Houston Rockets'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:receivesAward]->(m1:Award {name: 'NBA Coach of the Year Award'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player) WHERE (p)-[:playsFor]->(:Team {name: 'Houston Rockets'}) OR (p)-[:receivesAward]->(:Award {name: 'NBA Coach of the Year'}) RETURN count(DISTINCT p) AS numberOfPlayers",
+    "graph": "nba"
+  },
+  {
+    "question": "Are Billy Lange and Thomas Francis Xavier Smith of the same gender?",
+    "gold": "MATCH (n:Player {name: 'Billy Lange'}), (m0:Player {name: 'Thomas Francis Xavier Smith'}) RETURN n.gender = m0.gender AS answer",
+    "pred": "MATCH (p1:Player {name: 'Billy Lange'}), (p2:Player {name: 'Thomas Francis Xavier Smith'}) RETURN p1.gender, p2.gender, p1.gender = p2.gender AS sameGender",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the positions played by both Bulbs Ehlers and Derek Anderson?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player {name: 'Bulbs Ehlers'}),(n:Position)<-[r1:playsPosition]-(m1:Player {name: 'Derek Anderson'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position)\nWHERE p.name IN ['Bulbs Ehlers', 'Derek Anderson']\nWITH pos, collect(p.name) AS players\nWHERE size(players) = 2\nRETURN pos.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have played as shooting guards, along with the number of teams they have been part of, whether currently or in the past.",
+    "gold": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'shooting guard'}) OPTIONAL MATCH (n:Player)-[r0:playsFor]->(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position)\nMATCH (p)-[pf:playsFor]->(t:Team)\nRETURN p.name AS player_name, COUNT(DISTINCT t) AS number_of_teams\nORDER BY number_of_teams DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players currently playing for the Atlanta Hawks?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Atlanta Hawks'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[r:playsFor]->(t:Team)\nWHERE t.name = 'Atlanta Hawks' AND (r.end_year IS NULL OR r.end_year >= 2024)\nRETURN p",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who have received either the Kareem Abdul-Jabbar Award or the Oscar Robertson Trophy?",
+    "gold": "CALL { MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'Kareem Abdul-Jabbar Award'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:receivesAward]->(m1:Award {name: 'Oscar Robertson Trophy'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player)-[:receivesAward]->(award:Award) WHERE award.name IN ['Kareem Abdul-Jabbar Award', 'Oscar Robertson Trophy'] RETURN player.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What divisions are in the Western Conference?",
+    "gold": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Western Conference'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Conference {name: 'Western Conference'})<-[:partOfConference]-(d:Division) RETURN d.name AS division",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that Sidney Wicks was drafted by?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player {name: 'Sidney Wicks'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have been part of the Houston Rockets at any time, along with the number of awards each has received.",
+    "gold": "MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Houston Rockets'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players drafted by the Los Angeles Lakers, and how many such players have received each award?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'Los Angeles Lakers'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the venues that currently serve as the home for the Cleveland Cavaliers?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Cleveland Cavaliers'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[r:hasHomeVenue]->(v:Venue) WHERE t.name = 'Cleveland Cavaliers' AND r.start_year <= date().year AND (r.end_year IS NULL OR r.end_year >= date().year) RETURN v.name",
+    "graph": "nba"
+  },
+  {
+    "question": "How many players either play as a shooting guard or have received the Merited Master of Sports of the USSR award?",
+    "gold": "CALL { MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'shooting guard'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:receivesAward]->(m1:Award {name: 'Merited Master of Sports of the USSR'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player) WHERE (p)-[:playsPosition]->(:Position {name: 'Shooting Guard'}) OR (p)-[:receivesAward]->(:Award {name: 'Merited Master of Sports of the USSR'}) RETURN count(DISTINCT p) AS numberOfPlayers",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have been part of the Golden State Warriors at any time, along with the number of positions each player has played.",
+    "gold": "MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Golden State Warriors'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (t:Team)<-[:playsFor]-(p:Player)\nWHERE t.name = 'Golden State Warriors'\nOPTIONAL MATCH (p)-[:playsPosition]->(pos:Position)\nWITH p, COUNT(DISTINCT pos) AS positionCount\nRETURN p.name AS playerName, positionCount\nORDER BY positionCount DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players drafted by the Philadelphia 76ers and who have played for the Chicago Bulls, listed from the lightest to the heaviest?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'Philadelphia 76ers'}),(n:Player)-[r1:playsFor]->(m1:Team {name: 'Chicago Bulls'}) WITH DISTINCT n RETURN n.name ORDER BY n.mass_kg ASC",
+    "pred": "MATCH (player:Player)-[:draftedBy]->(philly:Team)\nWHERE philly.name = 'Philadelphia 76ers'\nMATCH (player)-[:playsFor]->(chicago:Team)\nWHERE chicago.name = 'Chicago Bulls'\nRETURN player\nORDER BY player.mass_kg ASC",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players drafted by the Portland Trail Blazers, along with the number of teams each player has played for, whether currently or in the past.",
+    "gold": "MATCH (n:Player)-[r1:draftedBy]->(m1:Team {name: 'Portland Trail Blazers'}) OPTIONAL MATCH (n:Player)-[r0:playsFor]->(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:draftedBy]->(t:Team) WHERE t.name = 'Portland Trail Blazers' OPTIONAL MATCH (p)-[:playsFor]->(team:Team) WITH p, count(DISTINCT team) AS numTeams RETURN p.name AS playerName, numTeams",
+    "graph": "nba"
+  },
+  {
+    "question": "List the names of all divisions in the Western Conference, along with the number of teams in each division.",
+    "gold": "MATCH (n:Division)-[r1:partOfConference]->(m1:Conference {name: 'Western Conference'}) OPTIONAL MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of positions played by players who have received the Kareem Abdul-Jabbar Award, and how many such players are there for each position?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'Kareem Abdul-Jabbar Award'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:receivesAward]->(a:Award) WHERE a.name = 'Kareem Abdul-Jabbar Award' MATCH (p)-[:playsPosition]->(pos:Position) RETURN pos.name AS position_name, count(DISTINCT p) AS player_count ORDER BY player_count DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "List the names of all players drafted by the New Orleans Pelicans, along with the number of positions each player plays.",
+    "gold": "MATCH (n:Player)-[r1:draftedBy]->(m1:Team {name: 'New Orleans Pelicans'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What positions have been played by Toronto Raptors members?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Toronto Raptors'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team {name: 'Toronto Raptors'})-[:playsFor]->(p:Player)-[:playsPosition]->(pos:Position) RETURN DISTINCT pos",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have been part of the Toronto Raptors at any time, along with the number of positions each player has played.",
+    "gold": "MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Toronto Raptors'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (t:Team {name: 'Toronto Raptors'})<-[:playsFor]-(p:Player) WITH p MATCH (p)-[:playsPosition]->(pos:Position) RETURN p.name AS player_name, COUNT(DISTINCT pos) AS position_count ORDER BY position_count DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the divisions that include the Philadelphia 76ers?",
+    "gold": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team {name: 'Philadelphia 76ers'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team {name: 'Philadelphia 76ers'})-[:partOfDivision]->(d:Division) RETURN d.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Which conference is Atlantic Division part of?",
+    "gold": "MATCH (n:Conference)<-[r0:partOfConference]-(m0:Division {name: 'Atlantic Division'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (d:Division)-[:partOfConference]->(c:Conference) WHERE d.name = 'Atlantic' RETURN c.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players who have received the Silbernes Lorbeerblatt award?",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'Silbernes Lorbeerblatt'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player)-[:receivesAward]->(award:Award) WHERE award.name = 'Silbernes Lorbeerblatt' RETURN player",
+    "graph": "nba"
+  },
+  {
+    "question": "When was George Lehmann born?",
+    "gold": "MATCH (n:Player {name: 'George Lehmann'}) WITH DISTINCT n RETURN n.date_of_birth",
+    "pred": "MATCH (p:Player {name: 'George Lehmann'}) RETURN p.date_of_birth",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who were either drafted by the Boston Celtics or play as a center?",
+    "gold": "CALL { MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'Boston Celtics'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'center'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player) WHERE (p)-[:draftedBy]->(:Team {name:'Boston Celtics'}) OR (p)-[:playsPosition]->(:Position {name:'Center'}) RETURN p.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and owners of the teams that Sidney Wicks was drafted by?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player {name: 'Sidney Wicks'}) WITH DISTINCT n RETURN n.name, n.owners",
+    "pred": "MATCH (player:Player)-[r:draftedBy]->(team:Team) WHERE player.name = 'Sidney Wicks' RETURN team.name AS team_name, team.owners AS owners",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players who have won the Bill Russell NBA Finals Most Valuable Player Award and were drafted by the Indiana Pacers, and what are their countries of citizenship?",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'Bill Russell NBA Finals Most Valuable Player Award'}),(n:Player)-[r1:draftedBy]->(m1:Team {name: 'Indiana Pacers'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (player:Player)-[:receivesAward]->(award:Award), (player)-[:draftedBy]->(team:Team) WHERE award.name = 'Bill Russell NBA Finals Most Valuable Player Award' AND team.name = 'Indiana Pacers' RETURN player.name, player.country_of_citizenship",
+    "graph": "nba"
+  },
+  {
+    "question": "How many teams have either drafted Tom Hawkins or had George McCloud play for them at any time?",
+    "gold": "CALL { MATCH (n:Team)<-[r0:draftedBy]-(m0:Player {name: 'Tom Hawkins'}) RETURN n, m0 as m UNION MATCH (n:Team)<-[r1:playsFor]-(m1:Player {name: 'George McCloud'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "OPTIONAL MATCH (player1:Player)-[:draftedBy]->(team1:Team)\nWHERE player1.name = 'Tom Hawkins'\nOPTIONAL MATCH (player2:Player)-[:playsFor]->(team2:Team)\nWHERE player2.name = 'George McCloud'\nRETURN count(DISTINCT COALESCE(team1, team2)) AS total_teams",
+    "graph": "nba"
+  },
+  {
+    "question": "What is the height difference in centimeters between Jordan Farmar and Michael Cooper?",
+    "gold": "MATCH (n:Player {name: 'Jordan Farmar'}), (m0:Player {name: 'Michael Cooper'}) RETURN n.height_cm - m0.height_cm AS answer",
+    "pred": "MATCH (jf:Player {name:'Jordan Farmar'}), (mc:Player {name:'Michael Cooper'}) RETURN abs(jf.height_cm - mc.height_cm) AS height_difference",
+    "graph": "nba"
+  },
+  {
+    "question": "How much heavier is Bud Olsen than Jerry Rullo in kilograms?",
+    "gold": "MATCH (n:Player {name: 'Bud Olsen'}), (m0:Player {name: 'Jerry Rullo'}) RETURN n.mass_kg - m0.mass_kg AS answer",
+    "pred": "MATCH (p1:Player {name: 'Bud Olsen'}), (p2:Player {name: 'Jerry Rullo'}) RETURN p1.mass_kg - p2.mass_kg AS difference_in_kg",
+    "graph": "nba"
+  },
+  {
+    "question": "List the names of all NBA teams.",
+    "gold": "MATCH (n:Team) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team) RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Do the Phoenix Suns and the Charlotte Hornets share the same year of inception?",
+    "gold": "MATCH (n:Team {name: 'Phoenix Suns'}), (m0:Team {name: 'Charlotte Hornets'}) RETURN n.inception_year = m0.inception_year AS answer",
+    "pred": "MATCH (suns:Team {name: 'Phoenix Suns'}) MATCH (hornets:Team {name: 'Charlotte Hornets'}) RETURN suns.name AS team1, suns.inception_year AS inception_year1, hornets.name AS team2, hornets.inception_year AS inception_year2",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have been part of the Los Angeles Clippers at any time, along with the count of awards each has received.",
+    "gold": "MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Los Angeles Clippers'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (t:Team {name: 'Los Angeles Clippers'})<-[:playsFor]-(p:Player) OPTIONAL MATCH (p)-[:receivesAward]->(a:Award) RETURN p.name AS player_name, count(a) AS award_count",
+    "graph": "nba"
+  },
+  {
+    "question": "What is Scott Padgett's country of citizenship?",
+    "gold": "MATCH (n:Player {name: 'Scott Padgett'}) WITH DISTINCT n RETURN n.country_of_citizenship",
+    "pred": "MATCH (p:Player) WHERE p.name = 'Scott Padgett' RETURN p.country_of_citizenship",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of positions played by players who also play as power forwards, and how many such players are there for each position?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'power forward'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pf:Position {name: 'Power Forward'}) WITH p MATCH (p)-[:playsPosition]->(pos:Position) WHERE pos.name <> 'Power Forward' RETURN pos.name AS position_name, count(DISTINCT p) AS number_of_players ORDER BY number_of_players DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of all the teams Jumaine Jones has played for, and how many venues has each of those teams called home?",
+    "gold": "MATCH (n:Team)<-[r1:playsFor]-(m1:Player {name: 'Jumaine Jones'}) OPTIONAL MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player {name: 'Jumaine Jones'})-[:playsFor]->(t:Team)\nOPTIONAL MATCH (t)-[:hasHomeVenue]->(v:Venue)\nRETURN t.name AS TeamName, count(DISTINCT v) AS VenueCount",
+    "graph": "nba"
+  },
+  {
+    "question": "What is the latest birthdate among players who have played for a team that Chris Whitney was drafted by?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'Chris Whitney'}) WITH DISTINCT n RETURN max(n.date_of_birth)",
+    "pred": "MATCH (chris:Player {name: 'Chris Whitney'})-[:draftedBy]->(team:Team) MATCH (p:Player)-[:playsFor]->(team) RETURN max(p.date_of_birth) AS latestBirthdate",
+    "graph": "nba"
+  },
+  {
+    "question": "List all the awards.",
+    "gold": "MATCH (n:Award) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Award) RETURN a",
+    "graph": "nba"
+  },
+  {
+    "question": "How many divisions are part of the Eastern Conference?",
+    "gold": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Eastern Conference'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (d:Division)-[:partOfConference]->(c:Conference) WHERE c.name = 'Eastern Conference' RETURN count(d)",
+    "graph": "nba"
+  },
+  {
+    "question": "When was the Golden State Warriors team founded?",
+    "gold": "MATCH (n:Team {name: 'Golden State Warriors'}) WITH DISTINCT n RETURN n.inception_year",
+    "pred": "MATCH (t:Team {name: 'Golden State Warriors'}) RETURN t.inception_year",
+    "graph": "nba"
+  },
+  {
+    "question": "How many teams are either part of the Pacific Division or have had the Los Angeles Memorial Sports Arena as their home venue?",
+    "gold": "CALL { MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Pacific Division'}) RETURN n, m0 as m UNION MATCH (n:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'Los Angeles Memorial Sports Arena'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (t:Team) WHERE (t)-[:partOfDivision]->(d:Division) AND d.name = 'Pacific' OR (t)-[:hasHomeVenue]->(v:Venue) AND v.name = 'Los Angeles Memorial Sports Arena' RETURN count(DISTINCT t)",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of conferences that include both the Northwest Division and the Southwest Division?",
+    "gold": "MATCH (n:Conference)<-[r0:partOfConference]-(m0:Division {name: 'Northwest Division'}),(n:Conference)<-[r1:partOfConference]-(m1:Division {name: 'Southwest Division'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (nw:Division {name: 'Northwest Division'})-[:partOfConference]->(c:Conference), (sw:Division {name: 'Southwest Division'})-[:partOfConference]->(c) RETURN c.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all teams in the Pacific Division, along with the number of players each team has drafted.",
+    "gold": "MATCH (n:Team)-[r1:partOfDivision]->(m1:Division {name: 'Pacific Division'}) OPTIONAL MATCH (n:Team)<-[r0:draftedBy]-(m0:Player) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (t:Team)-[:partOfDivision]->(d:Division)\nWHERE d.name = 'Pacific'\nOPTIONAL MATCH (p:Player)-[:draftedBy]->(t)\nRETURN t.name AS team_name, COUNT(p) AS drafted_players_count\nORDER BY team_name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players who have been part of the Indiana Pacers, and how many such players have received each award?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Indiana Pacers'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (team:Team {name: 'Indiana Pacers'})<-[:playsFor]-(player:Player)-[:receivesAward]->(award:Award) RETURN award.name AS award_name, count(DISTINCT player) AS player_count ORDER BY player_count DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "How many different genders are there among players who have received the same awards as Isiah Thomas?",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award)<-[r1:receivesAward]-(m1:Player {name: 'Isiah Thomas'}) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the positions played by athletes who have received the German Sportspersonality of the Year award?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'German Sportspersonality of the Year'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player)-[:receivesAward]->(award:Award)\nWHERE award.name = 'German Sportspersonality of the Year'\nMATCH (player)-[:playsPosition]->(position:Position)\nRETURN DISTINCT position",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who play as centers and were drafted by the Atlanta Hawks, listed from the oldest to the youngest based on their date of birth?",
+    "gold": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'center'}),(n:Player)-[r1:draftedBy]->(m1:Team {name: 'Atlanta Hawks'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth ASC",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position), (p)-[:draftedBy]->(team:Team)\nWHERE pos.name = 'Center' AND team.name = 'Atlanta Hawks'\nRETURN p.name\nORDER BY p.date_of_birth ASC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the unique genders of players who have been part of a team in the Northwest Division?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)-[r1:partOfDivision]->(m1:Division {name: 'Northwest Division'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (p:Player)-[:playsFor]->(t:Team)-[:partOfDivision]->(d:Division)\nWHERE d.name = 'Northwest Division'\nRETURN DISTINCT p.gender",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have drafted players who received the All-NBA Team award, and how many such players has each team drafted?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'All-NBA Team'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (team:Team)<-[:draftedBy]-(player:Player)-[:receivesAward]->(award:Award)\nWHERE award.name = 'All-NBA Team'\nRETURN team.name AS Team, count(DISTINCT player) AS NumberOfPlayers\nORDER BY NumberOfPlayers DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "How many unique positions are there?",
+    "gold": "MATCH (n:Position) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (p:Position) RETURN count(DISTINCT p) AS unique_positions",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have had players in the power forward position, and how many such players have been on each team?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'power forward'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position {name: 'Power Forward'})\nMATCH (p)-[:playsFor]->(t:Team)\nRETURN t.name AS team_name, count(DISTINCT p) AS power_forward_count\nORDER BY power_forward_count DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "How many divisions are in the same conference as the Central Division?",
+    "gold": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference)<-[r1:partOfConference]-(m1:Division {name: 'Central Division'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (central:Division)-[:partOfConference]->(conference:Conference) MATCH (d:Division)-[:partOfConference]->(conference) RETURN count(d)",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have received the Sports Illustrated Sportsperson of the Year award, along with the total number of awards each has received.",
+    "gold": "MATCH (n:Player)-[r1:receivesAward]->(m1:Award {name: 'Sports Illustrated Sportsperson of the Year'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[r:receivesAward]->(a:Award) WHERE a.name = 'Sports Illustrated Sportsperson of the Year' WITH p, COUNT(r) AS totalAwards RETURN p.name AS playerName, totalAwards",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players who were drafted by the San Antonio Spurs?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'San Antonio Spurs'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[:draftedBy]->(t:Team)\nWHERE t.name = 'San Antonio Spurs'\nMATCH (p)-[:receivesAward]->(a:Award)\nRETURN DISTINCT a.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have both drafted and had players on their roster at some point?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player),(n:Team)<-[r1:draftedBy]-(m0:Player) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team) WHERE EXISTS((t)<-[:draftedBy]-(:Player)) AND EXISTS((t)<-[:playsFor]-(:Player)) RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have received the Gold Medal of the Royal Order of Sports Merit, along with the number of teams they have played for at any time.",
+    "gold": "MATCH (n:Player)-[r1:receivesAward]->(m1:Award {name: 'Gold Medal of the Royal Order of Sports Merit'}) OPTIONAL MATCH (n:Player)-[r0:playsFor]->(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who have been part of the Denver Nuggets but did not attend Tyler Junior College?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Denver Nuggets'}) WITH DISTINCT n WHERE NOT 'Tyler Junior College' IN n.schools_attended RETURN n.name",
+    "pred": "MATCH (p:Player)-[:playsFor]->(t:Team) WHERE t.name = 'Denver Nuggets' AND NOT 'Tyler Junior College' IN p.schools_attended RETURN DISTINCT p.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who is the lightest player to have ever played for the Utah Jazz?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Utah Jazz'}) WITH DISTINCT n RETURN n.name ORDER BY n.mass_kg ASC LIMIT 1",
+    "pred": "MATCH (p:Player)-[:playsFor]->(t:Team {name: 'Utah Jazz'}) WHERE p.mass_kg IS NOT NULL RETURN p ORDER BY p.mass_kg ASC LIMIT 1",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and founding years of teams that have had a player in the point forward position at any time?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'point forward'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred": "MATCH (pos:Position {name: 'Point Forward'})<-[:playsPosition]-(player:Player)-[:playsFor]->(team:Team) RETURN DISTINCT team.name AS team_name, team.inception_year AS founding_year",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of conferences that include either the Northwest Division or the Pacific Division?",
+    "gold": "CALL { MATCH (n:Conference)<-[r0:partOfConference]-(m0:Division {name: 'Northwest Division'}) RETURN n, m0 as m UNION MATCH (n:Conference)<-[r1:partOfConference]-(m1:Division {name: 'Pacific Division'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (d:Division)-[:partOfConference]->(c:Conference) WHERE d.name IN ['Northwest Division', 'Pacific Division'] RETURN c.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What is the difference in the founding years between the Portland Trail Blazers and the Los Angeles Lakers?",
+    "gold": "MATCH (n:Team {name: 'Portland Trail Blazers'}), (m0:Team {name: 'Los Angeles Lakers'}) RETURN n.inception_year - m0.inception_year AS answer",
+    "pred": "MATCH (p:Team {name: 'Portland Trail Blazers'})\nMATCH (l:Team {name: 'Los Angeles Lakers'})\nRETURN p.inception_year AS portland_year, l.inception_year AS lakers_year, abs(p.inception_year - l.inception_year) AS difference",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and owners of teams that have had the Denver Coliseum as their home venue at any time?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Denver Coliseum'}) WITH DISTINCT n RETURN n.name, n.owners",
+    "pred": "MATCH (v:Venue {name: 'Denver Coliseum'})<-[:hasHomeVenue]-(t:Team) RETURN t.name AS team_name, t.owners AS owners",
+    "graph": "nba"
+  },
+  {
+    "question": "How many different positions are played by players who also play as power forwards?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'power forward'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (pf:Position)<-[:playsPosition]-(p:Player)\nWHERE pf.name = 'power forward'\nWITH p\nMATCH (p)-[:playsPosition]->(pos:Position)\nRETURN count(DISTINCT pos) AS numberOfPositions",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that currently play at the Delta Center?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Delta Center'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (team:Team)-[r:hasHomeVenue]->(venue:Venue) WHERE venue.name = 'Delta Center' AND r.start_year <= 2025 AND (r.end_year IS NULL OR r.end_year >= 2025) RETURN team.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all teams in the Atlantic Division, along with the number of venues they have had as home venues at any time, past or present.",
+    "gold": "MATCH (n:Team)-[r1:partOfDivision]->(m1:Division {name: 'Atlantic Division'}) OPTIONAL MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (d:Division {name: 'Atlantic'})\nMATCH (t:Team)-[:partOfDivision]->(d)\nOPTIONAL MATCH (t)-[hv:hasHomeVenue]->(v:Venue)\nRETURN t.name AS team_name, COUNT(hv) AS venue_count\nORDER BY team_name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the unique nicknames of players who have been part of the Denver Nuggets at any time?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Denver Nuggets'}) WITH DISTINCT n UNWIND n.nicknames AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (p:Player)-[:playsFor]->(t:Team)\nWHERE t.name = 'Denver Nuggets'\nUNWIND p.nicknames AS nickname\nRETURN DISTINCT nickname",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players who have also won the L'Équipe Champion of Champions, and how many such players have received each award?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'L\\'Équipe Champion of Champions'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:receivesAward]->(a:Award)\nWHERE a.name = 'L''Équipe Champion of Champions'\nMATCH (p)-[:receivesAward]->(award:Award)\nWHERE award.name <> 'L''Équipe Champion of Champions'\nRETURN award.name AS awardName, COUNT(DISTINCT p) AS playerCount\nORDER BY playerCount DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players who have been on the same teams as Aron Baynes, and how many of those teams has each player been a part of?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Aron Baynes'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the teams that Walt Hazzard has played for at any time, whether in the past or present?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Walt Hazzard'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[r:playsFor]->(t:Team) WHERE p.name = 'Walt Hazzard' RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who either play as shooting guards or have been part of the Dallas Mavericks at some point?",
+    "gold": "CALL { MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'shooting guard'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Dallas Mavericks'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player) WHERE (player)-[:playsPosition]->(:Position {name: 'Shooting Guard'}) OR (player)-[:playsFor]->(:Team {name: 'Dallas Mavericks'}) RETURN DISTINCT player.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have players who were both drafted by and have played for them, along with the names of their head coaches?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player),(n:Team)<-[r1:playsFor]-(m0:Player) WITH DISTINCT n RETURN n.name, n.head_coach",
+    "pred": "MATCH (p:Player)-[d:draftedBy]->(t:Team) MATCH (p)-[pf:playsFor]->(t) RETURN DISTINCT t.name AS team_name, t.head_coach AS head_coach",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams in the Pacific Division that Cheick Diallo has played for at some point?",
+    "gold": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Pacific Division'}),(n:Team)<-[r1:playsFor]-(m1:Player {name: 'Cheick Diallo'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player {name: 'Cheick Diallo'})-[:playsFor]->(team:Team)-[:partOfDivision]->(division:Division) WHERE division.name = 'Pacific' RETURN DISTINCT team.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams in the Pacific Division that drafted Derek Fisher?",
+    "gold": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Pacific Division'}),(n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Derek Fisher'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player {name: 'Derek Fisher'})-[:draftedBy]->(team:Team)-[:partOfDivision]->(division:Division {name: 'Pacific'}) RETURN DISTINCT team.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that drafted both Dennis Hopson and Marcus Williams?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player {name: 'Dennis Hopson'}),(n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Marcus Williams'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p1:Player)-[:draftedBy]->(t:Team)<-[:draftedBy]-(p2:Player) WHERE p1.name = 'Dennis Hopson' AND p2.name = 'Marcus Williams' RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of positions played by players who also play as center, and how many such players are there for each position?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'center'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (centerPos:Position {name: 'center'})<-[:playsPosition]-(p:Player)\nWITH p\nMATCH (p)-[:playsPosition]->(pos:Position)\nWHERE pos.name <> 'center'\nRETURN pos.name AS positionName, count(DISTINCT p) AS playerCount\nORDER BY playerCount DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of positions played by players drafted by the Brooklyn Nets, and how many such players are there for each position?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'Brooklyn Nets'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:draftedBy]->(t:Team) WHERE t.name = 'Brooklyn Nets' MATCH (p)-[:playsPosition]->(pos:Position) RETURN pos.name AS position, count(DISTINCT p) AS playerCount ORDER BY playerCount DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What positions does Robert Rose play?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player {name: 'Robert Rose'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player {name: 'Robert Rose'})-[:playsPosition]->(position:Position) RETURN position",
+    "graph": "nba"
+  },
+  {
+    "question": "How many players have either been part of the Utah Jazz or played as a small forward?",
+    "gold": "CALL { MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Utah Jazz'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'small forward'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player) WHERE (p)-[:playsFor]->(:Team {name: 'Utah Jazz'}) OR (p)-[:playsPosition]->(:Position {name: 'Small Forward'}) RETURN count(DISTINCT p)",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have played at Indiana Farmers Coliseum and are part of the Central Division?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Indiana Farmers Coliseum'}),(n:Team)-[r1:partOfDivision]->(m1:Division {name: 'Central Division'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[:hasHomeVenue]->(v:Venue), (t:Team)-[:partOfDivision]->(d:Division) WHERE v.name = 'Indiana Farmers Coliseum' AND d.name = 'Central Division' RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players who play the center position, and how many such players have received each award?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'center'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position)\nWHERE pos.name = 'Center'\nMATCH (p)-[:receivesAward]->(a:Award)\nRETURN a.name AS award_name, count(DISTINCT p) AS number_of_players\nORDER BY number_of_players DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the unique handedness types of players drafted by teams in the Atlantic Division?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team)-[r1:partOfDivision]->(m1:Division {name: 'Atlantic Division'}) WITH DISTINCT n RETURN DISTINCT n.handedness",
+    "pred": "MATCH (t:Team)-[:partOfDivision]->(d:Division)\nWHERE d.name = 'Atlantic'\nMATCH (p:Player)-[:draftedBy]->(t)\nRETURN DISTINCT p.handedness",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the awards received by José Calderón?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player {name: 'José Calderón'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[r:receivesAward]->(a:Award) WHERE 'José Calderón' IN p.nicknames RETURN a",
+    "graph": "nba"
+  },
+  {
+    "question": "Who is the player associated with a team that has used Gainbridge Fieldhouse as their home venue, and has the earliest recorded date of death?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'Gainbridge Fieldhouse'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death ASC LIMIT 1",
+    "pred": "MATCH (v:Venue {name: 'Gainbridge Fieldhouse'})<-[:hasHomeVenue]-(t:Team)\nMATCH (p:Player)-[:playsFor]->(t)\nWHERE p.date_of_death IS NOT NULL\nRETURN p\nORDER BY p.date_of_death ASC\nLIMIT 1",
+    "graph": "nba"
+  },
+  {
+    "question": "Which NBA team was established the earliest?",
+    "gold": "MATCH (n:Team) WITH DISTINCT n RETURN n.name ORDER BY n.inception_year ASC LIMIT 1",
+    "pred": "MATCH (t:Team) RETURN t, t.inception_year ORDER BY t.inception_year ASC LIMIT 1",
+    "graph": "nba"
+  },
+  {
+    "question": "Who passed away later, Greg Jackson or Nate Hawthorne?",
+    "gold": "MATCH (n:Player {name: 'Greg Jackson'}), (m0:Player {name: 'Nate Hawthorne'}) RETURN CASE WHEN n.date_of_death > m0.date_of_death THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (p1:Player {name: 'Greg Jackson'}), (p2:Player {name: 'Nate Hawthorne'}) RETURN p1.name AS GregJackson, p1.date_of_death AS GregJacksonDeath, p2.name AS NateHawthorne, p2.date_of_death AS NateHawthorneDeath, CASE WHEN p1.date_of_death > p2.date_of_death THEN p1.name WHEN p2.date_of_death > p1.date_of_death THEN p2.name ELSE 'Same' END AS whoPassedAwayLater",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the unique owners of teams that have drafted a player who plays the small forward position?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'small forward'}) WITH DISTINCT n UNWIND n.owners AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (pos:Position)\nWHERE pos.name = 'Small Forward'\nMATCH (p:Player)-[:playsPosition]->(pos)\nMATCH (p)-[:draftedBy]->(t:Team)\nUNWIND t.owners AS owner\nRETURN DISTINCT owner",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have drafted players who have played for the Sacramento Kings, and how many such players has each team drafted?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Sacramento Kings'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have the Los Angeles Memorial Sports Arena as their home venue and that drafted Dave Meyers?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Los Angeles Memorial Sports Arena'}),(n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Dave Meyers'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[:hasHomeVenue]->(v:Venue) WHERE v.name = 'Los Angeles Memorial Sports Arena' MATCH (p:Player {name: 'Dave Meyers'})-[:draftedBy]->(t) RETURN t.name AS team_name",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have been part of the Chicago Bulls at any time, along with the number of different teams each player has been associated with throughout their career.",
+    "gold": "MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Chicago Bulls'}) OPTIONAL MATCH (n:Player)-[r0:playsFor]->(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (bulls:Team)\nWHERE bulls.name = 'Chicago Bulls'\nMATCH (player:Player)-[:playsFor]->(bulls)\nWITH player,\n     [(player)-[:playsFor]->(team) | team.name] AS teams\nRETURN player.name AS player_name,\n       size(teams) AS number_of_teams\nORDER BY player_name",
+    "graph": "nba"
+  },
+  {
+    "question": "List the names of players who play the same positions as Jack Stephens, along with the number of those positions each plays.",
+    "gold": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position)<-[r1:playsPosition]-(m1:Player {name: 'Jack Stephens'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (jack:Player)-[:playsPosition]->(pos:Position) WHERE jack.name = 'Jack Stephens' WITH jack, collect(pos) AS jack_positions MATCH (other:Player)-[:playsPosition]->(pos2:Position) WHERE pos2 IN jack_positions AND other <> jack WITH other, jack_positions, collect(DISTINCT pos2) AS common_positions RETURN other.name AS player_name, size(common_positions) AS number_of_positions ORDER BY number_of_positions DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and head coaches of teams that have the Denver Coliseum as their home venue?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Denver Coliseum'}) WITH DISTINCT n RETURN n.name, n.head_coach",
+    "pred": "MATCH (v:Venue {name: 'Denver Coliseum'})<-[:hasHomeVenue]-(t:Team) RETURN t.name AS team_name, t.head_coach AS head_coach",
+    "graph": "nba"
+  },
+  {
+    "question": "How many unique venues are there?",
+    "gold": "MATCH (n:Venue) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (v:Venue) RETURN count(DISTINCT v) AS unique_venues",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the venues?",
+    "gold": "MATCH (n:Venue) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (v:Venue) RETURN v.name AS venue_name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who weighs more, Bud Olsen or Jerry Rullo?",
+    "gold": "MATCH (n:Player {name: 'Bud Olsen'}), (m0:Player {name: 'Jerry Rullo'}) RETURN CASE WHEN n.mass_kg > m0.mass_kg THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (p:Player) WHERE p.name IN ['Bud Olsen', 'Jerry Rullo'] RETURN p.name, p.mass_kg ORDER BY p.mass_kg DESC LIMIT 1",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams played their home games at Madison Square Garden in the year 1946?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Madison Square Garden'}) WHERE r0.start_year <= 1946 AND (r0.end_year >= 1946 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who have been part of the Utah Jazz and were born on February 28th, 1978?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Utah Jazz'}) WITH DISTINCT n WHERE n.date_of_birth = date('1978-02-28') RETURN n.name",
+    "pred": "MATCH (player:Player)-[:playsFor]->(team:Team) WHERE team.name = 'Utah Jazz' AND player.date_of_birth = date('1978-02-28') RETURN player.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have received the Gold Medal of the Royal Order of Sports Merit, along with the total number of awards each player has received.",
+    "gold": "MATCH (n:Player)-[r1:receivesAward]->(m1:Award {name: 'Gold Medal of the Royal Order of Sports Merit'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (award:Award {name: 'Gold Medal of the Royal Order of Sports Merit'})\nMATCH (player:Player)-[:receivesAward]->(award)\nWITH player\nMATCH (player)-[r:receivesAward]->(:Award)\nRETURN player.name AS player_name, COUNT(r) AS total_awards",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players drafted by the Cleveland Cavaliers, along with the number of teams each player has played for, whether currently or in the past.",
+    "gold": "MATCH (n:Player)-[r1:draftedBy]->(m1:Team {name: 'Cleveland Cavaliers'}) OPTIONAL MATCH (n:Player)-[r0:playsFor]->(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (t:Team {name: 'Cleveland Cavaliers'})<-[:draftedBy]-(p:Player)\nWITH p, size((p)-[:playsFor]->(:Team)) AS teams_played_for\nRETURN p.name AS player_name, teams_played_for\nORDER BY teams_played_for DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the positions played by players who have been part of the Atlanta Hawks, and how many such players have played each position?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Atlanta Hawks'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsFor]->(t:Team)\nWHERE t.name = 'Atlanta Hawks'\nMATCH (p)-[:playsPosition]->(pos:Position)\nRETURN pos.name AS position, count(DISTINCT p) AS numberOfPlayers\nORDER BY numberOfPlayers DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and head coaches of teams that have used the Toyota Coliseum as their home venue at some point?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Toyota Coliseum'}) WITH DISTINCT n RETURN n.name, n.head_coach",
+    "pred": "MATCH (team:Team)-[:hasHomeVenue]->(venue:Venue) WHERE venue.name = 'Toyota Coliseum' RETURN DISTINCT team.name AS team_name, team.head_coach AS head_coach",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the teams that Elfrid Payton is currently playing for?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Elfrid Payton'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player {name: 'Elfrid Payton'})-[r:playsFor]->(t:Team) WHERE r.end_year IS NULL RETURN t.name AS teamName",
+    "graph": "nba"
+  },
+  {
+    "question": "How many players have either received the NBA Most Valuable Player Award or been drafted by the Utah Jazz?",
+    "gold": "CALL { MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'NBA Most Valuable Player Award'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:draftedBy]->(m1:Team {name: 'Utah Jazz'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (player:Player) WHERE (player)-[:receivesAward]->(a:Award {name: 'NBA Most Valuable Player Award'}) OR (player)-[:draftedBy]->(t:Team {name: 'Utah Jazz'}) RETURN count(DISTINCT player) AS numberOfPlayers",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of divisions that include a team which drafted Keith Booth?",
+    "gold": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'Keith Booth'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player {name: 'Keith Booth'})-[:draftedBy]->(team:Team)-[:partOfDivision]->(division:Division) RETURN DISTINCT division.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have either played at Baltimore Arena or have drafted Jerry McKee?",
+    "gold": "CALL { MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Baltimore Arena'}) RETURN n, m0 as m UNION MATCH (n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Jerry McKee'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)\nOPTIONAL MATCH (t)-[:hasHomeVenue]->(v:Venue)\nOPTIONAL MATCH (p:Player {name: 'Jerry McKee'})-[:draftedBy]->(t)\nWHERE v.name = 'Baltimore Arena' OR p IS NOT NULL\nRETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have had the Spectrum as their home venue and for which Toni Kukoč has played, along with their head coaches?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Spectrum'}),(n:Team)<-[r1:playsFor]-(m1:Player {name: 'Toni Kukoč'}) WITH DISTINCT n RETURN n.name, n.head_coach",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have had players in the center position, and how many such players have been on each team?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'center'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (team:Team)<-[:playsFor]-(player:Player)-[:playsPosition]->(pos:Position) WHERE pos.name = 'Center' RETURN team.name AS TeamName, count(DISTINCT player) AS CenterPlayerCount",
+    "graph": "nba"
+  },
+  {
+    "question": "Who is the head coach of the Brooklyn Nets?",
+    "gold": "MATCH (n:Team {name: 'Brooklyn Nets'}) WITH DISTINCT n RETURN n.head_coach",
+    "pred": "MATCH (t:Team {name: 'Brooklyn Nets'}) RETURN t.head_coach",
+    "graph": "nba"
+  },
+  {
+    "question": "Which conference does the Memphis Grizzlies belong to?",
+    "gold": "MATCH (n:Conference)<-[r0:partOfConference]-(m0:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Memphis Grizzlies'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[:partOfDivision]->(d:Division)-[:partOfConference]->(c:Conference) WHERE t.name = 'Memphis Grizzlies' RETURN c.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and owners of teams that drafted Kent Benson and have Jabari Parker as a player, either currently or in the past?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player {name: 'Kent Benson'}),(n:Team)<-[r1:playsFor]-(m1:Player {name: 'Jabari Parker'}) WITH DISTINCT n RETURN n.name, n.owners",
+    "pred": "MATCH (kb:Player {name: 'Kent Benson'})-[:draftedBy]->(team:Team)\nMATCH (jp:Player {name: 'Jabari Parker'})-[:playsFor]->(team)\nRETURN team.name, team.owners",
+    "graph": "nba"
+  },
+  {
+    "question": "What is the earliest date of death among players who have received the All-NBA Team award and played as a center?",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'All-NBA Team'}),(n:Player)-[r1:playsPosition]->(m1:Position {name: 'center'}) WITH DISTINCT n RETURN min(n.date_of_death)",
+    "pred": "MATCH (player:Player)-[:playsPosition]->(pos:Position {name: 'Center'})\nMATCH (player)-[:receivesAward]->(award:Award {name: 'All-NBA Team'})\nWHERE player.date_of_death IS NOT NULL\nRETURN min(player.date_of_death) AS earliestDateOfDeath",
+    "graph": "nba"
+  },
+  {
+    "question": "What year were the Brooklyn Nets founded?",
+    "gold": "MATCH (n:Team {name: 'Brooklyn Nets'}) WITH DISTINCT n RETURN n.inception_year",
+    "pred": "MATCH (t:Team {name: 'Brooklyn Nets'}) RETURN t.inception_year",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have either played at Madison Square Garden or are part of the Atlantic Division?",
+    "gold": "CALL { MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Madison Square Garden'}) RETURN n, m0 as m UNION MATCH (n:Team)-[r1:partOfDivision]->(m1:Division {name: 'Atlantic Division'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team) WHERE (t)-[:hasHomeVenue]->(:Venue{name:'Madison Square Garden'}) OR (t)-[:partOfDivision]->(:Division{name:'Atlantic Division'}) RETURN DISTINCT t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have played as point guards, along with the number of teams they have been part of, whether currently or in the past.",
+    "gold": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'point guard'}) OPTIONAL MATCH (n:Player)-[r0:playsFor]->(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position)\nWHERE toLower(pos.name) = 'point guard'\nMATCH (p)-[:playsFor]->(t:Team)\nRETURN p.name AS player_name, COUNT(DISTINCT t) AS number_of_teams\nORDER BY number_of_teams DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of venues that have served as the home for the Atlanta Hawks at any time?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Atlanta Hawks'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[r:hasHomeVenue]->(v:Venue) WHERE t.head_coach CONTAINS 'Hawks' OR t.inception_year IS NOT NULL RETURN v",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who play as a small forward, along with the number of different positions each player plays.",
+    "gold": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'small forward'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position) WHERE pos.name = 'Small Forward' WITH p MATCH (p)-[:playsPosition]->(pos2:Position) RETURN p.name AS playerName, count(DISTINCT pos2) AS numberOfPositions",
+    "graph": "nba"
+  },
+  {
+    "question": "Which team was founded more recently, the Portland Trail Blazers or the Los Angeles Lakers?",
+    "gold": "MATCH (n:Team {name: 'Portland Trail Blazers'}), (m0:Team {name: 'Los Angeles Lakers'}) RETURN CASE WHEN n.inception_year > m0.inception_year THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (t:Team)\nWHERE t.name IN ['Portland Trail Blazers', 'Los Angeles Lakers']\nRETURN t.name, t.inception_year\nORDER BY t.inception_year DESC\nLIMIT 1",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have had players drafted by the Toronto Raptors, and how many such players have played for each team?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'Toronto Raptors'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (raptors:Team {name: 'Toronto Raptors'}) MATCH (player:Player)-[:draftedBy]->(raptors) MATCH (player)-[:playsFor]->(team:Team) WHERE team <> raptors RETURN team.name AS Team, count(DISTINCT player) AS NumberOfPlayers ORDER BY NumberOfPlayers DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the divisions that include either the Atlanta Hawks or the Washington Wizards?",
+    "gold": "CALL { MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team {name: 'Atlanta Hawks'}) RETURN n, m0 as m UNION MATCH (n:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Washington Wizards'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (team:Team)-[:partOfDivision]->(division:Division)\nWHERE team.name IN ['Atlanta Hawks', 'Washington Wizards']\nRETURN DISTINCT division.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the teams that Barry Orms has played for, either currently or in the past?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Barry Orms'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[r:playsFor]->(t:Team) \nWHERE p.name = 'Barry Orms' \nRETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "How many divisions are part of the Western Conference?",
+    "gold": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Western Conference'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (d:Division)-[:partOfConference]->(c:Conference {name: 'Western'})\nRETURN count(d) AS numberOfDivisions",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the venues that currently serve as the home venue for the Memphis Grizzlies?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Memphis Grizzlies'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team {name: 'Memphis Grizzlies'})-[:hasHomeVenue]->(v:Venue) RETURN v.name AS venueName",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have drafted players who received the Merited Master of Sports of the USSR award, and how many such players has each team drafted?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'Merited Master of Sports of the USSR'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (team:Team)<-[:draftedBy]-(player:Player)-[:receivesAward]->(award:Award) WHERE award.name = 'Merited Master of Sports of the USSR' RETURN team.name AS team, count(DISTINCT player) AS numberOfPlayers ORDER BY numberOfPlayers DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players drafted by the Utah Jazz, and how many such players have received each award?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'Utah Jazz'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (player:Player)-[:draftedBy]->(team:Team {name: 'Utah Jazz'})\nMATCH (player)-[:receivesAward]->(award:Award)\nRETURN award.name AS award_name, COUNT(DISTINCT player) AS number_of_players\nORDER BY number_of_players DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and heights in centimeters of players who play the forward-center position?",
+    "gold": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'forward-center'}) WITH DISTINCT n RETURN n.name, n.height_cm",
+    "pred": "MATCH (player:Player)-[:playsPosition]->(position:Position) WHERE position.name = 'forward-center' RETURN player.name, player.height_cm",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who were drafted by the same team that Khalid El-Amin has played for, and who passed away before the year 2019?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Khalid El-Amin'}) WITH DISTINCT n WHERE n.date_of_death.year < 2019 RETURN n.name",
+    "pred": "MATCH (khalid:Player {name: 'Khalid El-Amin'})-[:playsFor]->(team:Team) WITH DISTINCT team MATCH (player:Player)-[:draftedBy]->(team) WHERE player.date_of_death IS NOT NULL AND player.date_of_death < date('2019-01-01') RETURN DISTINCT player.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who passed away later, Skeeter Swift or Lee Knorek?",
+    "gold": "MATCH (n:Player {name: 'Skeeter Swift'}), (m0:Player {name: 'Lee Knorek'}) RETURN CASE WHEN n.date_of_death > m0.date_of_death THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (p:Player) WHERE p.nicknames CONTAINS 'Skeeter Swift' OR p.nicknames CONTAINS 'Lee Knorek' OR p.date_of_birth IS NOT NULL RETURN p.nicknames AS name, p.date_of_death AS death_date ORDER BY death_date DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the unique nicknames of players who were drafted by the Memphis Grizzlies and play as centers?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'Memphis Grizzlies'}),(n:Player)-[r1:playsPosition]->(m1:Position {name: 'center'}) WITH DISTINCT n UNWIND n.nicknames AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (p:Player)-[:draftedBy]->(t:Team {name: 'Memphis Grizzlies'}), (p)-[:playsPosition]->(pos:Position) WHERE pos.name = 'Center' RETURN DISTINCT p.nicknames",
+    "graph": "nba"
+  },
+  {
+    "question": "What is the earliest year of death among players who play the power forward position?",
+    "gold": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'power forward'}) WITH DISTINCT n RETURN min(n.date_of_death.year)",
+    "pred": "MATCH (player:Player)-[:playsPosition]->(position:Position)\nWHERE position.name = 'Power Forward'\nWITH player\nWHERE player.date_of_death IS NOT NULL\nRETURN MIN(YEAR(player.date_of_death)) AS earliest_year_of_death",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of divisions that include a team which has played at the Bill Graham Civic Auditorium?",
+    "gold": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'Bill Graham Civic Auditorium'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (v:Venue {name: 'Bill Graham Civic Auditorium'})<-[:hasHomeVenue]-(t:Team)-[:partOfDivision]->(d:Division) RETURN DISTINCT d.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players drafted by the Indiana Pacers, along with the number of awards each player has received.",
+    "gold": "MATCH (n:Player)-[r1:draftedBy]->(m1:Team {name: 'Indiana Pacers'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:draftedBy]->(t:Team) WHERE t.name = 'Indiana Pacers' OPTIONAL MATCH (p)-[r:receivesAward]->(a:Award) RETURN p.name AS player_name, count(r) AS award_count",
+    "graph": "nba"
+  },
+  {
+    "question": "How much heavier is JaVale McGee than Kevin Grevey in kilograms?",
+    "gold": "MATCH (n:Player {name: 'JaVale McGee'}), (m0:Player {name: 'Kevin Grevey'}) RETURN n.mass_kg - m0.mass_kg AS answer",
+    "pred": "MATCH (jaVale:Player {name: 'JaVale McGee'})\nMATCH (kevin:Player {name: 'Kevin Grevey'})\nRETURN jaVale.mass_kg - kevin.mass_kg AS weight_difference_kg",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and inception years of teams that Fred Jones has played for and that drafted Rik Smits?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Fred Jones'}),(n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Rik Smits'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred": "MATCH (fred:Player {name: 'Fred Jones'})-[:playsFor]->(team:Team)<-[:draftedBy]-(rik:Player {name: 'Rik Smits'}) RETURN team.name, team.inception_year",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who have been part of the Brooklyn Nets at any time, along with the number of different teams each player has been associated with throughout their career.",
+    "gold": "MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Brooklyn Nets'}) OPTIONAL MATCH (n:Player)-[r0:playsFor]->(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (player:Player)-[:playsFor]->(team:Team {name: 'Brooklyn Nets'}) WITH DISTINCT player MATCH (player)-[:playsFor]->(allTeams:Team) RETURN player.name AS playerName, count(DISTINCT allTeams) AS numberOfTeams",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams played their home games at the XL Center in the year 1975?",
+    "gold": "MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'XL Center'}) WHERE r0.start_year <= 1975 AND (r0.end_year >= 1975 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[hv:hasHomeVenue]->(v:Venue) WHERE v.name = 'XL Center' AND 1975 >= hv.start_year AND (hv.end_year IS NULL OR 1975 <= hv.end_year) RETURN t",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who have received an award?",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "Who is the head coach of the Golden State Warriors?",
+    "gold": "MATCH (n:Team {name: 'Golden State Warriors'}) WITH DISTINCT n RETURN n.head_coach",
+    "pred": "MATCH (t:Team {name: 'Golden State Warriors'})\nRETURN t.head_coach",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the teams Bill Russell played for during the year 1956?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Bill Russell'}) WHERE r0.start_year <= 1956 AND (r0.end_year >= 1956 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[r:playsFor]->(t:Team) WHERE p.name = 'Bill Russell' AND r.start_year <= 1956 AND (r.end_year IS NULL OR r.end_year >= 1956) RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What is the name of the conference that the Southwest Division is part of?",
+    "gold": "MATCH (n:Conference)<-[r0:partOfConference]-(m0:Division {name: 'Southwest Division'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (d:Division)-[:partOfConference]->(c:Conference) WHERE d.name = 'Southwest' RETURN c.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that have had their home venue at either the Georgia Dome or Kiel Auditorium at some point in time?",
+    "gold": "CALL { MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'Georgia Dome'}) RETURN n, m0 as m UNION MATCH (n:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'Kiel Auditorium'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[hv:hasHomeVenue]->(v:Venue) WHERE v.name IN ['Georgia Dome', 'Kiel Auditorium'] RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What awards has Clyde Drexler received?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player {name: 'Clyde Drexler'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player {name: 'Clyde Drexler'})-[r:receivesAward]->(a:Award) RETURN a, r.year ORDER BY r.year",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have drafted players who have received the MVP Supercup of Spain award?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'MVP Supercup of Spain'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of venues that served as the home for the Brooklyn Nets in the year 1972?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Brooklyn Nets'}) WHERE r0.start_year <= 1972 AND (r0.end_year >= 1972 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[hv:hasHomeVenue]->(v:Venue) WHERE t.name = 'Brooklyn Nets' AND hv.start_year <= 1972 AND hv.end_year >= 1972 RETURN v.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the unique genders of NBA players?",
+    "gold": "MATCH (n:Player) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (p:Player)-[:playsFor]->(:Team) RETURN DISTINCT p.gender",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of divisions in the Eastern Conference, and how many teams are part of each division?",
+    "gold": "MATCH (n:Division)-[r1:partOfConference]->(m1:Conference {name: 'Eastern Conference'}) OPTIONAL MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Conference)<-[:partOfConference]-(d:Division)\nWHERE c.name = 'Eastern Conference'\nOPTIONAL MATCH (t:Team)-[:partOfDivision]->(d)\nRETURN d.name AS division_name, count(t) AS number_of_teams\nORDER BY number_of_teams DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who were drafted by a team, sorted by their mass in kilograms from heaviest to lightest?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team) WITH DISTINCT n RETURN n.name ORDER BY n.mass_kg DESC",
+    "pred": "MATCH (p:Player)-[:draftedBy]->(t:Team) RETURN p.name ORDER BY p.mass_kg DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and owners of the teams that Barry Orms has played for, whether in the past or currently?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Barry Orms'}) WITH DISTINCT n RETURN n.name, n.owners",
+    "pred": "MATCH (p:Player {name: 'Barry Orms'})-[:playsFor]->(t:Team) RETURN t.name AS team_name, t.owners AS owners",
+    "graph": "nba"
+  },
+  {
+    "question": "Are Herb Williams and Ed Mikan of the same gender?",
+    "gold": "MATCH (n:Player {name: 'Herb Williams'}), (m0:Player {name: 'Ed Mikan'}) RETURN n.gender = m0.gender AS answer",
+    "pred": "MATCH (hw:Player {name: 'Herb Williams'})\nMATCH (em:Player {name: 'Ed Mikan'})\nRETURN hw.gender = em.gender AS same_gender",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams drafted Bob Dandridge?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player {name: 'Bob Dandridge'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player {name: 'Bob Dandridge'})-[:draftedBy]->(t:Team) RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players who have received the Silbernes Lorbeerblatt award, and which schools did they attend?",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'Silbernes Lorbeerblatt'}) WITH DISTINCT n RETURN n.name, n.schools_attended",
+    "pred": "MATCH (p:Player)-[:receivesAward]->(a:Award) WHERE a.name = 'Silbernes Lorbeerblatt' RETURN p.name AS Player, p.schools_attended AS Schools",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have had players who also played for the Chicago Bulls at some point, and how many such players have been on each of those teams?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Chicago Bulls'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsFor]->(bulls:Team) WHERE bulls.name = 'Chicago Bulls' WITH p MATCH (p)-[:playsFor]->(other:Team) WHERE other.name <> 'Chicago Bulls' RETURN other.name AS Team, count(DISTINCT p) AS PlayersWhoAlsoPlayedForBulls ORDER BY PlayersWhoAlsoPlayedForBulls DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of all players?",
+    "gold": "MATCH (n:Player) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player) RETURN p.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the divisions that include the Toronto Raptors?",
+    "gold": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team {name: 'Toronto Raptors'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team {name:'Toronto Raptors'})-[:partOfDivision]->(d:Division) RETURN d.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of venues that have been home to a team that also calls FedExForum their home venue?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'FedExForum'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (v1:Venue)<-[:hasHomeVenue]-(team:Team)-[:hasHomeVenue]->(v2:Venue) WHERE v1.name = 'FedExForum' AND v2 <> v1 RETURN DISTINCT v2.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of all the teams Doc Rivers has played for, and how many players have been part of each of those teams?",
+    "gold": "MATCH (n:Team)<-[r1:playsFor]-(m1:Player {name: 'Doc Rivers'}) OPTIONAL MATCH (n:Team)<-[r0:playsFor]-(m0:Player) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (docRivers:Player {name: 'Doc Rivers'})-[:playsFor]->(team:Team) WITH team MATCH (player:Player)-[:playsFor]->(team) RETURN team.name AS teamName, count(DISTINCT player) AS playerCount",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of all the teams Vander Blue has played for, along with the number of players who have been part of each team?",
+    "gold": "MATCH (n:Team)<-[r1:playsFor]-(m1:Player {name: 'Vander Blue'}) OPTIONAL MATCH (n:Team)<-[r0:playsFor]-(m0:Player) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players that were part of the Miami Heat roster in the year 1996?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Miami Heat'}) WHERE r0.start_year <= 1996 AND (r0.end_year >= 1996 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams in the Southwest Division that have Stephen Silas as their head coach?",
+    "gold": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Southwest Division'}) WITH DISTINCT n WHERE n.head_coach = 'Stephen Silas' RETURN n.name",
+    "pred": "MATCH (t:Team)-[:partOfDivision]->(d:Division) WHERE d.name = 'Southwest' AND t.head_coach = 'Stephen Silas' RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players currently playing for the Orlando Magic?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Orlando Magic'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[r:playsFor]->(t:Team)\nWHERE t.name = 'Orlando Magic' AND (r.end_year IS NULL OR r.end_year >= 2024)\nRETURN p",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have drafted players who have played for the Memphis Grizzlies at some point, and how many such players did each team draft?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Memphis Grizzlies'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (memphis:Team {name: 'Memphis Grizzlies'})<-[:playsFor]-(player:Player)-[:draftedBy]->(draftingTeam:Team) RETURN draftingTeam.name AS team, count(DISTINCT player) AS numberOfPlayers ORDER BY numberOfPlayers DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams in the Southwest Division that were established in 1980?",
+    "gold": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Southwest Division'}) WITH DISTINCT n WHERE n.inception_year = 1980 RETURN n.name",
+    "pred": "MATCH (team:Team)-[:partOfDivision]->(division:Division) WHERE division.name = 'Southwest Division' AND team.inception_year = 1980 RETURN team.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of divisions that are part of the Western Conference and include the Sacramento Kings?",
+    "gold": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Western Conference'}),(n:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Sacramento Kings'}) WITH DISTINCT n RETURN n.name",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "List the names of players who play the same positions as Joel Kramer, along with the number of those positions they play.",
+    "gold": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position)<-[r1:playsPosition]-(m1:Player {name: 'Joel Kramer'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (jk:Player)-[:playsPosition]->(p:Position)\nWITH jk, collect(p) AS joelPositions\nMATCH (jk)-[:playsPosition]->(p1:Position)<-[:playsPosition]-(otherPlayer:Player)\nWHERE otherPlayer <> jk\nWITH joelPositions, otherPlayer, collect(p1) AS sharedPositions\nWHERE size(sharedPositions) > 0\nRETURN otherPlayer.name AS playerName, size(sharedPositions) AS numberOfSharedPositions\nORDER BY numberOfSharedPositions DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that are in the same division as the New Orleans Pelicans?",
+    "gold": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division)<-[r1:partOfDivision]-(m1:Team {name: 'New Orleans Pelicans'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (pelicans:Team)-[:partOfDivision]->(division:Division)<-[:partOfDivision]-(otherTeam:Team)\nWHERE pelicans <> otherTeam\nRETURN otherTeam.name",
+    "graph": "nba"
+  },
+  {
+    "question": "How many positions does Robert Rose play?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player {name: 'Robert Rose'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (p:Player {name: 'Robert Rose'})-[:playsPosition]->(pos:Position) RETURN count(pos) AS number_of_positions",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that Bob Christian or Dwight Jones have played for at any time?",
+    "gold": "CALL { MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Bob Christian'}) RETURN n, m0 as m UNION MATCH (n:Team)<-[r1:playsFor]-(m1:Player {name: 'Dwight Jones'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player)-[:playsFor]->(team:Team) WHERE player.name IN ['Bob Christian', 'Dwight Jones'] RETURN DISTINCT team.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the positions played by players drafted by the Utah Jazz, and how many such players are there for each position?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'Utah Jazz'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (t:Team {name: 'Utah Jazz'})<-[:draftedBy]-(p:Player) MATCH (p)-[:playsPosition]->(pos:Position) RETURN pos.name AS position, count(DISTINCT p) AS count ORDER BY count DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the unique schools attended by players who were drafted by the Miami Heat?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'Miami Heat'}) WITH DISTINCT n UNWIND n.schools_attended AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (player:Player)-[:draftedBy]->(team:Team)\nWHERE team.name = 'Miami Heat'\nUNWIND player.schools_attended AS school\nRETURN DISTINCT school",
+    "graph": "nba"
+  },
+  {
+    "question": "Do Mark McNamara and Chris Paul have the same handedness?",
+    "gold": "MATCH (n:Player {name: 'Mark McNamara'}), (m0:Player {name: 'Chris Paul'}) RETURN n.handedness = m0.handedness AS answer",
+    "pred": "MATCH (p1:Player {name: 'Mark McNamara'}), (p2:Player {name: 'Chris Paul'}) RETURN p1.handedness AS mark_mcNamara_handedness, p2.handedness AS chris_paul_handedness",
+    "graph": "nba"
+  },
+  {
+    "question": "How many teams have drafted either Cotton Nash or John Block?",
+    "gold": "CALL { MATCH (n:Team)<-[r0:draftedBy]-(m0:Player {name: 'Cotton Nash'}) RETURN n, m0 as m UNION MATCH (n:Team)<-[r1:draftedBy]-(m1:Player {name: 'John Block'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player)-[:draftedBy]->(t:Team) WHERE p.name IN ['Cotton Nash', 'John Block'] RETURN count(DISTINCT t) AS numberOfTeams",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who either play as shooting guards or were drafted by the Houston Rockets?",
+    "gold": "CALL { MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'shooting guard'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:draftedBy]->(m1:Team {name: 'Houston Rockets'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)\nWHERE (p)-[:playsPosition]->(pos:Position {name: 'Shooting Guard'})\nOR (p)-[:draftedBy]->(t:Team {name: 'Houston Rockets'})\nRETURN p.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What is Scott Padgett's weight in kilograms?",
+    "gold": "MATCH (n:Player {name: 'Scott Padgett'}) WITH DISTINCT n RETURN n.mass_kg",
+    "pred": "MATCH (p:Player {name: 'Scott Padgett'}) RETURN p.mass_kg",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all teams in the Atlantic Division, along with the number of players who have played for each team, whether currently or in the past.",
+    "gold": "MATCH (n:Team)-[r1:partOfDivision]->(m1:Division {name: 'Atlantic Division'}) OPTIONAL MATCH (n:Team)<-[r0:playsFor]-(m0:Player) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (team:Team)-[:partOfDivision]->(d:Division)\nWHERE d.name = 'Atlantic'\nOPTIONAL MATCH (player:Player)-[:playsFor]->(team)\nRETURN team.name AS team_name, count(DISTINCT player) AS player_count",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of divisions that include both the Golden State Warriors and the Los Angeles Clippers?",
+    "gold": "MATCH (n:Division)<-[r0:partOfDivision]-(m0:Team {name: 'Golden State Warriors'}),(n:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Los Angeles Clippers'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t1:Team {name: 'Golden State Warriors'})-[:partOfDivision]->(d:Division)<-[:partOfDivision]-(t2:Team {name: 'Los Angeles Clippers'}) RETURN DISTINCT d.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that are part of the Pacific Division and have had the Golden 1 Center as their home venue?",
+    "gold": "MATCH (n:Team)-[r0:partOfDivision]->(m0:Division {name: 'Pacific Division'}),(n:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'Golden 1 Center'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[:partOfDivision]->(d:Division), (t:Team)-[:hasHomeVenue]->(v:Venue) WHERE d.name = 'Pacific' AND v.name = 'Golden 1 Center' RETURN t.name",
+    "graph": "nba"
+  },
+  {
+    "question": "How many venues have served as the home venue for the Atlanta Hawks at any time, past or present?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Atlanta Hawks'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (t:Team {name: 'Atlanta Hawks'})-[:hasHomeVenue]->(v:Venue) RETURN count(DISTINCT v) AS number_of_venues",
+    "graph": "nba"
+  },
+  {
+    "question": "List the names of all teams in the Atlantic Division, along with the number of players each have drafted.",
+    "gold": "MATCH (n:Team)-[r1:partOfDivision]->(m1:Division {name: 'Atlantic Division'}) OPTIONAL MATCH (n:Team)<-[r0:draftedBy]-(m0:Player) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players who have been on the same teams as Marcus Camby, and how many of those teams has each of them played for?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Marcus Camby'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (marcus:Player)-[:playsFor]->(team:Team)\nWHERE marcus.name = 'Marcus Camby'\nWITH COLLECT(DISTINCT team) AS marcusTeams\nMATCH (player:Player)-[:playsFor]->(team:Team)\nWHERE team IN marcusTeams AND player <> marcus\nWITH player, COLLECT(DISTINCT team) AS sharedTeams\nRETURN COALESCE(player.name, 'ID-' + toString(id(player))) AS playerName, SIZE(sharedTeams) AS numberOfSharedTeams\nORDER BY numberOfSharedTeams DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who play the point guard position, along with the number of awards each has received.",
+    "gold": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'point guard'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (player:Player)-[:playsPosition]->(pos:Position) WHERE pos.name = 'Point Guard' OPTIONAL MATCH (player)-[r:receivesAward]->(award) RETURN player.name AS playerName, count(r) AS awardCount",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who play the same position as Buck Williams and weigh 130 kg or less?",
+    "gold": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position)<-[r1:playsPosition]-(m1:Player {name: 'Buck Williams'}) WITH DISTINCT n WHERE n.mass_kg <= 130 RETURN n.name",
+    "pred": "MATCH (bw:Player {name: 'Buck Williams'})-[:playsPosition]->(pos:Position) MATCH (p:Player)-[:playsPosition]->(pos) WHERE p.name <> 'Buck Williams' AND p.mass_kg <= 130 RETURN p.name",
+    "graph": "nba"
+  },
+  {
+    "question": "How many NBA divisions are there?",
+    "gold": "MATCH (n:Division) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (d:Division) RETURN count(d) AS number_of_divisions",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names and genders of players who have been awarded the Australian Sports Medal and have played for the Houston Rockets at some point.",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'Australian Sports Medal'}),(n:Player)-[r1:playsFor]->(m1:Team {name: 'Houston Rockets'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "Can you provide the names of players who have been part of teams in the Pacific Division, along with the number of such teams each has played for?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)-[r1:partOfDivision]->(m1:Division {name: 'Pacific Division'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (d:Division)\nWHERE d.name = 'Pacific'\nMATCH (t:Team)-[:partOfDivision]->(d)\nMATCH (p:Player)-[:playsFor]->(t)\nWITH p, COUNT(DISTINCT t) AS teamsInPacific\nRETURN p.name AS playerName, teamsInPacific\nORDER BY teamsInPacific DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of venues that have served as the home venue for the Los Angeles Clippers at any time?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Los Angeles Clippers'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[:hasHomeVenue]->(v:Venue) WHERE t.head_coach CONTAINS 'Clippers' OR 'Los Angeles Clippers' IN t.owners RETURN v",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of venues that served as the home for the Atlanta Hawks in the year 1946?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Atlanta Hawks'}) WHERE r0.start_year <= 1946 AND (r0.end_year >= 1946 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team)-[r:hasHomeVenue]->(v:Venue) WHERE t.name = 'Atlanta Hawks' AND r.start_year <= 1946 AND (r.end_year IS NULL OR r.end_year >= 1946) RETURN v.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have had players who also played for the Atlanta Hawks at some point, and how many such players have each of these teams had?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Atlanta Hawks'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (hawks:Team)<-[:playsFor]-(player:Player)-[:playsFor]->(otherTeam:Team) WHERE otherTeam <> hawks RETURN otherTeam.name AS team, COUNT(DISTINCT player) AS sharedPlayersWithHawks ORDER BY sharedPlayersWithHawks DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "Which team was established later, the Phoenix Suns or the Charlotte Hornets?",
+    "gold": "MATCH (n:Team {name: 'Phoenix Suns'}), (m0:Team {name: 'Charlotte Hornets'}) RETURN CASE WHEN n.inception_year > m0.inception_year THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (t:Team)\nWHERE t.name IN ['Phoenix Suns', 'Charlotte Hornets']\nRETURN t.name, t.inception_year\nORDER BY t.inception_year DESC\nLIMIT 1",
+    "graph": "nba"
+  },
+  {
+    "question": "Which teams have drafted players who play the swingman position, and how many such players has each team drafted?",
+    "gold": "MATCH (n:Team)<-[r0:draftedBy]-(m0:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position) WHERE pos.name = 'swingman' MATCH (p)-[:draftedBy]->(t:Team) RETURN t.name AS Team, COUNT(p) AS NumberOfSwingmenDrafted ORDER BY NumberOfSwingmenDrafted DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "How many venues have served as the home ground for any team that Pete Brennan has played for, either currently or in the past?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Pete Brennan'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (player:Player)-[:playsFor]->(team:Team)-[:hasHomeVenue]->(venue:Venue)\nWHERE player.name = 'Pete Brennan'\nRETURN COUNT(DISTINCT venue) AS numberOfVenues",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the point guards who have played for the Toronto Raptors?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Toronto Raptors'}),(n:Player)-[r1:playsPosition]->(m1:Position {name: 'point guard'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player)-[:playsPosition]->(pos:Position), (player)-[:playsFor]->(team:Team) WHERE pos.name = 'Point Guard' AND team.name = 'Toronto Raptors' RETURN player.name AS player_name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players that have received the NBA All-Star Game Kobe Bryant Most Valuable Player Award?",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'NBA All-Star Game Kobe Bryant Most Valuable Player Award'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (a:Award {name: 'NBA All-Star Game Kobe Bryant Most Valuable Player Award'})<-[:receivesAward]-(player:Player) RETURN player",
+    "graph": "nba"
+  },
+  {
+    "question": "How many divisions are either part of the Western Conference or include the Golden State Warriors?",
+    "gold": "CALL { MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Western Conference'}) RETURN n, m0 as m UNION MATCH (n:Division)<-[r1:partOfDivision]-(m1:Team {name: 'Golden State Warriors'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (d:Division) WHERE (d)-[:partOfConference]->(c:Conference) AND c.name = 'Western Conference' OR (d)<-[:partOfDivision]-(t:Team) AND t.name = 'Golden State Warriors' RETURN count(DISTINCT d) AS numberOfDivisions",
+    "graph": "nba"
+  },
+  {
+    "question": "Do Kevin Durant and Kareem Abdul-Jabbar use the same hand for playing?",
+    "gold": "MATCH (n:Player {name: 'Kevin Durant'}), (m0:Player {name: 'Kareem Abdul-Jabbar'}) RETURN n.handedness = m0.handedness AS answer",
+    "pred": "MATCH (kd:Player {name: 'Kevin Durant'}), (ka:Player {name: 'Kareem Abdul-Jabbar'}) RETURN kd.handedness AS kevin_durant_handedness, ka.handedness AS kareem_handedness",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by both Nate \"Tiny\" Archibald and Lenny Wilkens?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player {name: 'Nate \"Tiny\" Archibald'}),(n:Award)<-[r1:receivesAward]-(m1:Player {name: 'Lenny Wilkens'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p1:Player)-[:receivesAward]->(a:Award) \nWHERE 'Tiny' IN p1.nickonyms OR 'Nate \"Tiny\" Archibald' IN p1.nicknames \nMATCH (p2:Player)-[:receivesAward]->(a:Award) \nWHERE 'Lenny Wilkens' IN p2.nicknames \nRETURN DISTINCT a.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What positions does Royce O'Neale play?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player {name: 'Royce O\\'Neale'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player)-[:playsPosition]->(position:Position) WHERE player.name = 'Royce O\\'Neale' RETURN position",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players who have also been honored with the Princess of Asturias Award for Sports?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'Princess of Asturias Award for Sports'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player)-[:receivesAward]->(award:Award) WHERE award.name = 'Princess of Asturias Award for Sports' WITH player MATCH (player)-[:receivesAward]->(otherAward:Award) RETURN DISTINCT otherAward.name AS awardName",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of the positions?",
+    "gold": "MATCH (n:Position) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Position) RETURN p",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of all NBA divisions?",
+    "gold": "MATCH (n:Division) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (d:Division) RETURN d.name AS division_name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of venues that have been home to a team that drafted Bo Erias?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team)<-[r1:draftedBy]-(m1:Player {name: 'Bo Erias'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player)-[:draftedBy]->(team:Team)\nWHERE player.name = 'Bo Erias'\nWITH DISTINCT team\nMATCH (team)-[:hasHomeVenue]->(venue:Venue)\nRETURN venue.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who have either played for the Boston Celtics or were drafted by the Miami Heat?",
+    "gold": "CALL { MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Boston Celtics'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:draftedBy]->(m1:Team {name: 'Miami Heat'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player) WHERE (p)-[:playsFor]->(:Team{name:'Boston Celtics'}) OR (p)-[:draftedBy]->(:Team{name:'Miami Heat'}) RETURN DISTINCT p.name AS playerName",
+    "graph": "nba"
+  },
+  {
+    "question": "What positions are played by players who were drafted by the Phoenix Suns?",
+    "gold": "MATCH (n:Position)<-[r0:playsPosition]-(m0:Player)-[r1:draftedBy]->(m1:Team {name: 'Phoenix Suns'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (t:Team {name: 'Phoenix Suns'})<-[:draftedBy]-(player:Player)-[:playsPosition]->(pos:Position) RETURN DISTINCT pos",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of divisions that are part of the Eastern Conference?",
+    "gold": "MATCH (n:Division)-[r0:partOfConference]->(m0:Conference {name: 'Eastern Conference'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (d:Division)-[:partOfConference]->(c:Conference) RETURN d.name, c.name",
+    "graph": "nba"
+  },
+  {
+    "question": "Who is the youngest player to have ever played for the same team as Billy Donovan?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team)<-[r1:playsFor]-(m1:Player {name: 'Billy Donovan'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "pred": "MATCH (bd:Player {name: 'Billy Donovan'})-[:playsFor]->(team:Team) WITH DISTINCT team MATCH (p:Player)-[:playsFor]->(team) WHERE p.name <> 'Billy Donovan' WITH p ORDER BY p.date_of_birth DESC LIMIT 1 RETURN p.name AS youngest_player, p.date_of_birth AS date_of_birth",
+    "graph": "nba"
+  },
+  {
+    "question": "How many players have either received the NBA All-Star Game Kobe Bryant Most Valuable Player Award or have played for the Golden State Warriors at some point?",
+    "gold": "CALL { MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'NBA All-Star Game Kobe Bryant Most Valuable Player Award'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Golden State Warriors'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player) WHERE (p)-[:receivesAward]->(a:Award {name: 'NBA All-Star Game Kobe Bryant Most Valuable Player Award'}) OR (p)-[:playsFor]->(t:Team {name: 'Golden State Warriors'}) RETURN count(DIST p) AS numberOfPlayers",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of venues that have served as home venues for teams in the Atlantic Division at any time?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team)-[r1:partOfDivision]->(m1:Division {name: 'Atlantic Division'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (v:Venue)<-[:hasHomeVenue]-(t:Team)-[:partOfDivision]->(d:Division) WHERE d.name = 'Atlantic' RETURN DISTINCT v.name",
+    "graph": "nba"
+  },
+  {
+    "question": "How many venues have served as the home venue for the Los Angeles Clippers at any time, past or present?",
+    "gold": "MATCH (n:Venue)<-[r0:hasHomeVenue]-(m0:Team {name: 'Los Angeles Clippers'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (t:Team {name: 'Los Angeles Clippers'})-[:hasHomeVenue]->(v:Venue) RETURN count(DISTINCT v) AS numberOfVenues",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players drafted by the New York Knicks, along with the schools they attended?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'New York Knicks'}) WITH DISTINCT n RETURN n.name, n.schools_attended",
+    "pred": "MATCH (player:Player)-[:draftedBy]->(team:Team)\nWHERE team.name = 'New York Knicks'\nRETURN player.schools_attended",
+    "graph": "nba"
+  },
+  {
+    "question": "Who is taller, Jordan Farmar or Michael Cooper?",
+    "gold": "MATCH (n:Player {name: 'Jordan Farmar'}), (m0:Player {name: 'Michael Cooper'}) RETURN CASE WHEN n.height_cm > m0.height_cm THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (p1:Player {name: 'Jordan Farmar'})\nMATCH (p2:Player {name: 'Michael Cooper'})\nRETURN p1.height_cm AS farmar_height, p2.height_cm AS cooper_height",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players born before January 22, 1950, who were drafted by a team that has played at Hy-Vee Arena?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team)-[r1:hasHomeVenue]->(m1:Venue {name: 'Hy-Vee Arena'}) WITH DISTINCT n WHERE n.date_of_birth < date('1950-01-22') RETURN n.name",
+    "pred": "MATCH (player:Player)-[:draftedBy]->(team:Team)-[:hasHomeVenue]->(venue:Venue) WHERE player.date_of_birth < date('1950-01-22') AND venue.name = 'Hy-Vee Arena' RETURN DISTINCT player.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of power forwards who have won the Princess of Asturias Award for Sports and attended Lausanne Collegiate School?",
+    "gold": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'power forward'}),(n:Player)-[r1:receivesAward]->(m1:Award {name: 'Princess of Asturias Award for Sports'}) WITH DISTINCT n WHERE 'Lausanne Collegiate School' IN n.schools_attended RETURN n.name",
+    "pred": "MATCH (player:Player)-[:playsPosition]->(position:Position)\nMATCH (player)-[:receivesAward]->(award:Award)\nWHERE position.name = 'Power Forward' AND award.name = 'Princess of Asturias Award for Sports' AND 'Lausanne Collegiate School' IN player.schools_attended\nRETURN player.name",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of all teams in the Southwest Division, and how many players have been part of each team at any time?",
+    "gold": "MATCH (n:Team)-[r1:partOfDivision]->(m1:Division {name: 'Southwest Division'}) OPTIONAL MATCH (n:Team)<-[r0:playsFor]-(m0:Player) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (team:Team)-[:partOfDivision]->(division:Division {name: 'Southwest Division'})\nOPTIONAL MATCH (player:Player)-[:playsFor]->(team)\nRETURN team.name AS teamName, count(DISTINCT player) AS playerCount\nORDER BY teamName",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of awards received by players who have been part of the Boston Celtics, and how many such players have received each award?",
+    "gold": "MATCH (n:Award)<-[r0:receivesAward]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Boston Celtics'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsFor]->(t:Team {name: 'Boston Celtics'}) MATCH (p)-[:receivesAward]->(a:Award) RETURN a.name AS award_name, count(DIST p) AS number_of_players",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players drafted by the Oklahoma City Thunder, along with the number of awards each player has received.",
+    "gold": "MATCH (n:Player)-[r1:draftedBy]->(m1:Team {name: 'Oklahoma City Thunder'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (t:Team {name: 'Oklahoma City Thunder'})\nMATCH (p:Player)-[d:draftedBy]->(t)\nOPTIONAL MATCH (p)-[a:receivesAward]->(:Award)\nRETURN p.name AS player_name, COUNT(a) AS awards_received\nORDER BY awards_received DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "List the NBA conferences.",
+    "gold": "MATCH (n:Conference) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Conference) RETURN c",
+    "graph": "nba"
+  },
+  {
+    "question": "How many players have been drafted by the Phoenix Suns or have played for the Golden State Warriors at any time?",
+    "gold": "CALL { MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'Phoenix Suns'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsFor]->(m1:Team {name: 'Golden State Warriors'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (p:Player) WHERE EXISTS { (p)-[:draftedBy]->(t:Team) WHERE t.name = 'Phoenix Suns' } OR EXISTS { (p)-[:playsFor]->(t:Team) WHERE t.name = 'Golden State Warriors' } RETURN count(DISTINCT p) AS numberOfPlayers",
+    "graph": "nba"
+  },
+  {
+    "question": "How many teams have either used the International Amphitheatre as their home venue or have had Barney Cable as a player at some point?",
+    "gold": "CALL { MATCH (n:Team)-[r0:hasHomeVenue]->(m0:Venue {name: 'International Amphitheatre'}) RETURN n, m0 as m UNION MATCH (n:Team)<-[r1:playsFor]-(m1:Player {name: 'Barney Cable'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (team:Team) OPTIONAL MATCH (team)-[:hasHomeVenue]->(venue:Venue) OPTIONAL MATCH (player:Player {name: 'Barney Cable'})-[:playsFor]->(team) WHERE venue.name = 'International Amphitheatre' OR player IS NOT NULL RETURN count(DISTINCT team) AS numberOfTeams",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the unique owners of teams that have had a player who received the Big Ten Conference Men's Basketball Coach of the Year award?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:receivesAward]->(m1:Award {name: 'Big Ten Conference Men\\'s Basketball Coach of the Year'}) WITH DISTINCT n UNWIND n.owners AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (a:Award)<-[:receivesAward]-(player:Player)-[:playsFor]->(team:Team) WHERE a.name = 'Big Ten Conference Men's Basketball Coach of the Year' UNWIND team.owners AS owner RETURN DISTINCT owner",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and genders of players who have received both the Bill Russell NBA Finals Most Valuable Player Award and the German Sportspersonality of the Year award?",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'Bill Russell NBA Finals Most Valuable Player Award'}),(n:Player)-[r1:receivesAward]->(m1:Award {name: 'German Sportspersonality of the Year'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (p:Player)-[:receivesAward]->(a:Award) WHERE a.name = 'Bill Russell NBA Finals Most Valuable Player Award' WITH p MATCH (p)-[:receivesAward]->(a2:Award) WHERE a2.name = 'German Sportspersonality of the Year' RETURN p.name AS playerName, p.gender",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of teams that Mark Strickland has played for or that drafted Raul Neto?",
+    "gold": "CALL { MATCH (n:Team)<-[r0:playsFor]-(m0:Player {name: 'Mark Strickland'}) RETURN n, m0 as m UNION MATCH (n:Team)<-[r1:draftedBy]-(m1:Player {name: 'Raul Neto'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (p:Player)-[r:playsFor|draftedBy]->(t:Team)\nWHERE (p.name = 'Mark Strickland' AND type(r) = 'playsFor') \n   OR (p.name = 'Raul Neto' AND type(r) = 'draftedBy')\nRETURN DISTINCT t.name AS team_name",
+    "graph": "nba"
+  },
+  {
+    "question": "How many teams have players who have also played for the Washington Wizards at some point?",
+    "gold": "MATCH (n:Team)<-[r0:playsFor]-(m0:Player)-[r1:playsFor]->(m1:Team {name: 'Washington Wizards'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (wiz:Team {name:'Washington Wizards'})<-[:playsFor]-(player:Player)-[:playsFor]->(team:Team) WHERE team.name <> 'Washington Wizards' RETURN count(DISTINCT team) AS numberOfTeams",
+    "graph": "nba"
+  },
+  {
+    "question": "Who are the players drafted by the Indiana Pacers who have also received the Bill Russell NBA Finals Most Valuable Player Award?",
+    "gold": "MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'Indiana Pacers'}),(n:Player)-[r1:receivesAward]->(m1:Award {name: 'Bill Russell NBA Finals Most Valuable Player Award'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (team:Team {name: 'Indiana Pacers'})-[:draftedBy]->(player:Player)\nMATCH (award:Award)<-[:receivesAward]-(player)\nWHERE award.name CONTAINS 'Bill Russell NBA Finals Most Valuable Player'\nRETURN DISTINCT player",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who have either received the NBA All-Star Game Kobe Bryant Most Valuable Player Award or play as a power forward?",
+    "gold": "CALL { MATCH (n:Player)-[r0:receivesAward]->(m0:Award {name: 'NBA All-Star Game Kobe Bryant Most Valuable Player Award'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'power forward'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (player:Player)-[:receivesAward]->(award:Award) WHERE award.name = 'NBA All-Star Game Kobe Bryant Most Valuable Player Award' RETURN DISTINCT player.name AS name UNION MATCH (player:Player)-[:playsPosition]->(pos:Position) WHERE pos.name = 'Power Forward' RETURN DISTINCT player.name AS name",
+    "graph": "nba"
+  },
+  {
+    "question": "How much taller is Isaac Bonga compared to Linas Kleiza in centimeters?",
+    "gold": "MATCH (n:Player {name: 'Isaac Bonga'}), (m0:Player {name: 'Linas Kleiza'}) RETURN n.height_cm - m0.height_cm AS answer",
+    "pred": "MATCH (p1:Player {name: 'Isaac Bonga'}), (p2:Player {name: 'Linas Kleiza'}) RETURN p1.height_cm - p2.height_cm AS height_difference",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names of players who have been part of both the Dallas Mavericks and the Indiana Pacers, sorted by their weight from heaviest to lightest?",
+    "gold": "MATCH (n:Player)-[r0:playsFor]->(m0:Team {name: 'Dallas Mavericks'}),(n:Player)-[r1:playsFor]->(m1:Team {name: 'Indiana Pacers'}) WITH DISTINCT n RETURN n.name ORDER BY n.mass_kg DESC",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "How many distinct awards are there?",
+    "gold": "MATCH (n:Award) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (a:Award) RETURN count(DISTINCT a) AS numberOfAwards",
+    "graph": "nba"
+  },
+  {
+    "question": "Identify the players who have received the same awards as Wilt Chamberlain, and specify how many of those awards each player has received.",
+    "gold": "MATCH (n:Player)-[r0:receivesAward]->(m0:Award)<-[r1:receivesAward]-(m1:Player {name: 'Wilt Chamberlain'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (wilt:Player)-[:receivesAward]->(award:Award)\nWITH wilt, collect(DISTINCT award) AS wiltAwards\nMATCH (player:Player)-[:receivesAward]->(award:Award)\nWHERE award IN wiltAwards AND player <> wilt\nWITH player, collect(DISTINCT award) AS sharedAwards\nRETURN player, size(sharedAwards) AS award_count\nORDER BY award_count DESC",
+    "graph": "nba"
+  },
+  {
+    "question": "How many players were either drafted by the Los Angeles Lakers or have received the All-NBA Team award?",
+    "gold": "CALL { MATCH (n:Player)-[r0:draftedBy]->(m0:Team {name: 'Los Angeles Lakers'}) RETURN n, m0 as m UNION MATCH (n:Player)-[r1:receivesAward]->(m1:Award {name: 'All-NBA Team'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "nba"
+  },
+  {
+    "question": "Who is younger, Al Butler or Jerry Kelly?",
+    "gold": "MATCH (n:Player {name: 'Al Butler'}), (m0:Player {name: 'Jerry Kelly'}) RETURN CASE WHEN n.date_of_birth > m0.date_of_birth THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (al:Player)<-[:playsFor]-(t:Team) WHERE al.nicknames CONTAINS 'Al Butler' OR 'Al Butler' IN al.nicknames MATCH (jk:Player)<-[:playsFor]-(t2:Team) WHERE jk.nicknames CONTAINS 'Jerry Kelly' OR 'Jerry Kelly' IN jk.nicknames RETURN al.date_of_birth AS al_butler_dob, jk.date_of_birth AS jerry_kelly_dob, CASE WHEN al.date_of_birth < jk.date_of_birth THEN 'Al Butler is younger' WHEN al.date_of_birth > jk.date_of_birth THEN 'Jerry Kelly is younger' ELSE 'Same age' END AS result",
+    "graph": "nba"
+  },
+  {
+    "question": "What are the names and schools attended of players who play both point guard and center positions?",
+    "gold": "MATCH (n:Player)-[r0:playsPosition]->(m0:Position {name: 'point guard'}),(n:Player)-[r1:playsPosition]->(m1:Position {name: 'center'}) WITH DISTINCT n RETURN n.name, n.schools_attended",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position) WITH p, collect(pos.name) AS positions WHERE 'point guard' IN positions AND 'center' IN positions RETURN p.name, p.schools_attended",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who play the swingman position, along with the number of awards each has received.",
+    "gold": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) OPTIONAL MATCH (n:Player)-[r0:receivesAward]->(m0:Award) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (p:Player)-[:playsPosition]->(pos:Position) WHERE pos.name = 'swingman' OPTIONAL MATCH (p)-[:receivesAward]->(a:Award) RETURN p.name AS player_name, COUNT(a) AS award_count",
+    "graph": "nba"
+  },
+  {
+    "question": "Provide the names of all players who play the swingman position, along with the number of different positions each player plays.",
+    "gold": "MATCH (n:Player)-[r1:playsPosition]->(m1:Position {name: 'swingman'}) OPTIONAL MATCH (n:Player)-[r0:playsPosition]->(m0:Position) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "nba"
+  }
+]

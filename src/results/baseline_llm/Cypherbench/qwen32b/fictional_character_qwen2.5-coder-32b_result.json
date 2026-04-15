@@ -1,0 +1,2312 @@
+[
+  {
+    "question": "How many creators are there of characters who killed their spouse?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasSpouse]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n.creator)",
+    "pred": "MATCH (c:Character)-[:killedBy]->(s:Character)<-[:hasSpouse]-(c) RETURN count(DISTINCT c.creator)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the individuals that killed the spouse of Petyr Baelish?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Petyr Baelish'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (petyr:Character {birth_name: 'Petyr Baelish'})-[:hasSpouse]->(spouse:Character)<-[:killedBy]-(killer:Character) RETURN killer",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Do Wipeout and Chris Bradley share the same gender?",
+    "gold": "MATCH (n:Character {name: 'Wipeout'}), (m0:Character {name: 'Chris Bradley'}) RETURN n.gender = m0.gender AS answer",
+    "pred": "MATCH (c1:Character {birth_name: 'Wipeout'}), (c2:Character {birth_name: 'Chris Bradley'}) RETURN c1.gender = c2.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters either have Cao Cao as their father or killed Wu Lan?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Cao Cao'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Wu Lan'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:hasFather]->(father:Character {birth_name: 'Cao Cao'}) OR (c:Character)-[:killedBy]->(victim:Character {birth_name: 'Wu Lan'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of students of those killed by Yuno Gasai and are not serial killers by occupation?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Yuno Gasai'}) WITH DISTINCT n WHERE NOT 'serial killer' IN n.occupation RETURN n.name",
+    "pred": "MATCH (killed:Character)-[:killedBy]->(killer:Character {birth_name: 'Yuno Gasai'}), (killed)-[:hasStudent]->(student:Character) WHERE NOT 'serial killer' IN student.occupation RETURN student.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many distinct organizations are there?",
+    "gold": "MATCH (n:Organization) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (o:Organization) RETURN count(DISTINCT o)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of all locations where the Night's Watch is based, and how many characters have died in each of those locations?",
+    "gold": "MATCH (n:Location)<-[r1:basedIn]-(m1:Organization {name: 'Night\\'s Watch'}) OPTIONAL MATCH (n:Location)<-[r0:diedIn]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (o:Organization {name: 'Night's Watch'})-[:basedIn]->(l:Location) WITH l MATCH (c:Character)-[:diedIn]->(l) RETURN l.name AS location_name, count(DISTINCT c) AS number_of_deaths",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the characters married to Jean Grey's mother, and who created them?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character)<-[r1:hasMother]-(m1:Character {name: 'Jean Grey'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (jean:Character {birth_name: 'Jean Grey'})-[:hasMother]->(mother:Character)-[:hasSpouse]->(spouse:Character)\nRETURN spouse.birth_name AS spouse_name, spouse.creator AS creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the locations?",
+    "gold": "MATCH (n:Location) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (l:Location) RETURN l",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and countries of citizenship of characters who died in King's Landing and have Jeyne Lannister as their mother?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'King\\'s Landing'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Jeyne Lannister'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'King's Landing'})-[:hasMother]->(m:Character {birth_name: 'Jeyne Lannister'}) RETURN c.birth_name AS character_name, c.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Future Diary universe, along with the number of characters that each of them have killed.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Future Diary universe'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {name: 'Future Diary'})\nOPTIONAL MATCH (c)-[:killedBy]->(victims:Character)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT victims) AS NumberOfKilled",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that have members who are also part of Team X, and how many such members do they have?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Team X'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (o:Organization)<-[:memberOf]-(c:Character)-[:memberOf]->(teamX:Organization {name: 'Team X'}) RETURN o.name AS OrganizationName, count(c) AS NumberOfMembers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Are Lieutenant Flap and Liu Bi of the same gender?",
+    "gold": "MATCH (n:Character {name: 'Lieutenant Flap'}), (m0:Character {name: 'Liu Bi'}) RETURN n.gender = m0.gender AS answer",
+    "pred": "MATCH (c1:Character {birth_name: 'Lieutenant Flap'}), (c2:Character {birth_name: 'Liu Bi'}) RETURN c1.gender = c2.gender AS are_same_gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many organizations are either based in Wall or have Janos Slynt as a member?",
+    "gold": "CALL { MATCH (n:Organization)-[r0:basedIn]->(m0:Location {name: 'Wall'}) RETURN n, m0 as m UNION MATCH (n:Organization)<-[r1:memberOf]-(m1:Character {name: 'Janos Slynt'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (o:Organization) WHERE (o)-[:basedIn]->(l:Location {name: 'Wall'}) OR (o)<-[:memberOf]-(c:Character {birth_name: 'Janos Slynt'}) RETURN count(DISTINCT o)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique occupations of characters whose spouses were killed by Daenerys Targaryen?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Daenerys Targaryen'}) WITH DISTINCT n UNWIND n.occupation AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)<-[:killedBy]-(d:Character {birth_name: 'Daenerys Targaryen'}) RETURN DISTINCT c.occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the fictional universes that the New Mutants are from?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'New Mutants'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse) WHERE c.name IN ['Cyclops', 'Jean Grey', 'Storm', 'Beast', 'Angel'] RETURN DISTINCT fu.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and creators of characters who have been killed by another character.",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (vict:Character)-[:killedBy]->(ass:Character) RETURN vict.birth_name AS victim_name, vict.creator AS victim_creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters either killed Liu Fu or were married to Lady Liu?",
+    "gold": "CALL { MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Liu Fu'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady Liu'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:killedBy]->(l:Character {birth_name: 'Liu Fu'}) OR (c:Character)-[:hasSpouse]->(ll:Character {birth_name: 'Lady Liu'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of characters who are married to Thundra and belong to the Marvel Universe?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Thundra'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (c:Character)-[r:hasSpouse]->(spouse:Character {birth_name: 'Thundra'})\nMATCH (c)-[:fromUniverse]->(u:FictionalUniverse {creator: 'Marvel'})\nRETURN c.birth_name AS name, c.occupation AS occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and birth names of characters who were born in Kandor and are from the Earth-167 universe.",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Kandor'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Earth-167'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Kandor'})-[:fromUniverse]->(u:FictionalUniverse {name: 'Earth-167'}) RETURN c.name AS character_name, c.birth_name AS birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who have Hoster Tully as their father and were killed by Walder Frey?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Hoster Tully'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Walder Frey'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Hoster Tully'})\nWHERE (c)-[:killedBy]->(k:Character {birth_name: 'Walder Frey'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the unique creators of characters who were both born and died in the same location?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location),(n:Character)-[r1:bornIn]->(m0:Location) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location)<-[:diedIn]-(c)\nRETURN DISTINCT c.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters were killed by Euron Greyjoy or killed Trystane Martell?",
+    "gold": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Euron Greyjoy'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Trystane Martell'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:killedBy]->(e:Character {birth_name: 'Euron Greyjoy'}) OR (c:Character)-[:killedBy]->(t:Character {birth_name: 'Trystane Martell'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many distinct locations have characters died in?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location) RETURN count(DISTINCT l)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who died in a location and are citizens of Yan?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location) WITH DISTINCT n WHERE 'Yan' IN n.country_of_citizenship RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE 'Yan' IN c.country_of_citizenship RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters whose mother is Jacqueline Bouvier, along with the count of characters who have each of them as a mother.",
+    "gold": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Jacqueline Bouvier'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Character {birth_name: 'Jacqueline Bouvier'})<-[:hasMother]-(c:Character)\nRETURN c.birth_name AS character_name, COUNT(DISTINCT c) AS count_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters whose mother is Minisa Tully, along with the count of characters who have each of them as a mother.",
+    "gold": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Minisa Tully'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Character {birth_name: 'Minisa Tully'})<-[:hasMother]-(c:Character)\nRETURN c.birth_name AS character_name, size((c)<-[:hasMother]-(:Character)) AS mother_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who are members of the Exemplars, along with the count of characters who have each of them as a father.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Exemplars'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Exemplars'})\nRETURN c.birth_name AS character_name, size((c)<-[:hasFather]-(Character)) AS father_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who is the spouse of Mystique?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character {name: 'Mystique'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (mystique:Character {birth_name: 'Mystique'})-[:hasSpouse]->(spouse:Character) RETURN spouse.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of characters who are mothers of those who died at Dreadfort, and for each of those characters, provide the number of their children who died at Dreadfort.",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:diedIn]->(m1:Location {name: 'Dreadfort'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Character)-[:hasMother]->(c:Character)-[:diedIn]->(l:Location {name: 'Dreadfort'})\nRETURN m.birth_name AS mother_name, COUNT(c) AS number_of_children_who_died_at_dreadfort",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that Fantomex is a member of?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character {name: 'Fantomex'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Fantomex'})-[:memberOf]->(o:Organization) RETURN o",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fictional universes created by Edgar Rice Burroughs?",
+    "gold": "MATCH (n:FictionalUniverse) WITH DISTINCT n WHERE n.creator = 'Edgar Rice Burroughs' RETURN n.name",
+    "pred": "MATCH (fu:FictionalUniverse {creator: 'Edgar Rice Burroughs'}) RETURN fu.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are spouses of those who killed Cao Yong?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Cao Yong'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character) WHERE c IN (MATCH (victim:Character {birth_name: 'Cao Yong'})<-[:killedBy]-(killer:Character) RETURN killer) RETURN spouse.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Do Tarzan and Karma share the same creator?",
+    "gold": "MATCH (n:Character {name: 'Tarzan'}), (m0:Character {name: 'Karma'}) RETURN n.creator = m0.creator AS answer",
+    "pred": "MATCH (t:Character {birth_name: 'Tarzan'})-[:fromUniverse]->(fu:FictionalUniverse), (k:Character {birth_name: 'Karma'})-[:fromUniverse]->(fu2:FictionalUniverse) RETURN fu.creator = fu2.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where characters born in Beyond the Wall have died, and how many such characters died in each location?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Beyond the Wall'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:bornIn]->(b:Location {name: 'Beyond the Wall'})-[:diedIn]->(d:Location)\nRETURN d.name AS location_name, COUNT(c) AS number_of_characters",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and creators of the fictional universes from which the New Mutants organization originates?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'New Mutants'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (o:Organization {name: 'New Mutants'})-[:fromUniverse]->(fu:FictionalUniverse) RETURN fu.name AS universe_name, fu.creator AS universe_creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of characters who have Azazel as their father and are also the father of Nocturne?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Azazel'}),(n:Character)<-[r1:hasFather]-(m1:Character {name: 'Nocturne'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (child:Character)-[:hasFather]->(father:Character {birth_name: 'Azazel'})-[:hasFather]->(grandfather:Character {birth_name: 'Nocturne'}) RETURN child.birth_name AS child_name, child.occupation AS child_occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and inception years of the fictional universes that both Adam X and Solo are from?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Adam X'}),(n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Solo'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred": "MATCH (adam:Character {birth_name: 'Adam X'})-[:fromUniverse]->(fu:FictionalUniverse)<-[:fromUniverse]-(solo:Character {birth_name: 'Solo'}) RETURN fu.inception_year, fu.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who were killed by Cersei Lannister, along with the number of organizations each belongs to.",
+    "gold": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Cersei Lannister'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:killedBy]->(cl:Character {birth_name: 'Cersei Lannister'})\nOPTIONAL MATCH (c)-[:memberOf]->(o:Organization)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT o) AS NumberOfOrganizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and birth names of characters who died in Yuqing Guan.",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Yuqing Guan'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Yuqing Guan'}) RETURN c.name AS name, c.birth_name AS birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are either married to Cersei Lannister or have Cassana Baratheon as their mother?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Cersei Lannister'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Cassana Baratheon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(cersei:Character {birth_name: 'Cersei Lannister'})\nRETURN c.birth_name\nUNION\nMATCH (c:Character)-[:hasMother]->(cassana:Character {birth_name: 'Cassana Baratheon'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique genders of characters who were killed by a student of Subhuti?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Subhuti'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (c:Character)-[:killedBy]->(s:Character)<-[:hasStudent]-(t:Character {birth_name: 'Subhuti'}) RETURN DISTINCT c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and birth names of characters who were born in Riverrun and killed Jon Arryn.",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Riverrun'}),(n:Character)<-[r1:killedBy]-(m1:Character {name: 'Jon Arryn'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Riverrun'})\nWHERE (c)-[:killedBy]->(:Character {name: 'Jon Arryn'})\nRETURN c.name AS character_name, c.birth_name AS birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Journey to the West universe, along with the number of students each character has.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) OPTIONAL MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'Journey to the West'})\nOPTIONAL MATCH (c)-[:hasStudent]->(s:Character)\nRETURN c.birth_name AS character_name, COUNT(s) AS number_of_students\nGROUP BY c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the unique creators of characters who were both born and died in the same location?",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location),(n:Character)-[r1:diedIn]->(m0:Location) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location)<-[:diedIn]-(c)\nRETURN DISTINCT c.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and birth names of characters from The Romance of the Three Kingdoms universe who died in Jixian.",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Jixian'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'The Romance of the Three Kingdoms universe'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Jixian'})-[:fromUniverse]->(u:FictionalUniverse {name: 'The Romance of the Three Kingdoms'}) RETURN c.name AS character_name, c.birth_name AS birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and creators of characters who killed Loras Tyrell and have Myrcella Baratheon as their kid?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Loras Tyrell'}),(n:Character)<-[r1:hasMother]-(m1:Character {name: 'Myrcella Baratheon'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (killer:Character)-[:killedBy]->(loras:Character {birth_name: 'Loras Tyrell'}), (killer)-[:hasStudent]->(myrcella:Character {birth_name: 'Myrcella Baratheon'}) RETURN killer.birth_name AS killer_name, killer.creator AS killer_creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Do Morbius, the Living Vampire, and Giganto share the same creator?",
+    "gold": "MATCH (n:Character {name: 'Morbius, the Living Vampire'}), (m0:Character {name: 'Giganto'}) RETURN n.creator = m0.creator AS answer",
+    "pred": "MATCH (m:Character {birth_name: 'Morbius, the Living Vampire'})-[:fromUniverse]->(u:FictionalUniverse), (g:Character {birth_name: 'Giganto'})-[:fromUniverse]->(u:FictionalUniverse) RETURN m.creator = g.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the places where Lysa Arryn died?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character {name: 'Lysa Arryn'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Lysa Arryn'})-[:diedIn]->(l:Location) RETURN l.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who died in Chang'an, along with the number of students each had.",
+    "gold": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Chang\\'an'}) OPTIONAL MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Chang'an'})\nOPTIONAL MATCH (c)-[:hasStudent]->(s:Character)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT s) AS NumberOfStudents",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters have Corlys Velaryon as their father or are married to Daemon Targaryen?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Corlys Velaryon'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Daemon Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Corlys Velaryon'}) OR (c:Character)-[:hasSpouse]->(s:Character {birth_name: 'Daemon Targaryen'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of students who killed their teachers.",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (teacher:Character)-[:hasStudent]->(student:Character)-[killed:killedBy]->(teacher)\nRETURN student.birth_name AS student_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are either married to Milla Donovan or are students of Stick?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Milla Donovan'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (milla:Character {birth_name: 'Milla Donovan'})<-[r1:hasSpouse]-(c1:Character) OR (stick:Character {birth_name: 'Stick'})-[r2:hasStudent]->(c2:Character) RETURN count(DISTINCT c1) + count(DISTINCT c2) AS total_characters",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters either died in Winterfell or are married to Lynesse Hightower?",
+    "gold": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Winterfell'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lynesse Hightower'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character) WHERE (c)-[:diedIn]->(:Location {name: 'Winterfell'}) OR (c)-[:hasSpouse]->(:Character {birth_name: 'Lynesse Hightower'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of fathers with children from the Cthulhu Mythos universe, along with the count of such children for each of those characters.",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Cthulhu Mythos'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (f:Character)-[:hasStudent]->(c:Character)-[:fromUniverse]->(u:FictionalUniverse {creator: 'H.P. Lovecraft'})\nRETURN f.birth_name AS father_name, COUNT(c) AS number_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the fictional universes that Lance Hunter is from?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Lance Hunter'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Lance Hunter'})-[:fromUniverse]->(fu:FictionalUniverse) RETURN fu",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where characters from The Simpsons universe have died?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'The Simpsons universe'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE (c)-[:fromUniverse]->(:FictionalUniverse {creator: 'The Simpsons'}) RETURN l",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters were either born in King's Landing or have Shaera Targaryen as their mother?",
+    "gold": "CALL { MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'King\\'s Landing'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Shaera Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character) WHERE (c)-[:bornIn]->(:Location {name: 'King\\'s Landing'}) OR (c)-[:hasMother]->(:Character {birth_name: 'Shaera Targaryen'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many different genders are there among characters who killed and married to the same character?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasSpouse]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred": "MATCH (c1:Character)-[:killedBy]->(c2:Character)<-[:hasSpouse]-(c1)\nRETURN count(DISTINCT c1.gender)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are students of both Subhuti and Xuanzang?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Subhuti'}),(n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Xuanzang'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (s1:Character {birth_name: 'Subhuti'})-[:hasStudent]->(c:Character)<-[:hasStudent]-(s2:Character {birth_name: 'Xuanzang'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that include a character whose father is Ultimate Wolverine?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Ultimate Wolverine'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Ultimate Wolverine'})-[:memberOf]->(o:Organization) RETURN o",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the characters that are either married to Lyanna Stark or have Aerys II Targaryen as their father?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Lyanna Stark'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Aerys II Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character {birth_name: 'Lyanna Stark'})\nRETURN c\nUNION\nMATCH (c:Character)-[:hasFather]->(father:Character {birth_name: 'Aerys II Targaryen'})\nRETURN c",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were either killed by Petyr Baelish or have Cersei Lannister as their mother?",
+    "gold": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Petyr Baelish'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Cersei Lannister'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character) WHERE (c)-[:killedBy]->(:Character {birth_name: 'Petyr Baelish'}) OR (c)-[:hasMother]->(:Character {birth_name: 'Cersei Lannister'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique genders of characters who have a spouse?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(:Character) RETURN DISTINCT c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of characters who are spouses of other characters?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character) RETURN c1.birth_name AS name, c1.gender UNION MATCH (c2:Character)-[:hasSpouse]->(c1:Character) RETURN c2.birth_name AS name, c2.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are members of the Midnight Sons?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Midnight Sons'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Midnight Sons'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and creators of characters from the Marvel Universe who are married to Red Guardian?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Marvel Universe'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Red Guardian'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(r:Character {birth_name: 'Red Guardian'})-[:fromUniverse]->(u:FictionalUniverse {creator: 'Marvel'})\nRETURN c.birth_name AS character_name, c.creator AS character_creator\"}",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who created Druig?",
+    "gold": "MATCH (n:Character {name: 'Druig'}) WITH DISTINCT n RETURN n.creator",
+    "pred": "MATCH (c:Character {birth_name: 'Druig'}) RETURN c.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who either have Maggie Murdock as their mother or are members of the Avengers?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Maggie Murdock'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Avengers'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Maggie Murdock'}) RETURN c.birth_name UNION MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Avengers'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of spies who are part of an organization located in Kirky Hassary?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)-[r1:basedIn]->(m1:Location {name: 'Kirky Hassary'}) WITH DISTINCT n WHERE 'spy' IN n.occupation RETURN n.name",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization)-[:basedIn]->(l:Location {name: 'Kirky Hassary'}) WHERE 'spy' IN c.occupation RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are fathers of characters from the Bråkmakargatan universe, and how such children are there for each father?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Bråkmakargatan universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (f:Character)-[:hasFather]->(c:Character)-[:fromUniverse]->(u:FictionalUniverse {creator: 'Bråkmakargatan'})\nRETURN f.birth_name AS father_name, COUNT(c) AS number_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many fictional universes include either the Daily Globe organization or the character Fei Lian?",
+    "gold": "CALL { MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'Daily Globe'}) RETURN n, m0 as m UNION MATCH (n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Fei Lian'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (u:FictionalUniverse) WHERE (u)<-[:fromUniverse]-(o:Organization {name: 'Daily Globe'}) OR (u)<-[:fromUniverse]-(c:Character {birth_name: 'Fei Lian'}) RETURN count(DISTINCT u)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and countries of citizenship of characters who are students of Stick and spouses of Milla Donovan?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Stick'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Milla Donovan'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(stick:Character {birth_name: 'Stick'})\nMATCH (c)-[:hasSpouse]->(milla:Character {birth_name: 'Milla Donovan'})\nRETURN c.birth_name AS name, c.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters from the Cosmere universe who do not work as therapists?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Cosmere'}) WITH DISTINCT n WHERE NOT 'therapist' IN n.occupation RETURN n.name",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(u:FictionalUniverse {name: 'Cosmere'}) WHERE NOT 'therapist' IN c.occupation RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Do Betty Ross and Ultimate Firestar share the same birth name?",
+    "gold": "MATCH (n:Character {name: 'Betty Ross'}), (m0:Character {name: 'Ultimate Firestar'}) RETURN n.birth_name = m0.birth_name AS answer",
+    "pred": "MATCH (betty:Character {birth_name: 'Betty Ross'}), (firestar:Character {birth_name: 'Ultimate Firestar'}) RETURN betty.birth_name = firestar.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are the mother of Myrcella Baratheon or killed Mace Tyrell?",
+    "gold": "CALL { MATCH (n:Character)<-[r0:hasMother]-(m0:Character {name: 'Myrcella Baratheon'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Mace Tyrell'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:Character)-[:hasMother]->(c:Character {birth_name: 'Myrcella Baratheon'}) OR (k:Character)-[:killedBy]->(c:Character {birth_name: 'Mace Tyrell'}) RETURN m.birth_name AS mother_name, k.birth_name AS killer_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that Jessica Drew is a member of, and how many characters are members of each of those organizations?",
+    "gold": "MATCH (n:Organization)<-[r1:memberOf]-(m1:Character {name: 'Jessica Drew'}) OPTIONAL MATCH (n:Organization)<-[r0:memberOf]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character {birth_name: 'Jessica Drew'})-[:memberOf]->(o:Organization)\nRETURN o.name AS OrganizationName, size((o)<-[:memberOf]-(c2:Character)) AS NumberOfMembers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many organizations is the spouse of Cyclops a member of?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Cyclops'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character {birth_name: 'Cyclops'})-[:hasSpouse]->(spouse:Character)-[:memberOf]->(o:Organization) RETURN count(DISTINCT o)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of characters who were killed by their spouse.",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character)<-[:killedBy]-(c1) RETURN c1.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the birthplaces of characters who are members of the Brotherhood Without Banners?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Brotherhood Without Banners'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Brotherhood Without Banners'})-[:basedIn]->(l:Location) RETURN l",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals who killed someone who has Yuno Gasai as a student?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:hasStudent]->(m1:Character {name: 'Yuno Gasai'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (killer:Character)-[:killedBy]->(victim:Character)<-[:hasStudent]-(teacher:Character {birth_name: 'Yuno Gasai'}) RETURN killer.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all children of Clancy Bouvier, along with the count of characters who have each of them as their mother.",
+    "gold": "MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Clancy Bouvier'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Character {birth_name: 'Clancy Bouvier'})-[:hasMother]->(c:Character)\nRETURN c.birth_name AS child_name, count(DISTINCT c) AS count_of_mothers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who is the paternal grandfather of Socks Heeler?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)<-[r1:hasFather]-(m1:Character {name: 'Socks Heeler'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (socks:Character {birth_name: 'Socks Heeler'})-[:hasFather]->(father:Character)-[:hasFather]->(paternalGrandfather:Character) RETURN paternalGrandfather.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where characters who were killed by Jon Snow were born, and how many such characters were born in each location?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Jon Snow'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (killed:Character)-[:killedBy]->(killer:Character {birth_name: 'Jon Snow'}), (killed)-[:bornIn]->(birthLocation:Location) RETURN birthLocation.name AS birth_location, COUNT(killed) AS number_of_characters_born_there",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many locations are there where a character was both born and died?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character),(n:Location)<-[r1:diedIn]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location)<-[:diedIn]-(c) RETURN count(DISTINCT l)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique occupations of characters who share a fictional universe with Nanase?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Nanase'}) WITH DISTINCT n UNWIND n.occupation AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (n:Character {birth_name: 'Nanase'})-[:fromUniverse]->(u:FictionalUniverse)<-[:fromUniverse]-(c:Character) RETURN DISTINCT c.occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were killed by Ramsay Bolton and have Catelyn Stark as their mother?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Ramsay Bolton'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Catelyn Stark'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:killedBy]->(r:Character {birth_name: 'Ramsay Bolton'})\nMATCH (c)-[:hasMother]->(m:Character {birth_name: 'Catelyn Stark'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the stuents of Stick, and how many organizations does each of them belong to?",
+    "gold": "MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (stick:Character {birth_name: 'Stick'})-[:hasStudent]->(student:Character) OPTIONAL MATCH (student)-[:memberOf]->(org:Organization) WITH student, count(DISTINCT org) AS org_count RETURN student.birth_name AS student_name, org_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters either killed the Demon King of Confusion or are students of Xuanzang?",
+    "gold": "CALL { MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Demon King of Confusion'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Xuanzang'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (demonKing:Character {birth_name: 'Demon King of Confusion'})<-[:killedBy]-(c1:Character) OR (xuanzang:Character {birth_name: 'Xuanzang'})-[:hasStudent]->(c2:Character) RETURN count(DISTINCT c1) + count(DISTINCT c2) AS totalCharacters",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of characters who are children of Kevan Lannister and died in the Great Sept of Baelor?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Kevan Lannister'}),(n:Character)-[r1:diedIn]->(m1:Location {name: 'Great Sept of Baelor'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (c:Character)-[r:hasFather]->(f:Character {birth_name: 'Kevan Lannister'})\nWHERE (c)-[:diedIn]->(:Location {name: 'Great Sept of Baelor'})\nRETURN c.birth_name AS name, c.occupation AS occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and creators of characters who are fathers of Lady Wang's children?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:hasMother]->(m1:Character {name: 'Lady Wang'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (ladyWang:Character {birth_name: 'Lady Wang'})-[:hasStudent]->(child:Character)<-[:hasFather]-(father:Character) RETURN father.birth_name AS father_name, father.creator AS father_creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who is the character that killed his teacher Takao Hiyama?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Takao Hiyama'}),(n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Takao Hiyama'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (student:Character)-[killed:killedBy]->(teacher:Character {birth_name: 'Takao Hiyama'}) RETURN student",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and inception years of the fictional universes from which the Sinister Six originates?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'Sinister Six'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred": "MATCH (o:Organization {name: 'Sinister Six'})-[:fromUniverse]->(fu:FictionalUniverse) RETURN fu.name AS universe_name, fu.inception_year",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique countries of citizenship of characters who were killed by Cao Hong?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Cao Hong'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (killed:Character)-[:killedBy]->(killer:Character {birth_name: 'Cao Hong'}) RETURN DISTINCT killed.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many people create characters who were both born and died in the same location?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location),(n:Character)-[r1:bornIn]->(m0:Location) WITH DISTINCT n RETURN count(DISTINCT n.creator)",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location)<-[:diedIn]-(c)\nRETURN count(DISTINCT c.creator)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who is Trixie Heeler married to?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character {name: 'Trixie Heeler'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Trixie Heeler'})-[:hasSpouse]->(spouse:Character) RETURN spouse.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters killed by Arya Stark, along with the number of characters for whom each of them is a father.",
+    "gold": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Arya Stark'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (arya:Character {birth_name: 'Arya Stark'})-[:killedBy]->(victims:Character)\nRETURN victims.birth_name AS victim_name, size((victims)-[:hasFather]->()) AS number_of_fathers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of all students of Takao Hiyama, and for each of them, provide the number of characters that have been killed by them.",
+    "gold": "MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Takao Hiyama'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (takao:Character {birth_name: 'Takao Hiyama'})-[:hasStudent]->(student:Character)\nOPTIONAL MATCH (student)-[:killedBy]->(killed:Character)\nRETURN student.birth_name AS student_name, COUNT(DISTINCT killed) AS number_of_killed",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique birth names of characters who have a mother?",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.birth_name",
+    "pred": "MATCH (c:Character)-[:hasMother]->(:Character) RETURN DISTINCT c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were killed by and are married to the same person, and are not citizens of Han?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasSpouse]->(m0:Character) WITH DISTINCT n WHERE NOT 'Han' IN n.country_of_citizenship RETURN n.name",
+    "pred": "MATCH (c:Character)-[:killedBy]->(killer:Character)<-[:hasSpouse]-(c)\nWHERE NOT 'Han' IN c.country_of_citizenship\nRETURN c.birth_name AS character_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were killed by their own spouse, but are not war chiefs?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasSpouse]->(m0:Character) WITH DISTINCT n WHERE NOT 'war chief' IN n.occupation RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)-[:killedBy]->(c)\nWHERE NOT 'war chief' IN c.occupation\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters born in King's Landing, along with the count of characters who have them as their mother.",
+    "gold": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'King\\'s Landing'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'King's Landing'})\nOPTIONAL MATCH (child:Character)-[:hasMother]->(c)\nRETURN c.birth_name AS CharacterName, COUNT(child) AS NumberOfChildren",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who have a spouse?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character) RETURN c1.birth_name AS character_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of Cai Yong's students?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Cai Yong'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (caiYong:Character {birth_name: 'Cai Yong'})-[:hasStudent]->(student:Character) RETURN student.birth_name AS student_name, student.occupation AS student_occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were either killed by Gregor Clegane or born in Dragonstone?",
+    "gold": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Gregor Clegane'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Dragonstone'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character) WHERE (c)-[:killedBy]->(:Character {birth_name: 'Gregor Clegane'}) OR (c)-[:bornIn]->(:Location {name: 'Dragonstone'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique genders of characters who are members of an organization?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization) RETURN DISTINCT c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the unique creators of characters whose mother is Lulubelle Loon?",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lulubelle Loon'}) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Lulubelle Loon'}) RETURN DISTINCT c.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of characters who were killed by their father Stannis Baratheon?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Stannis Baratheon'}),(n:Character)-[r1:hasFather]->(m1:Character {name: 'Stannis Baratheon'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (father:Character {birth_name: 'Stannis Baratheon'})-[:killedBy]->(child:Character) RETURN child.birth_name AS name, child.gender AS gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters either died in King's Landing or have Steffon Baratheon as their father?",
+    "gold": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'King\\'s Landing'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Steffon Baratheon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'King\\'s Landing'}) OR (c:Character)-[:hasFather]->(f:Character {birth_name: 'Steffon Baratheon'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Marvel Universe, along with the number of characters that they killed.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'Marvel'})\nOPTIONAL MATCH (c)-[:killedBy]->(victims:Character)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT victims) AS NumberOfKilled",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where characters from the World of Ice and Fire died, and how many such characters died in each location?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[died:diedIn]->(l:Location)\nMATCH (c)-[:fromUniverse]->(u:FictionalUniverse {name: 'World of Ice and Fire'})\nRETURN l.name AS location_name, count(c) AS number_of_deaths",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are either members of the Avengers or married to Viper?",
+    "gold": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Avengers'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Viper'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Avengers'})\nRETURN count(DISTINCT c)\nUNION\nMATCH (c1:Character)-[:hasSpouse]->(c2:Character {name: 'Viper'})\nRETURN count(DISTINCT c1)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many distinct locations have members of the Brotherhood Without Banners died in?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Brotherhood Without Banners'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location) WHERE (c)-[:memberOf]->(:Organization {name: 'Brotherhood Without Banners'}) RETURN count(DISTINCT l)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many locations is the Night's Watch based in?",
+    "gold": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization {name: 'Night\\'s Watch'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (o:Organization {name: 'Night\\'s Watch'})-[:basedIn]->(l:Location) RETURN count(DISTINCT l)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals who were killed by their fathers?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (father:Character)-[:hasFather]->(child:Character)-[:killedBy]->(father)\nRETURN child.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters born in Dragonstone, along with the count of characters for whom they are the mother.",
+    "gold": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Dragonstone'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Dragonstone'})\nOPTIONAL MATCH (c)<-[:hasMother]-(child:Character)\nRETURN c.birth_name AS character_name, COUNT(child) AS number_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who died in Dorne, along with the number of characters for each of whom they are the mother.",
+    "gold": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Dorne'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Dorne'})\nOPTIONAL MATCH (c)<-[:hasMother]-(child:Character)\nRETURN c.birth_name AS character_name, COUNT(child) AS number_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of characters who were killed by Bian Hong and are married to Lady Xu?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Bian Hong'}),(n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Lady Xu'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (c:Character)-[:killedBy]->(bianHong:Character {birth_name: 'Bian Hong'})\nMATCH (c)-[:hasSpouse]->(ladyXu:Character {birth_name: 'Lady Xu'})\nRETURN c.birth_name AS name, c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Bambi universe, along with the count of characters for whom each is a mother.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Bambi universe'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'Bambi'})\nOPTIONAL MATCH (c)<-[:hasMother]-(child:Character)\nRETURN c.birth_name AS CharacterName, COUNT(child) AS NumberOfChildren",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and countries of citizenship of individuals are mothers of someone who killed Lancel Lannister?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Lancel Lannister'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (m:Character)-[:hasMother]->(c:Character)-[:killedBy]->(l:Character {birth_name: 'Lancel Lannister'}) RETURN m.birth_name AS mother_name, m.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of characters who were killed by their own fathers?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasFather]->(m0:Character) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (c:Character)-[:killedBy]->(f:Character)\nWHERE (c)-[:hasFather]->(f)\nRETURN c.birth_name AS character_name, c.occupation AS character_occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of characters who have students that killed Baigujing, and for each, provide the number of such students.",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Baigujing'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:killedBy]->(v:Character {birth_name: 'Baigujing'}) RETURN c.birth_name AS character_name, count(DISTINCT s) AS number_of_students",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique genders of characters whose paternal grandfather is Cao Song?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Cao Song'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (c:Character)-[:hasFather]->(father:Character)-[:hasFather]->(grandfather:Character {birth_name: 'Cao Song'}) RETURN DISTINCT c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of characters who have students born in Mount Huaguo, and for each, provide the number of such students.",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Mount Huaguo'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:bornIn]->(l:Location {name: 'Mount Huaguo'}) RETURN c.birth_name AS CharacterName, count(s) AS NumberOfStudents",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that have members who are students of Stick, and how many such students are members of each organization?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (stick:Character {birth_name: 'Stick'})-[:hasStudent]->(student:Character)-[:memberOf]->(org:Organization) RETURN org, count(student)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of all characters who are members of Heroes for Hire, and for each of them, provide the number of characters who are their teachers.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Heroes for Hire'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Heroes for Hire'})\nOPTIONAL MATCH (c)<-[:hasStudent]-(teacher:Character)\nRETURN c.birth_name AS character_name, COUNT(DISTINCT teacher) AS number_of_teachers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique genders of characters whose fathers were killed by Euron Greyjoy?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Euron Greyjoy'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character)-[:killedBy]->(e:Character {birth_name: 'Euron Greyjoy'}) RETURN DISTINCT c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that the spouse of Scarlet Witch belongs to, and how many characters who are her spouse are members of each organization?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Scarlet Witch'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (sw:Character {birth_name: 'Scarlet Witch'})-[:hasSpouse]->(spouse:Character)-[:memberOf]->(org:Organization)\nRETURN org, count(DISTINCT spouse)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of all the characters who are students of Xuanzang, and how many teachers does each of them have?",
+    "gold": "MATCH (n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Xuanzang'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (s:Character)-[:hasStudent]->(student:Character)\nWHERE s.birth_name = 'Xuanzang'\nRETURN student.birth_name AS StudentName, size((student)<-[:hasStudent]-()) AS NumberOfTeachers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations located in New New York?",
+    "gold": "MATCH (n:Organization)-[r0:basedIn]->(m0:Location {name: 'New New York'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization)-[:basedIn]->(l:Location {name: 'New New York'}) RETURN o.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters either killed Loras Tyrell or are the mother of Tommen Baratheon?",
+    "gold": "CALL { MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Loras Tyrell'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasMother]-(m1:Character {name: 'Tommen Baratheon'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:killedBy]->(loras:Character {birth_name: 'Loras Tyrell'}) OR (c:Character)-[:hasMother]->(tommen:Character {birth_name: 'Tommen Baratheon'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are mothers and work as geneticists?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH DISTINCT n WHERE 'geneticist' IN n.occupation RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasMother]->(:Character) WHERE 'geneticist' IN c.occupation RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and countries of citizenship of characters whose mother is Cersei Lannister and who were killed by Ellaria Sand?",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Cersei Lannister'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Ellaria Sand'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Cersei Lannister'})\nWHERE (c)-[:killedBy]->(k:Character {birth_name: 'Ellaria Sand'})\nRETURN c.birth_name AS name, c.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the mothers of characters killed by Stannis Baratheon.",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Stannis Baratheon'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (m:Character)-[:hasMother]->(c:Character)<-[:killedBy]-(s:Character {birth_name: 'Stannis Baratheon'}) RETURN m",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals who killed Rhaegar Targaryen's children, and how many such children did each of them kill?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Rhaegar Targaryen'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (rhaegar:Character {birth_name: 'Rhaegar Targaryen'})-[:hasStudent]->(child:Character)<-[killedBy:killedBy]-(killer:Character) RETURN killer.birth_name AS killer_name, COUNT(child) AS number_of_children_killed",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are part of both X-Factor and Fallen Angels and have an occupation as a thief?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'X-Factor'}),(n:Character)-[r1:memberOf]->(m1:Organization {name: 'Fallen Angels'}) WITH DISTINCT n WHERE 'thief' IN n.occupation RETURN n.name",
+    "pred": "MATCH (c:Character {occupation: 'thief'})-[:memberOf]->(o1:Organization {name: 'X-Factor'})\nMATCH (c)-[:memberOf]->(o2:Organization {name: 'Fallen Angels'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the characters that have a student who is also a student of Xuanzang, and what are their birth names?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Xuanzang'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character)<-[:hasStudent]-(x:Character {birth_name: 'Xuanzang'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where Planet Express is based and where Leela was born?",
+    "gold": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization {name: 'Planet Express'}),(n:Location)<-[r1:bornIn]-(m1:Character {name: 'Leela'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization {name: 'Planet Express'})-[:basedIn]->(l1:Location) MATCH (c:Character {birth_name: 'Leela'})-[:bornIn]->(l2:Location) RETURN l1.name AS planet_express_location, l2.name AS leela_birth_location",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of characters who are mothers of members of the Defenders, and for each of those characters, provide the number of Defenders who are their children.",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Defenders'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Character)-[:hasMother]->(d:Character)-[:memberOf]->(o:Organization {name: 'Defenders'})\nRETURN m.birth_name AS MotherName, COUNT(d) AS NumberOfDefenders",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations located in Kirky Hassary?",
+    "gold": "MATCH (n:Organization)-[r0:basedIn]->(m0:Location {name: 'Kirky Hassary'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization)-[:basedIn]->(l:Location {name: 'Kirky Hassary'}) RETURN o.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many fictional universes include either Maha Yogi or the organization MI-13?",
+    "gold": "CALL { MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Maha Yogi'}) RETURN n, m0 as m UNION MATCH (n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Organization {name: 'MI-13'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (u:FictionalUniverse) WHERE (u)<-[:fromUniverse]-(c:Character {birth_name: 'Maha Yogi'}) OR (u)<-[:fromUniverse]-(o:Organization {name: 'MI-13'}) RETURN count(DISTINCT u)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who are members of the Kingsguard, along with the number of individuals they have killed.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Kingsguard'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Kingsguard'})\nOPTIONAL MATCH (c)-[:killedBy]->(victims:Character)\nRETURN c.name AS CharacterName, count(DISTINCT victims) AS NumberOfKilled",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique occupations of characters who was killed by someone that was killed by Jaime Lannister?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Jaime Lannister'}) WITH DISTINCT n UNWIND n.occupation AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (c:Character)-[:killedBy]->(killedByJaime:Character)<-[:killedBy]-(jaime:Character {birth_name: 'Jaime Lannister'}) RETURN DISTINCT c.occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations located in the place where Jon Snow died?",
+    "gold": "MATCH (n:Organization)-[r0:basedIn]->(m0:Location)<-[r1:diedIn]-(m1:Character {name: 'Jon Snow'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Jon Snow'})-[:diedIn]->(l:Location) MATCH (o:Organization)-[:basedIn]->(l) RETURN o",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where organizations from the World of Ice and Fire are based, and how many such organizations are based in each location?",
+    "gold": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (o:Organization)-[r:basedIn]->(l:Location) WHERE (o)-[:fromUniverse]->(fu:FictionalUniverse {name: 'World of Ice and Fire'}) RETURN l.name AS location_name, count(o) AS organization_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals whose mother is Lady Wu and who are married to Lady Wang?",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lady Wu'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady Wang'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Lady Wu'})\nWHERE (c)-[:hasSpouse]->(s:Character {birth_name: 'Lady Wang'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the unique creators of characters who have been killed by another character?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred": "MATCH (c1:Character)-[:killedBy]->(c2:Character) RETURN DISTINCT c1.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who were killed by Gan Ning, along with the number of characters who have them as a father.",
+    "gold": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Gan Ning'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (ganNing:Character {birth_name: 'Gan Ning'})-[:killedBy]->(killed:Character) WITH killed MATCH (killed)<-[:hasFather]-(children:Character) RETURN killed.birth_name AS killed_by_gan_ning, count(DISTINCT children) AS number_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the places where the spouse of Renly Baratheon was born?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Renly Baratheon'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (renly:Character {birth_name: 'Renly Baratheon'})-[:hasSpouse]->(spouse:Character)-[:bornIn]->(birthplace:Location) RETURN birthplace",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that have members born in Asgard, and how many such members does each organization have?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Asgard'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (o:Organization)-[:memberOf*0..]->(c:Character)-[r:bornIn]->(l:Location {name: 'Asgard'})\nRETURN o.name AS OrganizationName, COUNT(DISTINCT c) AS NumberOfMembersBornInAsgard",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many distinct locations are there where a child of Maekar I Targaryen died?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Maekar I Targaryen'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (maekar:Character {birth_name: 'Maekar I Targaryen'})-[:hasStudent]->(child:Character)-[:diedIn]->(location:Location) RETURN count(DISTINCT location)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are mothers of those who are students of Stick?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (stick:Character {birth_name: 'Stick'})-[:hasStudent]->(student:Character)<-[:hasMother]-(mother:Character) RETURN mother.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who have teachers from the Future Diary universe, and how many such teachers does each of them have?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Future Diary universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:fromUniverse]->(u:FictionalUniverse {name: 'Future Diary'})\nRETURN c.birth_name AS student_name, count(DISTINCT s) AS number_of_teachers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and birth names of mothers of Liu Biao's children?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Liu Biao'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (l:Character {birth_name: 'Liu Biao'})-[:hasStudent]->(c:Character)-[:hasMother]->(m:Character) RETURN m.birth_name, m.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Where was Ygritte born?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character {name: 'Ygritte'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Ygritte'})-[:bornIn]->(l:Location) RETURN l",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the characters that died in the same location where Liu Shan was born, and who created them?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location)<-[r1:bornIn]-(m1:Character {name: 'Liu Shan'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (liuShan:Character {birth_name: 'Liu Shan'})-[:bornIn]->(birthLocation:Location)\nMATCH (otherCharacter:Character)-[:diedIn]->(birthLocation)\nRETURN otherCharacter.birth_name AS character_name, otherCharacter.creator AS creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who killed individuals from The Romance of the Three Kingdoms universe, and how many such individuals did each of them kill?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'The Romance of the Three Kingdoms universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (u:FictionalUniverse {creator: 'The Romance of the Three Kingdoms'})<-[:fromUniverse]-(c:Character)-[:killedBy]->(v:Character)\nRETURN c.birth_name AS killer_name, COUNT(DISTINCT v) AS number_of_killed",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who is the paternal grandmother of Liu Xuan?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)<-[r1:hasFather]-(m1:Character {name: 'Liu Xuan'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (liuXuan:Character {birth_name: 'Liu Xuan'})-[:hasFather]->(father:Character)-[:hasMother]->(paternalGrandmother:Character) RETURN paternalGrandmother",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were killed by their students?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (student:Character)-[:hasStudent]->(teacher:Character)<-[:killedBy]-(student)\nRETURN student.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who are members of the Cabal, along with the number of organizations each character belongs to.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Cabal'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Cabal'})\nRETURN c.name AS character_name, size((c)-[:memberOf]->()) AS number_of_organizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and birth names of characters whose mother is Lady Wu and who belong to The Romance of the Three Kingdoms universe.",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lady Wu'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'The Romance of the Three Kingdoms universe'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Lady Wu'})-[:fromUniverse]->(u:FictionalUniverse {creator: 'The Romance of the Three Kingdoms'}) RETURN c.birth_name, c.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who either have Magus as their father or are members of the New Mutants?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Magus'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'New Mutants'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Magus'}) RETURN c.birth_name UNION MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'New Mutants'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fathers who killed their own children?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (father:Character)-[:hasFather]->(child:Character)<-[:killedBy]-(father) RETURN father.birth_name AS father_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Do Feral and Nightcrawler share the same birth name?",
+    "gold": "MATCH (n:Character {name: 'Feral'}), (m0:Character {name: 'Nightcrawler'}) RETURN n.birth_name = m0.birth_name AS answer",
+    "pred": "MATCH (feral:Character {birth_name: 'Feral'})\nMATCH (nightcrawler:Character {birth_name: 'Nightcrawler'})\nRETURN feral.birth_name = nightcrawler.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters that killed Jiao Bing?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Jiao Bing'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (killer:Character)-[:killedBy]->(victim:Character {birth_name: 'Jiao Bing'}) RETURN killer.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who either died in Westeros or have Melessa Tarly as their mother?",
+    "gold": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Westeros'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Melessa Tarly'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character) WHERE (c-[:diedIn]->(l:Location {name: 'Westeros'})) OR (c-[:hasMother]->(m:Character {birth_name: 'Melessa Tarly'})) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are fathers?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasFather]->(:Character) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the unique creators of characters whose mother is Minisa Tully and who were born in Riverrun?",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Minisa Tully'}),(n:Character)-[r1:bornIn]->(m1:Location {name: 'Riverrun'}) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Minisa Tully'})-[:bornIn]->(l:Location {name: 'Riverrun'}) RETURN DISTINCT c.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the fictional universes from which the character Cao Wenshu originates?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Cao Wenshu'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Cao Wenshu'})-[:fromUniverse]->(fu:FictionalUniverse) RETURN fu.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters that have teachers",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (s:Character)-[:hasStudent]->(t:Character) RETURN s.birth_name AS student_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the spouses of Trixie Heeler?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character {name: 'Trixie Heeler'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Trixie Heeler'})-[:hasSpouse]->(spouse:Character) RETURN spouse",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of individuals born in King's Landing who are married to Alysanne Targaryen?",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'King\\'s Landing'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Alysanne Targaryen'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (c:Character)-[r:hasSpouse]->(a:Character {birth_name: 'Alysanne Targaryen'})\nMATCH (c)-[b:bornIn]->(l:Location {name: 'King's Landing'})\nRETURN c.birth_name AS name, c.gender AS gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals who killed someone, provided they are not terrorists by occupation?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH DISTINCT n WHERE NOT 'terrorist' IN n.occupation RETURN n.name",
+    "pred": "MATCH (killer:Character)-[:killedBy]->(victim:Character) WHERE NOT 'terrorist' IN killer.occupation RETURN killer.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where organizations that Samwell Tarly is a member of are based, and how many such organizations are based in each location?",
+    "gold": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization)<-[r1:memberOf]-(m1:Character {name: 'Samwell Tarly'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character {birth_name: 'Samwell Tarly'})-[:memberOf]->(o:Organization)-[:basedIn]->(l:Location) RETURN l.name AS location_name, count(o) AS number_of_organizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the characters married to Mystique, and who created them?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Mystique'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (mystique:Character {birth_name: 'Mystique'})-[:hasSpouse]-(spouse:Character) RETURN spouse.birth_name AS spouse_name, spouse.creator AS creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters are students of someone from the Journey to the West universe, and how many such characters are there for each student?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (s:Character)-[:hasStudent]->(c:Character)-[:fromUniverse]->(u:FictionalUniverse {creator: 'Journey to the West'}) RETURN c.birth_name AS student_name, count(DISTINCT s) AS number_of_teachers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and birth names of characters who were born in Metropolis.",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Metropolis'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Metropolis'}) RETURN c.name, c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and genders of characters who were both married to and killed by the same person.",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character)<-[:killedBy]-(c)\nRETURN c.birth_name AS character_name, c.gender AS character_gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are either married to Guo Guifei or are father of Cao Lin?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Guo Guifei'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasFather]-(m1:Character {name: 'Cao Lin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(g:Character {birth_name: 'Guo Guifei'}) OR (c:Character)-[:hasFather]->(cl:Character {birth_name: 'Cao Lin'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where characters who died in Dorne were born, and how many such characters were born in each location?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:diedIn]->(m1:Location {name: 'Dorne'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:diedIn]->(d:Location {name: 'Dorne'})-[:basedIn]->(b:Location)\nOPTIONAL MATCH (c)-[:bornIn]->(b)\nRETURN b.name AS birth_location, COUNT(DISTINCT c) AS number_of_characters\nGROUP BY b.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are fathers to someone born in The Riverlands?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'The Riverlands'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (f:Character)-[:hasStudent]->(s:Character)-[:bornIn]->(l:Location {name: 'The Riverlands'}) RETURN f.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who died at the Twins, along with the number of organizations each was a member of.",
+    "gold": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Twins'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Twins'})\nOPTIONAL MATCH (c)-[:memberOf]->(o:Organization)\nRETURN c.birth_name AS character_name, COUNT(DISTINCT o) AS number_of_organizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters have Baron Strucker as their father and are members of the Thunderbolts?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Baron Strucker'}),(n:Character)-[r1:memberOf]->(m1:Organization {name: 'Thunderbolts'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Baron Strucker'})-[:memberOf]->(o:Organization {name: 'Thunderbolts'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are members of either the Brotherhood of Mutants or the X-Men?",
+    "gold": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Brotherhood of Mutants'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'X-Men'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization) WHERE o.name IN ['Brotherhood of Mutants', 'X-Men'] RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Marvel Universe, along with the number of teachers that each of them have.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'Marvel'})\nOPTIONAL MATCH (c)-[:hasStudent*]->(teacher:Character)\nRETURN c.birth_name AS character_name, COUNT(DISTINCT teacher) AS number_of_teachers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where characters who were killed by Huang Zhong died, and how many such characters died in each location?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Huang Zhong'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:killedBy]->(killer:Character {birth_name: 'Huang Zhong'})-[:diedIn]->(l:Location)\nRETURN l.name AS location_name, COUNT(c) AS number_of_characters_died",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique countries of citizenship of individuals who are mothers?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (m:Character)-[:hasMother]->(:Character) RETURN DISTINCT m.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where characters were born?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location) RETURN l.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of characters who have a student married to Milla Donovan?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Milla Donovan'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:hasSpouse]->(m:Character {birth_name: 'Milla Donovan'}) RETURN c.birth_name AS student_name, c.gender AS student_gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals who killed someone married to Jeyne Westerling, and how many such spouses did each of them kill?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Jeyne Westerling'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (spouse:Character)-[:hasSpouse]->(jeyne:Character {birth_name: 'Jeyne Westerling'})\nMATCH (killer:Character)-[:killedBy]->(spouse)\nRETURN killer.birth_name AS killer_name, COUNT(spouse) AS number_of_spouses_killed",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the name and creator of the mother of Tommen Baratheon who killed Kevan Lannister?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character {name: 'Tommen Baratheon'}),(n:Character)<-[r1:killedBy]-(m1:Character {name: 'Kevan Lannister'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (tommen:Character {birth_name: 'Tommen Baratheon'})-[:hasMother]->(mother:Character), (tommen)-[:killedBy]->(kevan:Character {birth_name: 'Kevan Lannister'}) RETURN mother.birth_name AS mother_name, mother.creator AS mother_creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of characters who have Yuno Gasai as their student?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Yuno Gasai'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (yuno:Character {birth_name: 'Yuno Gasai'})-[:hasStudent]->(student:Character) RETURN student.birth_name AS name, student.occupation AS occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and countries of citizenship of the mother of Celeste Cuckoo?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character {name: 'Celeste Cuckoo'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (celeste:Character {birth_name: 'Celeste Cuckoo'})-[:hasMother]->(mother:Character) RETURN mother.birth_name AS mother_name, mother.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are married to Alerie Tyrell and were killed by Cersei Lannister?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Alerie Tyrell'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Cersei Lannister'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(a:Character {birth_name: 'Alerie Tyrell'})\nWHERE (c)-[:killedBy]->(ce:Character {birth_name: 'Cersei Lannister'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were either born in King's Landing or are married to Alysanne Targaryen?",
+    "gold": "CALL { MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'King\\'s Landing'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Alysanne Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character) WHERE (c)-[:bornIn]->(:Location {name: 'King\\'s Landing'}) OR (c)-[:hasSpouse]->(:Character {birth_name: 'Alysanne Targaryen'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and inception years of the fictional universes from which Lance Hunter originates?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Lance Hunter'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred": "MATCH (c:Character {birth_name: 'Lance Hunter'})-[:fromUniverse]->(fu:FictionalUniverse) RETURN fu.name AS universe_name, fu.inception_year",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and countries of citizenship of the spouses of Stick's students?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (stick:Character)-[:hasStudent]->(student:Character)-[:hasSpouse]->(spouse:Character) WHERE stick.birth_name = 'Stick' RETURN spouse.birth_name AS spouse_name, spouse.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all children of Joanna Lannister, along with the count of characters each of them have killed.",
+    "gold": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Joanna Lannister'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (j:Character {birth_name: 'Joanna Lannister'})-[:hasStudent*]->(child:Character)\nRETURN child.birth_name AS child_name, SIZE((child)-[:killedBy]->()) AS killed_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where organizations that Eddison Tollett is a member of are based, and how many such organizations are based in each location?",
+    "gold": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization)<-[r1:memberOf]-(m1:Character {name: 'Eddison Tollett'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character {creator: 'Eddison Tollett'})-[:memberOf]->(o:Organization)-[:basedIn]->(l:Location) RETURN l, count(o)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fictional universes from which a character, who is a student of Guan Yin, originates?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Guan Yin'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character), (s)-[:fromUniverse]->(fu:FictionalUniverse) WHERE c.birth_name = 'Guan Yin' RETURN fu",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of all characters from the Bluey universe, along with the number of characters for whom each is a father.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Bluey universe'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(u:FictionalUniverse {name: 'Bluey'})\nOPTIONAL MATCH (c)-[:hasFather]->(child:Character)\nRETURN c.birth_name AS character_name, COUNT(child) AS number_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters either have Lady Wang as their mother or are married to Lady He?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lady Wang'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Lady He'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Lady Wang'}) OR (c:Character)-[:hasSpouse]->(s:Character {birth_name: 'Lady He'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of all characters who are members of the X-Men, and for each, provide the number of characters for whom each is the mother.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'X-Men'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'X-Men'})\nOPTIONAL MATCH (c)<-[:hasMother]-(child:Character)\nRETURN c.birth_name AS character_name, COUNT(child) AS number_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and birth names of characters who have teachers?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(:Character) RETURN c.birth_name, c.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of characters who are students of characters that have Zhu Bajie as a student, and for each, provide the number of such characters.",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:hasStudent]->(m1:Character {name: 'Zhu Bajie'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (zhu:Character {birth_name: 'Zhu Bajie'})-[:hasStudent]->(teacher:Character)<-[:hasStudent]-(student:Character) RETURN student.birth_name AS student_name, count(student) AS number_of_students",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique genders of characters who have a spouse and killed that spouse?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(s:Character)<-[:killedBy]-(c) RETURN DISTINCT c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters whose mother is Cassana Baratheon or who killed Mance Rayder?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Cassana Baratheon'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Mance Rayder'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Cassana Baratheon'}) RETURN c.birth_name UNION MATCH (c:Character)-[:killedBy]->(v:Character {birth_name: 'Mance Rayder'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who died?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who are members of the Lethal Legion, along with the count of characters who have them as a mother.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Lethal Legion'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Lethal Legion'})\nRETURN c.birth_name AS character_name, size((c)<-[:hasMother]-(m:Character)) AS mother_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who either have Yog-Sothoth as their father or are the father of Cthulhu?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Yog-Sothoth'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasFather]-(m1:Character {name: 'Cthulhu'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Yog-Sothoth'}) RETURN c.birth_name UNION MATCH (c:Character)-[:hasFather]->(ch:Character {birth_name: 'Cthulhu'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who have a mother?",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasMother]->(:Character) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and inception years of fictional universes from which a character married to Daimon Hellstrom originates?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Daimon Hellstrom'}) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(spouse:Character {birth_name: 'Daimon Hellstrom'})-[:fromUniverse]->(fu:FictionalUniverse) RETURN fu.inception_year, fu.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters born in Dragonstone, along with the count of characters who have them as a father.",
+    "gold": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Dragonstone'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Dragonstone'})\nOPTIONAL MATCH (c)<-[:hasFather]-(child:Character)\nRETURN c.birth_name AS CharacterName, COUNT(child) AS NumberOfChildren",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters whose mother is Jean Grey, along with the number of organizations each character is a member of.",
+    "gold": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Jean Grey'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Character {birth_name: 'Jean Grey'})<-[:hasMother]-(c:Character)-[:memberOf]->(o:Organization) WITH c, count(DISTINCT o) AS org_count RETURN c.birth_name AS character_name, org_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique genders of characters whose mother is married to Stripe Heeler?",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Stripe Heeler'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (m:Character)-[:hasSpouse]->(s:Character {birth_name: 'Stripe Heeler'})<-[:hasMother]-(c:Character) RETURN DISTINCT c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names and creators of characters who were students and killed their teachers.",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (s:Character)-[:hasStudent]->(t:Character)<-[:killedBy]-(s)\nRETURN s.birth_name AS student_name, s.creator AS student_creator, t.birth_name AS teacher_name, t.creator AS teacher_creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many distinct genders are there among the characters?",
+    "gold": "MATCH (n:Character) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred": "MATCH (c:Character) RETURN count(DISTINCT c.gender)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fictional universes that include a character who has Yukiteru Amano as a student?",
+    "gold": "MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character)-[r1:hasStudent]->(m1:Character {name: 'Yukiteru Amano'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character {birth_name: 'Yukiteru Amano'})-[:fromUniverse]->(u:FictionalUniverse) RETURN u",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique genders of characters who were both born and died in the same location?",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location),(n:Character)-[r1:diedIn]->(m0:Location) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location)<-[:diedIn]-(c)\nRETURN DISTINCT c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who have a student married to Milla Donovan?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Milla Donovan'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:hasSpouse]->(m:Character {birth_name: 'Milla Donovan'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who have students born in Mount Huaguo?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Mount Huaguo'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:bornIn]->(l:Location {name: 'Mount Huaguo'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the mothers whose children were killed by Cersei Lannister, and how many children did Cersei kill for each of these mothers?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Cersei Lannister'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character {birth_name: 'Cersei Lannister'})-[:killedBy]->(child:Character)-[r:hasMother]->(mother:Character)\nRETURN mother.birth_name AS mother_name, COUNT(child) AS number_of_children_killed",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are either members of the Hellfire Club or have Jacob Shaw as their father?",
+    "gold": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Hellfire Club'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Jacob Shaw'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Hellfire Club'})\nRETURN count(DISTINCT c)\nUNION\nMATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Jacob Shaw'})\nRETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that originate from the Known Space universe?",
+    "gold": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Known Space'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization)-[:fromUniverse]->(fu:FictionalUniverse {name: 'Known Space'}) RETURN o.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many different genders are there among characters who have students?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(:Character) RETURN count(DISTINCT c.gender)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Journey to the West universe, along with the number of teachers each of them has.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {name: 'Journey to the West'})\nOPTIONAL MATCH (c)-[:hasStudent*]->(teacher:Character)\nRETURN c.birth_name AS character_name, COUNT(DISTINCT teacher) AS number_of_teachers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters either have Lady Wang as their mother or are married to Lady He?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Lady Wang'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady He'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Lady Wang'}) OR (c:Character)-[:hasSpouse]->(s:Character {birth_name: 'Lady He'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many unique birth names are there for characters who have students?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n.birth_name)",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(:Character) RETURN count(DISTINCT c.birth_name)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations?",
+    "gold": "MATCH (n:Organization) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization) RETURN o",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations from the Marvel Universe that Kamala Khan is a member of?",
+    "gold": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Marvel Universe'}),(n:Organization)<-[r1:memberOf]-(m1:Character {name: 'Kamala Khan'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Kamala Khan'})-[:memberOf]->(o:Organization)-[:fromUniverse]->(u:FictionalUniverse {creator: 'Marvel'}) RETURN o",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters whose father is Li Jing, along with the number of teachers each of them has.",
+    "gold": "MATCH (n:Character)-[r1:hasFather]->(m1:Character {name: 'Li Jing'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Li Jing'})\nOPTIONAL MATCH (c)-[:hasStudent*]->(t:Character)\nRETURN c.birth_name AS character_name, COUNT(DISTINCT t) AS number_of_teachers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the name of the character who is a member of the X-Men and is the mother of Wolfsbane?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'X-Men'}),(n:Character)<-[r1:hasMother]-(m1:Character {name: 'Wolfsbane'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'X-Men'})\nWHERE EXISTS {(c)-[:hasMother]->(:Character {name: 'Wolfsbane'})}\nRETURN c.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of the spouses of Cao Zhang's father?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character)<-[r1:hasFather]-(m1:Character {name: 'Cao Zhang'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (caoZhang:Character {birth_name: 'Cao Zhang'})-[:hasFather]->(father:Character)-[:hasSpouse]->(spouse:Character) RETURN spouse.birth_name AS spouse_name, spouse.occupation AS spouse_occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fictional universes that include either Stryfe or Hope Summers?",
+    "gold": "CALL { MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Character {name: 'Stryfe'}) RETURN n, m0 as m UNION MATCH (n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Hope Summers'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(u:FictionalUniverse) WHERE c.birth_name IN ['Stryfe', 'Hope Summers'] RETURN DISTINCT u",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of warriors from the World of Ice and Fire who died in Dragonstone?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'World of Ice and Fire'}),(n:Character)-[r1:diedIn]->(m1:Location {name: 'Dragonstone'}) WITH DISTINCT n WHERE 'warrior' IN n.occupation RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Dragonstone'})-[:basedIn]->(u:FictionalUniverse {name: 'World of Ice and Fire'}) WHERE 'warrior' IN c.occupation RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who died in the Great Sept of Baelor, along with the number of organizations each was a member of.",
+    "gold": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Great Sept of Baelor'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are members of the Wild Pack and are citizens of Symkaria?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Wild Pack'}) WITH DISTINCT n WHERE 'Symkaria' IN n.country_of_citizenship RETURN n.name",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Wild Pack'}) WHERE 'Symkaria' IN c.country_of_citizenship RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of characters who are married to Milla Donovan and are students of Stick?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character {name: 'Milla Donovan'}),(n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(m:Character {birth_name: 'Milla Donovan'})\nWHERE (c)-[:hasStudent*]->(:Character {birth_name: 'Stick'})\nRETURN c.birth_name AS name, c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are members of organizations located in Kirky Hassary, and how many such organizations is each character a member of?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)-[r1:basedIn]->(m1:Location {name: 'Kirky Hassary'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization)-[:basedIn]->(l:Location {name: 'Kirky Hassary'})\nRETURN c.birth_name AS character_name, count(DISTINCT o) AS number_of_organizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many organizations exist in the same fictional universe as Shallan Davar?",
+    "gold": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse)<-[r1:fromUniverse]-(m1:Character {name: 'Shallan Davar'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character {birth_name: 'Shallan Davar'})-[:fromUniverse]->(fu:FictionalUniverse) MATCH (o:Organization)-[:fromUniverse]->(fu) RETURN count(DISTINCT o)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals who killed the person that taught them?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasStudent]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (student:Character)-[:hasStudent]->(teacher:Character)<-[:killedBy]-(killer:Character) RETURN killer.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are either members of the Brotherhood Without Banners or were born in King's Landing?",
+    "gold": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Brotherhood Without Banners'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'King\\'s Landing'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Brotherhood Without Banners'}) OR (c:Character)-[:bornIn]->(l:Location {name: 'King\\'s Landing'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of characters who have Zhu Bajie as their student?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Zhu Bajie'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (zhuBajie:Character {birth_name: 'Zhu Bajie'})-[:hasStudent]->(student:Character) RETURN student.birth_name AS name, student.gender AS gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where characters from the Earth-167 universe were born, and how many such characters were born in each location?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Earth-167'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[r:bornIn]->(l:Location) WHERE (c)-[:fromUniverse]->(:FictionalUniverse {name: 'Earth-167'}) RETURN l.name AS location_name, COUNT(c) AS number_of_characters_born",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters born in Riverrun, along with the count of characters that they have killed.",
+    "gold": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Riverrun'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Riverrun'})\nRETURN c.birth_name AS CharacterName, size((c)-[:killedBy]->()) AS KilledCount",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who killed individuals from the Cosmere universe, and how many such victims from the Cosmere are there for each of these characters?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Cosmere'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (killer:Character)-[:killedBy]->(victim:Character)-[:fromUniverse]->(universe:FictionalUniverse {name: 'Cosmere'}) RETURN killer.birth_name AS killer_name, COUNT(victim) AS number_of_victims",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters that killed Lü Xiang?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Lü Xiang'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (killer:Character)-[:killedBy]->(victim:Character {birth_name: 'Lü Xiang'}) RETURN killer.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique genders of characters who are members of the Night's Watch and died Beyond the Wall?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Night\\'s Watch'}),(n:Character)-[r1:diedIn]->(m1:Location {name: 'Beyond the Wall'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Night\\'s Watch'})\nWHERE (c)-[:diedIn]->(l:Location {name: 'Beyond the Wall'})\nRETURN DISTINCT c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique countries of citizenship of fathers of members of the Future Foundation?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Future Foundation'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character)-[:memberOf]->(o:Organization {name: 'Future Foundation'}) RETURN DISTINCT f.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Marvel Universe, along with the number of students each one has.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) OPTIONAL MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'Marvel'})\nOPTIONAL MATCH (c)-[:hasStudent]->(s:Character)\nRETURN c.birth_name AS character_name, COUNT(s) AS number_of_students\nGROUP BY c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many creators are there of characters who were killed by Liao Hua?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Liao Hua'}) WITH DISTINCT n RETURN count(DISTINCT n.creator)",
+    "pred": "MATCH (c:Character)-[:killedBy]->(killer:Character {birth_name: 'Liao Hua'}) RETURN count(DISTINCT c.creator)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of individuals who killed someone born in Winterfell, and for each, indicate the deaths how many Winterfell-born individuals they were responsible for.",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Winterfell'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (v:Location {name: 'Winterfell'})<-[:bornIn]-(c:Character)<-[:killedBy]-(k:Character)\nRETURN k.birth_name AS killer_name, COUNT(c) AS winterfell_victims_count\nGROUP BY k.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of all organizations from the Cosmere universe, and how many characters are members of each?",
+    "gold": "MATCH (n:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Cosmere'}) OPTIONAL MATCH (n:Organization)<-[r0:memberOf]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (o:Organization)-[:fromUniverse]->(fu:FictionalUniverse {name: 'Cosmere'})\nOPTIONAL MATCH (c:Character)-[:memberOf]->(o)\nRETURN o.name AS OrganizationName, COUNT(DISTINCT c) AS NumberOfMembers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters whose mother is Rhaella Targaryen, along with the count of characters for whom each of them is a father.",
+    "gold": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Rhaella Targaryen'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Character {birth_name: 'Rhaella Targaryen'})<-[:hasMother]-(c:Character)-[:hasFather]->(s:Character)\nRETURN c.birth_name AS character_name, COUNT(DISTINCT s) AS number_of_sons",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Which universe was created later, Known Space or the Ultimate Universe?",
+    "gold": "MATCH (n:FictionalUniverse {name: 'Known Space'}), (m0:FictionalUniverse {name: 'Ultimate Universe'}) RETURN CASE WHEN n.inception_year > m0.inception_year THEN n.name ELSE m0.name END AS answer",
+    "pred": "MATCH (u1:FictionalUniverse {name: 'Known Space'}), (u2:FictionalUniverse {name: 'Ultimate Universe'}) RETURN CASE WHEN u1.inception_year > u2.inception_year THEN 'Known Space' ELSE 'Ultimate Universe' END AS later_universe",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were either born in Riverrun or died in Winterfell?",
+    "gold": "CALL { MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Riverrun'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Winterfell'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l1:Location {name: 'Riverrun'}) OR (c:Character)-[:diedIn]->(l2:Location {name: 'Winterfell'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters whose father is the Grandfather of the Troublemaker Street children and whose mother is the Grandmother of the Troublemaker Street children?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Grandfather of the Troublemaker Street children'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Grandmother of the Troublemaker Street children'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (grandfather:Character)-[:hasFather]->(father:Character)<-[:hasFather]-(child:Character)-[:fromUniverse]->(universe:FictionalUniverse {name: 'Troublemaker Street'}), (grandmother:Character)-[:hasMother]->(mother:Character)<-[:hasMother]-(child)-[:fromUniverse]->(universe) MATCH (character:Character)-[:hasFather]->(father)-[:hasFather]->(grandfather), (character)-[:hasMother]->(mother)-[:hasMother]->(grandmother) RETURN character.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fictional universes along with their inception years?",
+    "gold": "MATCH (n:FictionalUniverse) WITH DISTINCT n RETURN n.name, n.inception_year",
+    "pred": "MATCH (fu:FictionalUniverse) RETURN fu.inception_year, fu.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Where was Snake born?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character {name: 'Snake'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Snake'})-[:bornIn]->(l:Location) RETURN l",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters were either born in King's Landing or are the father of Aerys II Targaryen?",
+    "gold": "CALL { MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'King\\'s Landing'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasFather]-(m1:Character {name: 'Aerys II Targaryen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals who are fathers and are citizens of the United States of America?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH DISTINCT n WHERE 'United States of America' IN n.country_of_citizenship RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasFather]->(:Character) WHERE 'United States of America' IN c.country_of_citizenship RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the places where characters who killed Lysa Arryn died?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Lysa Arryn'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:killedBy]->(vict:Character {birth_name: 'Lysa Arryn'})-[:diedIn]->(l:Location) RETURN l",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters either died in Chang'an or have Gu Yong as a student?",
+    "gold": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Chang\\'an'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:hasStudent]->(m1:Character {name: 'Gu Yong'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Chang'an'}) OR (c:Character)<-[:hasStudent]-(g:Character {birth_name: 'Gu Yong'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who are members of the Marauders, along with the count of characters each has killed.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Marauders'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Marauders'})\nRETURN c.name AS CharacterName, size((c)-[:killedBy]->()) AS KilledCount",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Futuramaverse and, for each, the number of organizations each of them belongs to.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Futuramaverse'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'Futuramaverse'})\nOPTIONAL MATCH (c)-[:memberOf]->(o:Organization)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT o) AS NumberOfOrganizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What unique occupations do characters have whose mother is Scarlet Witch?",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character {name: 'Scarlet Witch'}) WITH DISTINCT n UNWIND n.occupation AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Scarlet Witch'}) RETURN DISTINCT c.occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What is the name of the location where Li Qiu died?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character {name: 'Li Qiu'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Li Qiu'})-[:diedIn]->(l:Location) RETURN l.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and genders of individuals who killed the person who taught them.",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasStudent]-(m0:Character) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (s:Character)-[:hasStudent]->(t:Character)<-[:killedBy]-(k:Character) RETURN s.birth_name AS student_name, s.gender AS student_gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the unique creators of characters whose father is Bandit Heeler?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Bandit Heeler'}) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'Bandit Heeler'}) RETURN DISTINCT c.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and birth names of students taught by Guan Yin?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Guan Yin'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (g:Character {birth_name: 'Guan Yin'})-[:hasStudent]->(s:Character) RETURN s.birth_name, s.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are married to Lady Li and killed Zhong Jin?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Lady Li'}),(n:Character)<-[r1:killedBy]-(m1:Character {name: 'Zhong Jin'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(l:Character {birth_name: 'Lady Li'})\nWHERE (c)-[:killedBy]->(z:Character {birth_name: 'Zhong Jin'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of characters who are married to Mystique?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Mystique'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(m:Character {birth_name: 'Mystique'}) RETURN c.birth_name AS name, c.occupation AS occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the characters whose students killed Six-Eared Macaque, and for each of them, how many of their students killed Six-Eared Macaque?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Six-Eared Macaque'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:killedBy]->(victim:Character {birth_name: 'Six-Eared Macaque'}) RETURN c.birth_name AS CharacterName, count(DISTINCT s) AS NumberOfStudentsWhoKilledSixEaredMacaque",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Cthulhu Mythos universe, along with the count of characters for whom they are fathers.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Cthulhu Mythos'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'H.P. Lovecraft'})\nOPTIONAL MATCH (c)-[:hasFather]->(child:Character)\nRETURN c.birth_name AS character_name, COUNT(child) AS number_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters whose father is J. Jonah Jameson and who are not aircraft pilots?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'J. Jonah Jameson'}) WITH DISTINCT n WHERE NOT 'aircraft pilot' IN n.occupation RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasFather]->(f:Character {birth_name: 'J. Jonah Jameson'}) WHERE NOT 'aircraft pilot' IN c.occupation RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and birth names of characters who have killed members of the organization Excalibur?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Excalibur'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:killedBy]->(v:Character)-[:memberOf]->(o:Organization {name: 'Excalibur'}) RETURN c.name, c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of all characters from the World of Ice and Fire universe, along with the number of characters for whom each is a mother.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(u:FictionalUniverse {name: 'World of Ice and Fire'})\nOPTIONAL MATCH (c)<-[:hasMother]-(child:Character)\nRETURN c.birth_name AS CharacterName, COUNT(child) AS NumberOfChildren",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What is the difference in inception years between Known Space and the Ultimate Universe?",
+    "gold": "MATCH (n:FictionalUniverse {name: 'Known Space'}), (m0:FictionalUniverse {name: 'Ultimate Universe'}) RETURN n.inception_year - m0.inception_year AS answer",
+    "pred": "MATCH (u1:FictionalUniverse {name: 'Known Space'}), (u2:FictionalUniverse {name: 'Ultimate Universe'}) RETURN u1.inception_year - u2.inception_year AS inception_year_difference",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who died in Jingzhou, along with the number of characters who have each of them as their mother.",
+    "gold": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Jingzhou'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[died:diedIn]->(l:Location {name: 'Jingzhou'})\nOPTIONAL MATCH (child:Character)-[hasMother:hasMother]->(c)\nRETURN c.birth_name AS CharacterName, COUNT(child) AS NumberOfChildren",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and birth names of characters who were killed by their own fathers.",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasFather]->(m0:Character) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:killedBy]->(f:Character)<-[:hasFather]-(c) RETURN c.birth_name, c.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters born in The Stormlands, along with the number of organizations each is a member of.",
+    "gold": "MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'The Stormlands'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'The Stormlands'})\nOPTIONAL MATCH (c)-[:memberOf]->(o:Organization)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT o) AS NumberOfOrganizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who are members of the Maggia, along with the number of their children if they are fathers.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Maggia'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Maggia'})\nOPTIONAL MATCH (c)-[:hasStudent]->(child:Character)\nRETURN c.birth_name AS character_name, COUNT(child) AS number_of_children\nGROUP BY c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where members of the Brotherhood Without Banners died, and how many of them died in each location?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Brotherhood Without Banners'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (o:Organization {name: 'Brotherhood Without Banners'})<-[:memberOf]-(c:Character)-[:diedIn]->(l:Location) RETURN l.name AS location_name, count(c) AS number_of_deaths",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of characters who were born in Metropolis?",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Metropolis'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Metropolis'}) RETURN c.birth_name AS name, c.occupation AS occupations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who were killed by Tyrion Lannister, along with the count of characters for whom each is a mother.",
+    "gold": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Tyrion Lannister'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (tyrion:Character {birth_name: 'Tyrion Lannister'})-[:killedBy]->(victims:Character)\nRETURN victims.birth_name AS victim_name, size((victims)-[:hasMother]->()) AS mother_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of characters who have both Daredevil and Elektra as students?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Daredevil'}),(n:Character)-[r1:hasStudent]->(m1:Character {name: 'Elektra'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (t:Character)-[:hasStudent]->(d:Character {birth_name: 'Daredevil'}), (t)-[:hasStudent]->(e:Character {birth_name: 'Elektra'}) RETURN t.birth_name AS name, t.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are the father of Rhaenys Targaryen or the spouse of Elia Martell?",
+    "gold": "CALL { MATCH (n:Character)<-[r0:hasFather]-(m0:Character {name: 'Rhaenys Targaryen'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Elia Martell'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character)-[:hasFather]->(r:Character {birth_name: 'Rhaenys Targaryen'}) OR (c:Character)-[:hasSpouse]->(e:Character {birth_name: 'Elia Martell'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique countries of citizenship of characters who have killed another character?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (c1:Character)-[:killedBy]->(c2:Character) RETURN DISTINCT c1.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What is Druig's gender?",
+    "gold": "MATCH (n:Character {name: 'Druig'}) WITH DISTINCT n RETURN n.gender",
+    "pred": "MATCH (c:Character {birth_name: 'Druig'}) RETURN c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are married to someone from the Åsa-Nisse universe?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Åsa-Nisse universe'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character)\nMATCH (c1)-[:fromUniverse]->(fu:FictionalUniverse {name: 'Åsa-Nisse'})\nRETURN count(DISTINCT c1)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are either married to Casey Coot or are Cuthbert Coot's mother?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Casey Coot'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasMother]-(m1:Character {name: 'Cuthbert Coot'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(casey:Character {birth_name: 'Casey Coot'})\nRETURN c.birth_name\nUNION\nMATCH (c:Character)-[:hasMother]->(cuthbert:Character {birth_name: 'Cuthbert Coot'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are either members of the Dark X-Men or are the mother of Celeste Cuckoo?",
+    "gold": "CALL { MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Dark X-Men'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasMother]-(m1:Character {name: 'Celeste Cuckoo'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Dark X-Men'})\nRETURN c.birth_name\nUNION\nMATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Celeste Cuckoo'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fictional universes that include either the Grapplers or Mys-Tech organizations?",
+    "gold": "CALL { MATCH (n:FictionalUniverse)<-[r0:fromUniverse]-(m0:Organization {name: 'Grapplers'}) RETURN n, m0 as m UNION MATCH (n:FictionalUniverse)<-[r1:fromUniverse]-(m1:Organization {name: 'Mys-Tech'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization)-[:fromUniverse]->(fu:FictionalUniverse) WHERE o.name IN ['Grapplers', 'Mys-Tech'] RETURN DISTINCT fu.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the characters that have Zhu Bajie as their student?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Zhu Bajie'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (zhuBajie:Character {birth_name: 'Zhu Bajie'})-[:hasStudent]->(student:Character) RETURN student",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of characters who are members of organizations based in Wall, and for each character, provide the number of such organizations they belong to.",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)-[r1:basedIn]->(m1:Location {name: 'Wall'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization)-[:basedIn]->(l:Location {name: 'Wall'})\nRETURN c.birth_name AS character_name, count(DISTINCT o) AS number_of_organizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names and countries of citizenship of characters who were killed by their student.",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character),(n:Character)-[r1:hasStudent]->(m0:Character) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (c:Character)-[:killedBy]->(s:Character)<-[:hasStudent]-(c)\nRETURN c.birth_name AS character_name, c.country_of_citizenship AS country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the students of Cai Yong?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Cai Yong'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Cai Yong'})-[:hasStudent]->(s:Character) RETURN s",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who have Sun Wukong as a student, along with the number of students each of them has.",
+    "gold": "MATCH (n:Character)-[r1:hasStudent]->(m1:Character {name: 'Sun Wukong'}) OPTIONAL MATCH (n:Character)-[r0:hasStudent]->(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (s:Character {birth_name: 'Sun Wukong'})<-[:hasStudent]-(t:Character) WITH t CALL { WITH t MATCH (t)-[:hasStudent]->(students:Character) RETURN count(DISTINCT students) AS student_count } RETURN t.birth_name AS character_name, student_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the characters that have Muzha as a student and are from the Journey to the West universe, and who created them?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Muzha'}),(n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character {birth_name: 'Muzha'})-[:fromUniverse]->(u:FictionalUniverse {name: 'Journey to the West'}) RETURN c.birth_name AS character_name, c.creator AS creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who belong to organizations from the Donald Duck universe, and how many such organizations is each character a member of?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Donald Duck universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'Donald Duck'})\nRETURN c.birth_name AS character_name, count(DISTINCT o) AS number_of_organizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where members of the Night's Watch were born, and how many such members were born in each location?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Night\\'s Watch'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location) WITH c, l WHERE (c)-[:memberOf]->(o:Organization {name: 'Night's Watch'}) RETURN l.name AS location_name, COUNT(c) AS number_of_members_born",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fathers whose children are members of The Second Sons, and how many members of The Second Sons are children to each character?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'The Second Sons'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (f:Character)-[:hasStudent]->(c:Character)-[:memberOf]->(o:Organization {name: 'The Second Sons'}) RETURN f.birth_name AS father_name, COUNT(c) AS number_of_children",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of characters who have students from the Journey to the West universe, and for each, provide the number of such students they have.",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Journey to the West universe'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character) WHERE (c)-[:fromUniverse]->(:FictionalUniverse {creator: 'Journey to the West'}) RETURN c.birth_name AS CharacterName, count(s) AS NumberOfStudents",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where organizations are based?",
+    "gold": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization)-[:basedIn]->(l:Location) RETURN l",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of all organizations from the World of Ice and Fire universe, along with the number of members for each of them.",
+    "gold": "MATCH (n:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) OPTIONAL MATCH (n:Organization)<-[r0:memberOf]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (o:Organization)-[:fromUniverse]->(u:FictionalUniverse {name: 'World of Ice and Fire'})\nOPTIONAL MATCH (o)<-[:memberOf]-(c:Character)\nRETURN o.name AS OrganizationName, COUNT(DISTINCT c) AS NumberOfMembers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters from the Journey to the West universe who have Muzha as a student?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Journey to the West universe'}),(n:Character)-[r1:hasStudent]->(m1:Character {name: 'Muzha'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (u:FictionalUniverse {name: 'Journey to the West'})<-[:fromUniverse]-(c:Character)-[:hasStudent]->(s:Character {birth_name: 'Muzha'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the teachers of Yuno Gasai?",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character {name: 'Yuno Gasai'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (yuno:Character {birth_name: 'Yuno Gasai'})<-[:hasStudent]-(teacher:Character) RETURN teacher",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters from the Future Diary universe who are students of Takao Hiyama and work as serial killers?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Future Diary universe'}),(n:Character)<-[r1:hasStudent]-(m1:Character {name: 'Takao Hiyama'}) WITH DISTINCT n WHERE 'serial killer' IN n.occupation RETURN n.name",
+    "pred": "MATCH (u:FictionalUniverse {name: 'Future Diary'})<-[:fromUniverse]-(c:Character)-[:hasStudent]->(t:Character {birth_name: 'Takao Hiyama'}) WHERE 'Serial killer' IN c.occupation RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters from Earth-167 who were born on Krypton and are not murderers by occupation?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Earth-167'}),(n:Character)-[r1:bornIn]->(m1:Location {name: 'Krypton'}) WITH DISTINCT n WHERE NOT 'murderer' IN n.occupation RETURN n.name",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Krypton'})-[:fromUniverse]->(u:FictionalUniverse {name: 'Earth-167'}) WHERE NOT 'murderer' IN c.occupation RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that have members who killed Karen Page, and how many such members does each organization have?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Karen Page'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (k:Character {birth_name: 'Karen Page'})<-[:killedBy]-(c:Character)-[:memberOf]->(o:Organization) RETURN o, count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who died in Winterfell and killed Alester Florent?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Winterfell'}),(n:Character)<-[r1:killedBy]-(m1:Character {name: 'Alester Florent'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Winterfell'})\nWHERE (c)-[:killedBy]->(:Character {birth_name: 'Alester Florent'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of places where a character was both born and died?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character),(n:Location)<-[r1:diedIn]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:bornIn]->(b:Location)<-[:diedIn]-(c) RETURN b",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the spouses of individuals whose mother is Maggie Murdock?",
+    "gold": "MATCH (n:Character)<-[r0:hasSpouse]-(m0:Character)-[r1:hasMother]->(m1:Character {name: 'Maggie Murdock'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasMother]->(m:Character {birth_name: 'Maggie Murdock'})-[:hasSpouse]->(s:Character) RETURN s.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many distinct genders are there among characters who are members of an organization?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization) RETURN count(DISTINCT c.gender)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who are members of the Defenders, along with the number of characters who have each as students.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Defenders'}) OPTIONAL MATCH (n:Character)<-[r0:hasStudent]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Defenders'})\nOPTIONAL MATCH (c)-[:hasStudent]->(s:Character)\nRETURN c.birth_name AS character_name, COUNT(DISTINCT s) AS number_of_students",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many unique creators are there for characters who are members of the Wild Pack organization?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Wild Pack'}) WITH DISTINCT n RETURN count(DISTINCT n.creator)",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Wild Pack'})\nRETURN count(DISTINCT c.creator)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and countries of citizenship of characters who died in Heilong River?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Heilong River'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Heilong River'}) RETURN c.birth_name AS name, c.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who is the father of both Rhaelle Targaryen and Shaera Targaryen, and what is his countries of citizenship?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character {name: 'Rhaelle Targaryen'}),(n:Character)<-[r1:hasFather]-(m1:Character {name: 'Shaera Targaryen'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (f:Character)-[:hasFather]->(father:Character)\nWHERE (f {birth_name: 'Rhaelle Targaryen'}) AND (f)-[:hasFather]->(father)\nAND (f2:Character {birth_name: 'Shaera Targaryen'})-[:hasFather]->(father)\nRETURN father.birth_name AS father_name, father.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals whose mothers are members of the Dark X-Men?",
+    "gold": "MATCH (n:Character)-[r0:hasMother]->(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'Dark X-Men'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[r:hasMother]->(m:Character), (m)-[:memberOf]->(o:Organization {name: 'Dark X-Men'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters killed by Petyr Baelish, along with the count of characters for whom each of them is the mother.",
+    "gold": "MATCH (n:Character)-[r1:killedBy]->(m1:Character {name: 'Petyr Baelish'}) OPTIONAL MATCH (n:Character)<-[r0:hasMother]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (killer:Character {birth_name: 'Petyr Baelish'})-[:killedBy]->(victims:Character) WITH victims MATCH (victims)<-[:hasMother]-(children:Character) RETURN victims.birth_name AS victim_name, COUNT(children) AS mother_of_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and countries of citizenship of students taught by Guan Yin?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Guan Yin'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (g:Character {birth_name: 'Guan Yin'})-[:hasStudent]->(s:Character) RETURN s.birth_name AS student_name, s.country_of_citizenship AS country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and occupations of characters who have a student that killed them.",
+    "gold": "MATCH (n:Character)-[r0:hasStudent]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (c:Character)-[:hasStudent]->(s:Character)-[:killedBy]->(c)\nRETURN c.birth_name AS character_name, c.occupation AS character_occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the places where a character who is married to Stannis Baratheon died?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character)-[r1:hasSpouse]->(m1:Character {name: 'Stannis Baratheon'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(s:Character {birth_name: 'Stannis Baratheon'})-[:diedIn]->(l:Location) RETURN l",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of the characters that killed Jiao Bing?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Jiao Bing'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (killer:Character)-[:killedBy]->(victim:Character {birth_name: 'Jiao Bing'}) RETURN killer.birth_name AS name, killer.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and countries of citizenship of individuals who were killed by their father.",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (father:Character)-[:hasSon|hasDaughter]->(child:Character)<-[:killedBy]-(father) RETURN child.birth_name AS name, child.country_of_citizenship AS country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many different genders are there among characters from the World of Ice and Fire who were killed by Ellaria Sand?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'World of Ice and Fire'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Ellaria Sand'}) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred": "MATCH (u:FictionalUniverse {name: 'World of Ice and Fire'})<-[:fromUniverse]-(c:Character)-[:killedBy]->(e:Character {birth_name: 'Ellaria Sand'}) RETURN count(DISTINCT c.gender)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fathers whose children killed Euron Greyjoy?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)<-[r1:killedBy]-(m1:Character {name: 'Euron Greyjoy'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (father:Character)-[:hasFather]->(child:Character)-[:killedBy]->(target:Character {birth_name: 'Euron Greyjoy'}) RETURN father.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that include a student of Stick as a member?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)<-[r1:hasStudent]-(m1:Character {name: 'Stick'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (stick:Character {birth_name: 'Stick'})-[:hasStudent]->(student:Character)-[:memberOf]->(org:Organization) RETURN org",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals who died in Chang'an and had Gu Yong as a student?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Chang\\'an'}),(n:Character)-[r1:hasStudent]->(m1:Character {name: 'Gu Yong'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Chang'an'})\nWHERE (c)<-[:hasStudent]-(g:Character {birth_name: 'Gu Yong'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of characters who are married to Trixie Heeler?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Trixie Heeler'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (c:Character)-[r:hasSpouse]->(t:Character {birth_name: 'Trixie Heeler'}) RETURN c.birth_name AS name, c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names and birth names of fathers that killed their children.",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character),(n:Character)<-[r1:killedBy]-(m0:Character) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (father:Character)-[:hasStudent]->(child:Character)<-[:killedBy]-(father) RETURN father.birth_name AS father_birth_name, father.name AS father_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who died in Highgarden and were married to Luthor Tyrell?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Highgarden'}),(n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Luthor Tyrell'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Highgarden'})\nMATCH (c)-[:hasSpouse]->(spouse:Character {birth_name: 'Luthor Tyrell'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of locations where characters have died?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location) RETURN DISTINCT l.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are part of Weapon X and have a child named Jimmy Hudson?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization {name: 'Weapon X'}),(n:Character)<-[r1:hasFather]-(m1:Character {name: 'Jimmy Hudson'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization {name: 'Weapon X'})\nMATCH (c)-[:hasStudent]->(child:Character {birth_name: 'Jimmy Hudson'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that exist in the same fictional universe as Infinity Watch?",
+    "gold": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse)<-[r1:fromUniverse]-(m1:Organization {name: 'Infinity Watch'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (org:Organization)-[:fromUniverse]->(fu:FictionalUniverse)<-[:fromUniverse]-(infinityWatch:Character {birth_name: 'Infinity Watch'}) RETURN org",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who died at the Twins, along with the count of individuals each of them killed.",
+    "gold": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Twins'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Twins'})\nOPTIONAL MATCH (c)-[:killedBy]->(victims:Character)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT victims) AS VictimsKilled",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the characters that are either students of Stick or spouses of Milla Donovan?",
+    "gold": "CALL { MATCH (n:Character)<-[r0:hasStudent]-(m0:Character {name: 'Stick'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Milla Donovan'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (stick:Character {birth_name: 'Stick'})-[:hasStudent]->(student:Character) WITH student UNION MATCH (milla:Character {birth_name: 'Milla Donovan'})-[:hasSpouse]->(spouse:Character) RETURN student, spouse",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who killed individuals whose mother is Lady of House Sunderly, and how many such individuals was each of them responsible for?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character)-[r1:hasMother]->(m1:Character {name: 'Lady of House Sunderly'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (mother:Character {birth_name: 'Lady of House Sunderly'})<-[:hasMother]-(victim:Character)<-[:killedBy]-(killer:Character) RETURN killer.birth_name AS killer_name, COUNT(victim) AS victims_count GROUP BY killer.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many distinct locations are there?",
+    "gold": "MATCH (n:Location) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (l:Location) RETURN count(DISTINCT l)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations from the World of Ice and Fire universe located in Kirky Hassary?",
+    "gold": "MATCH (n:Organization)-[r0:basedIn]->(m0:Location {name: 'Kirky Hassary'}),(n:Organization)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'World of Ice and Fire'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization)-[:basedIn]->(l:Location {name: 'Kirky Hassary'})-[:fromUniverse]->(u:FictionalUniverse {name: 'World of Ice and Fire'}) RETURN o.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who killed Joffrey Baratheon and were married to Lysa Arryn?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character {name: 'Joffrey Baratheon'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lysa Arryn'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (killer:Character)-[:killedBy]->(joffrey:Character {birth_name: 'Joffrey Baratheon'}), (killer)-[:hasSpouse]->(lysa:Character {birth_name: 'Lysa Arryn'}) RETURN killer.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Where is Planet Express based?",
+    "gold": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization {name: 'Planet Express'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization {name: 'Planet Express'})-[:basedIn]->(l:Location) RETURN l",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who either have Aerys II Targaryen as their father or were born in Dragonstone?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'Aerys II Targaryen'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Dragonstone'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character) WHERE (c)-[:hasFather]->(:Character {birth_name: 'Aerys II Targaryen'}) OR (c)-[:bornIn]->(:Location {name: 'Dragonstone'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and birth names of characters who were killed by Petyr Baelish and are the mother of Robert Arryn.",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Petyr Baelish'}),(n:Character)<-[r1:hasMother]-(m1:Character {name: 'Robert Arryn'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (killed:Character)-[:killedBy]->(killer:Character {birth_name: 'Petyr Baelish'}), (killed)-[:hasMother]->(mother:Character {birth_name: 'Robert Arryn'}) RETURN killed.birth_name, killed.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and birth names of characters who are married to Cyclops and have a child named Nate Grey.",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Cyclops'}),(n:Character)<-[r1:hasMother]-(m1:Character {name: 'Nate Grey'}) WITH DISTINCT n RETURN n.name, n.birth_name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(cyclops:Character {birth_name: 'Scott Summers'})\nMATCH (c)-[:hasStudent]->(nate:Character {birth_name: 'Nate Grey'})\nRETURN c.birth_name, c.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the unique creators of characters who have spouses?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred": "MATCH (c1:Character)-[:hasSpouse]->(c2:Character) RETURN DISTINCT c1.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who either died in Kirky Hassary or were born in the Tower of Joy?",
+    "gold": "CALL { MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Kirky Hassary'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:bornIn]->(m1:Location {name: 'Tower of Joy'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l1:Location {name: 'Kirky Hassary'}) OR (c:Character)-[:bornIn]->(l2:Location {name: 'Tower of Joy'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters whose mother is Downy O'Drake, along with the count of characters for whom each is the father.",
+    "gold": "MATCH (n:Character)-[r1:hasMother]->(m1:Character {name: 'Downy O\\'Drake'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (m:Character {birth_name: 'Downy O''Drake'})<-[:hasMother]-(c:Character)-[:hasFather]->(f:Character) RETURN f.birth_name AS father_name, COUNT(c) AS child_count",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of fathers whose children were killed by Ramsay Bolton, and for each of them, provide the number of their children killed by Ramsay Bolton.",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Ramsay Bolton'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (f:Character)-[:hasFather]->(c:Character)<-[k:killedBy]-(r:Character {birth_name: 'Ramsay Bolton'})\nRETURN f.birth_name AS father_name, COUNT(c) AS number_of_children_killed",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who died in Yuqing Guan?",
+    "gold": "MATCH (n:Character)-[r0:diedIn]->(m0:Location {name: 'Yuqing Guan'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Yuqing Guan'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names and genders of characters who were born in Oldtown and have Rhea Florent as their mother.",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Oldtown'}),(n:Character)-[r1:hasMother]->(m1:Character {name: 'Rhea Florent'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Oldtown'})-[:hasMother]->(m:Character {birth_name: 'Rhea Florent'}) RETURN c.birth_name AS name, c.gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who are members of Mandarin's Minions, along with the number of organizations each character belongs to.",
+    "gold": "MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Mandarin\\'s Minions'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization)\nWHERE (o)<-[:memberOf]-(m:Character {birth_name: 'Mandarin'})\nRETURN c.birth_name AS character_name, count(DISTINCT (c)-[:memberOf]->(:Organization)) AS number_of_organizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "List the names of characters who are fathers of characters born in Pyke, and for each of those characters, provide the count of the children born in Pyke.",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:bornIn]->(m1:Location {name: 'Pyke'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (f:Character)-[:hasStudent]->(c:Character)-[:bornIn]->(l:Location {name: 'Pyke'})\nRETURN f.birth_name AS father_name, COUNT(c) AS children_count\nGROUP BY f.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of individuals who were killed by someone whose father is Jaehaerys II Targaryen?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character)-[r1:hasFather]->(m1:Character {name: 'Jaehaerys II Targaryen'}) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (victim:Character)-[:killedBy]->(killer:Character)-[:hasFather]->(father:Character {birth_name: 'Jaehaerys II Targaryen'}) RETURN victim.birth_name AS victim_name, victim.occupation AS victim_occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters from the World of Ice and Fire have Robb Stark as a spouse?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'World of Ice and Fire'}),(n:Character)-[r1:hasSpouse]->(m1:Character {name: 'Robb Stark'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character)-[r:hasSpouse]->(rob:Character {birth_name: 'Robb Stark'})-[:fromUniverse]->(u:FictionalUniverse {name: 'World of Ice and Fire'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many organizations are characters, who are part of The Assembly of Evil, also members of?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'The Assembly of Evil'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o1:Organization {name: 'The Assembly of Evil'})-[:memberOf]->(o2:Organization) RETURN count(DISTINCT o2)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and occupations of characters who are fathers and killed their children?",
+    "gold": "MATCH (n:Character)<-[r0:killedBy]-(m0:Character),(n:Character)<-[r1:hasFather]-(m0:Character) WITH DISTINCT n RETURN n.name, n.occupation",
+    "pred": "MATCH (father:Character)-[:hasStudent]->(child:Character)<-[:killedBy]-(father) RETURN father.birth_name AS father_name, father.occupation AS father_occupation",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who are the children of J. Jonah Jameson?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character {name: 'J. Jonah Jameson'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (parent:Character {birth_name: 'J. Jonah Jameson'})<-[:hasStudent]-(child:Character) RETURN child",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What is the name and country of citizenship of Mattie Franklin's father?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character {name: 'Mattie Franklin'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred": "MATCH (mattie:Character {birth_name: 'Mattie Franklin'})-[:hasFather]->(father:Character) RETURN father.birth_name AS father_name, father.country_of_citizenship AS father_country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who died in Yiling, along with the count of individuals each of them killed.",
+    "gold": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Yiling'}) OPTIONAL MATCH (n:Character)<-[r0:killedBy]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Yiling'})\nOPTIONAL MATCH (c)-[:killedBy]->(victims:Character)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT victims) AS VictimsKilled",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters who died in Xuzhou, along with the number of characters for whom they are fathers.",
+    "gold": "MATCH (n:Character)-[r1:diedIn]->(m1:Location {name: 'Xuzhou'}) OPTIONAL MATCH (n:Character)<-[r0:hasFather]-(m0:Character) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:diedIn]->(l:Location {name: 'Xuzhou'})\nOPTIONAL MATCH (c)-[:hasFather]->(father:Character)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT father) AS NumberOfFathers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who belong to the same organizations as Matsu'o Tsurayaba, and how many of those organizations is each character a member of?",
+    "gold": "MATCH (n:Character)-[r0:memberOf]->(m0:Organization)<-[r1:memberOf]-(m1:Character {name: 'Matsu\\'o Tsurayaba'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (matsu:Character {birth_name: 'Matsu''o Tsurayaba'})-[:memberOf]->(org:Organization)<-[:memberOf]-(char:Character)\nRETURN char.birth_name AS character_name, count(DISTINCT org) AS number_of_organizations\nGROUP BY char.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were killed by Bian Hong and are married to Lady Xu?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Bian Hong'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady Xu'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:killedBy]->(bianHong:Character {birth_name: 'Bian Hong'})\nMATCH (c)-[:hasSpouse]->(ladyXu:Character {birth_name: 'Lady Xu'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who is the mother of Lady He's spouse.",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Lady He'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (ladyHe:Character {birth_name: 'Lady He'})-[:hasSpouse]->(spouse:Character)-[:hasMother]->(mother:Character) RETURN mother",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters from the Forest universe?",
+    "gold": "MATCH (n:Character)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Forest universe'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(u:FictionalUniverse {name: 'Forest'}) RETURN c.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Provide the names of all characters from the Marvel Universe, along with the number of organizations each one is a member of.",
+    "gold": "MATCH (n:Character)-[r1:fromUniverse]->(m1:FictionalUniverse {name: 'Marvel Universe'}) OPTIONAL MATCH (n:Character)-[r0:memberOf]->(m0:Organization) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'Marvel'})\nOPTIONAL MATCH (c)-[:memberOf]->(o:Organization)\nRETURN c.birth_name AS CharacterName, COUNT(DISTINCT o) AS NumberOfOrganizations",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of fathers whose children that died in The North, and how many such characters are there for each father?",
+    "gold": "MATCH (n:Character)<-[r0:hasFather]-(m0:Character)-[r1:diedIn]->(m1:Location {name: 'The North'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (f:Character)-[:hasStudent]->(c:Character)-[d:diedIn]->(l:Location)\nWHERE l.name = 'The North'\nRETURN f.birth_name AS father_name, COUNT(c) AS number_of_children\nGROUP BY f.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters whose teachers were killed by Yuno Gasai, and how many such teachers does each of these characters have?",
+    "gold": "MATCH (n:Character)<-[r0:hasStudent]-(m0:Character)-[r1:killedBy]->(m1:Character {name: 'Yuno Gasai'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (t:Character)-[:hasStudent]->(s:Character), (k:Character {birth_name: 'Yuno Gasai'})-[:killedBy]->(t)\nRETURN s.birth_name AS student_name, count(DISTINCT t) AS number_of_teachers_killed_by_yuno",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are either the father of Zhao Guang or killed Su Yong?",
+    "gold": "CALL { MATCH (n:Character)<-[r0:hasFather]-(m0:Character {name: 'Zhao Guang'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:killedBy]-(m1:Character {name: 'Su Yong'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (father:Character)-[:hasFather]->(zhaoGuang:Character {birth_name: 'Zhao Guang'})\nOR (killer:Character)-[:killedBy]->(suYong:Character {birth_name: 'Su Yong'})\nRETURN count(DISTINCT father, killer)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the locations where both Mu Shun and Geng Ji died?",
+    "gold": "MATCH (n:Location)<-[r0:diedIn]-(m0:Character {name: 'Mu Shun'}),(n:Location)<-[r1:diedIn]-(m1:Character {name: 'Geng Ji'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (muShun:Character {birth_name: 'Mu Shun'})-[:diedIn]->(location:Location)<-[:diedIn]-(gengJi:Character {birth_name: 'Geng Ji'}) RETURN location",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of individuals who were killed by Liao Hua and are citizens of Han?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Liao Hua'}) WITH DISTINCT n WHERE 'Han' IN n.country_of_citizenship RETURN n.name",
+    "pred": "MATCH (victim:Character)-[:killedBy]->(killer:Character {birth_name: 'Liao Hua'}) WHERE 'Han' IN victim.country_of_citizenship RETURN victim.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "Who creates characters who are both married to and killed by the same individual?",
+    "gold": "MATCH (n:Character)-[r0:hasSpouse]->(m0:Character),(n:Character)-[r1:killedBy]->(m0:Character) WITH DISTINCT n RETURN DISTINCT n.creator",
+    "pred": "MATCH (c1:Character)-[:hasSpouse]->(spouse:Character)<-[:killedBy]-(c1)\nRETURN c1.creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many distinct locations are there where characters were born?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location) RETURN count(DISTINCT l)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that have members who are also part of X-Force, and how many X-Force members belong to each of these organizations?",
+    "gold": "MATCH (n:Organization)<-[r0:memberOf]-(m0:Character)-[r1:memberOf]->(m1:Organization {name: 'X-Force'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred": "MATCH (c:Character)-[:memberOf]->(o:Organization) WITH c, o MATCH (c)-[:memberOf]->(x:Organization {name: 'X-Force'}) RETURN o.name AS OrganizationName, count(DISTINCT c) AS NumberOfXForceMembers",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of organizations that belong to the Rosario + Vampire universe?",
+    "gold": "MATCH (n:Organization)-[r0:fromUniverse]->(m0:FictionalUniverse {name: 'Rosario + Vampire universe'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (o:Organization)-[:fromUniverse]->(fu:FictionalUniverse {creator: 'Rosario + Vampire'}) RETURN o.name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names and genders of characters who were killed by Sun Lin and were fathers of Empress Quan?",
+    "gold": "MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Sun Lin'}),(n:Character)<-[r1:hasFather]-(m1:Character {name: 'Empress Quan'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred": "MATCH (killed:Character)-[:killedBy]->(killer:Character {birth_name: 'Sun Lin'}), (killed)-[:hasFather]->(father:Character {birth_name: 'Empress Quan'}) RETURN killed.birth_name AS name, killed.gender AS gender",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many characters are either killed by Burglar or married to Aunt May?",
+    "gold": "CALL { MATCH (n:Character)-[r0:killedBy]->(m0:Character {name: 'Burglar'}) RETURN n, m0 as m UNION MATCH (n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Aunt May'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred": "MATCH (c:Character) WHERE (c)-[:killedBy]->(:Character {birth_name: 'Burglar'}) OR (c)-[:hasSpouse]->(:Character {birth_name: 'Aunt May'}) RETURN count(DISTINCT c)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many different genders are there among characters who were born in Xandar and are members of the Nova Corps?",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Xandar'}),(n:Character)-[r1:memberOf]->(m1:Organization {name: 'Nova Corps'}) WITH DISTINCT n RETURN count(DISTINCT n.gender)",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Xandar'})-[:basedIn]-(o:Organization {name: 'Nova Corps'}) RETURN count(DISTINCT c.gender)",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of the locations where Rhaenys Targaryen was born and where Aegon III Targaryen was born?",
+    "gold": "MATCH (n:Location)<-[r0:bornIn]-(m0:Character {name: 'Rhaenys Targaryen'}),(n:Location)<-[r1:bornIn]-(m1:Character {name: 'Aegon III Targaryen'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character {birth_name: 'Rhaenys Targaryen'})-[:bornIn]->(l1:Location), (c2:Character {birth_name: 'Aegon III Targaryen'})-[:bornIn]->(l2:Location) RETURN l1, l2",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the name and creator of the character who is the mother of Dwight Conrad and the spouse of Hermes Conrad?",
+    "gold": "MATCH (n:Character)<-[r0:hasMother]-(m0:Character {name: 'Dwight Conrad'}),(n:Character)<-[r1:hasSpouse]-(m1:Character {name: 'Hermes Conrad'}) WITH DISTINCT n RETURN n.name, n.creator",
+    "pred": "MATCH (m:Character)-[:hasMother]->(d:Character {birth_name: 'Dwight Conrad'}), (m)-[:hasSpouse]->(h:Character {birth_name: 'Hermes Conrad'}) RETURN m.birth_name AS name, m.creator AS creator",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were born in Twins?",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Twins'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Twins'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who were born in Riverrun and were killed by Petyr Baelish?",
+    "gold": "MATCH (n:Character)-[r0:bornIn]->(m0:Location {name: 'Riverrun'}),(n:Character)-[r1:killedBy]->(m1:Character {name: 'Petyr Baelish'}) WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:bornIn]->(l:Location {name: 'Riverrun'})\nMATCH (c)-[:killedBy]->(k:Character {birth_name: 'Petyr Baelish'})\nRETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the unique countries of citizenship for characters who have a father?",
+    "gold": "MATCH (n:Character)-[r0:hasFather]->(m0:Character) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred": "MATCH (c:Character)-[:hasFather]->(:Character) RETURN DISTINCT c.country_of_citizenship",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "What are the names of characters who are either married to Shiklah or are members of Mercs for Money?",
+    "gold": "CALL { MATCH (n:Character)-[r0:hasSpouse]->(m0:Character {name: 'Shiklah'}) RETURN n, m0 as m UNION MATCH (n:Character)-[r1:memberOf]->(m1:Organization {name: 'Mercs for Money'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred": "MATCH (c:Character)-[:hasSpouse]->(s:Character {birth_name: 'Shiklah'}) OR (c:Character)-[:memberOf]->(o:Organization {name: 'Mercs for Money'}) RETURN c.birth_name",
+    "graph": "fictional_character"
+  },
+  {
+    "question": "How many distinct locations are organizations based in?",
+    "gold": "MATCH (n:Location)<-[r0:basedIn]-(m0:Organization) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred": "MATCH (o:Organization)-[:basedIn]->(l:Location) RETURN count(DISTINCT l)",
+    "graph": "fictional_character"
+  }
+]
