@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # ── GPU config (1 GPU) ────────────────────────────────────────────────────────
-GPUS=(0)
+GPUS=(1)
 export CUDA_VISIBLE_DEVICES=$(IFS=,; echo "${GPUS[*]}")
 
 # ── Distributed args ──────────────────────────────────────────────────────────
@@ -25,21 +25,21 @@ BASE_PATH=.
 DATA_DIR="processed_data/benchmarks/Cypherbench/qwen/"
 
 # ── Model ─────────────────────────────────────────────────────────────────────
-CKPT_NAME="qwen3-0.6B"
-CKPT="Qwen/Qwen3-0.6B"
+CKPT_NAME="qwen3-4B"
+CKPT="Qwen/Qwen3-4B-Instruct-2507"
 
 # ── Hyper-parameters ──────────────────────────────────────────────────────────
-BATCH_SIZE=4
-LR=0.00005
-GRAD_ACC=4
-EVAL_BATCH_SIZE=16
-EPOCHS=5
+BATCH_SIZE=1
+LR=0.00001
+GRAD_ACC=1
+EVAL_BATCH_SIZE=1
+EPOCHS=1
 
 # ── Length ────────────────────────────────────────────────────────────────────
-MAX_LENGTH=1024
+MAX_LENGTH=797
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
-SAVE_PATH="${BASE_PATH}/results/qwen3/updated_sft_0.6B"
+SAVE_PATH="${BASE_PATH}/results/qwen3/updated_sft_4B"
 SEED=42
 
 
@@ -55,7 +55,7 @@ OPTS+=" --gradient-checkpointing"     # saves VRAM on a single GPU
 OPTS+=" --data-dir ${DATA_DIR}"
 OPTS+=" --num-workers 0"
 OPTS+=" --dev-num -1"
-# OPTS+=" --slice-data"
+OPTS+=" --slice-data"
 # hp
 OPTS+=" --lr ${LR}"
 OPTS+=" --batch-size ${BATCH_SIZE}"
@@ -81,9 +81,15 @@ OPTS+=" --mid-log-num -1"
 OPTS+=" --save ${SAVE_PATH}"
 # seed
 OPTS+=" --seed ${SEED}"
+# lora
+OPTS+=" --peft lora"
+OPTS+=" --peft-lora-r 32"
+OPTS+=" --peft-lora-alpha 64"
+OPTS+=" --peft-lora-dropout 0.1"
+# OPTS+=" --peft-path results/qwen3/updated_sft_4B/e3-bs2-lr0.0001-G8-N2-NN1-lora-32-64-0.1/78"
 # deepspeed
 OPTS+=" --deepspeed"
-OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config_bf16.json"
+OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config_fp16.json"
 # type
 OPTS+=" --type lm"
 # generation
