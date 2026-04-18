@@ -402,7 +402,7 @@ def main():
     # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distillm_query_cypher_attention.json" 
 
     # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}.json"
-    output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fkl_query_attention.json"
+    output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fkl_full_attention.json"
     # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_rkl_query_attention.json"
     # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_sfkl_query_attention.json"
     # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_csd_query_attention.json"
