@@ -25,7 +25,7 @@ TEACHER_CKPT="Qwen/Qwen3-4B-Instruct-2507"
 DATA_DIR="${BASE_PATH}/processed_data/benchmarks/Cypherbench/qwen/"
 # hp
 BATCH_SIZE=2
-LR=0.0001
+LR=0.00005
 GRAD_ACC=8
 EVAL_BATCH_SIZE=8
 EPOCHS=5
@@ -109,6 +109,8 @@ OPTS+=" --use-query-attention-loss"
 OPTS+=" --use-cypher-attention-loss"
 OPTS+=" --attention-loss-type kl"
 OPTS+=" --attention-head-reduction mean"
+OPTS+=" --attention-student-layer-mapping -1"
+OPTS+=" --attention-teacher-layer-mapping -1"
 OPTS+=" --w-attention-loss 0.5"
 OPTS+=" --w-query-attention-loss 1.0"
 OPTS+=" --w-cypher-attention-loss 1.0"

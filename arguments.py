@@ -164,6 +164,8 @@ def add_hp_args(parser: argparse.ArgumentParser):
     group.add_argument("--attention-loss-type", type=str, default="kl", choices=["mse", "kl", "js"])
     group.add_argument("--attention-head-reduction", type=str, default="mean", choices=["mean", "none"])
     group.add_argument("--attention-eps", type=float, default=1e-8)
+    group.add_argument("--attention-student-layer-mapping", nargs='+', type=int, default=[-1])
+    group.add_argument("--attention-teacher-layer-mapping", nargs='+', type=int, default=[-1])
     group.add_argument("--use-span-rep-loss", action="store_true")
     group.add_argument("--use-span-rel-loss", action="store_true")
     group.add_argument("--w-span-rep-loss", type=float, default=1.0)

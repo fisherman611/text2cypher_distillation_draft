@@ -339,7 +339,10 @@ def compute_overall_attention_loss(student_attentions, teacher_attentions, no_mo
     use_schema = args.use_schema_attention_loss
 
     layer_pairs = align_layer_mappings(
-        student_attentions, teacher_attentions, args.student_layer_mapping, args.teacher_layer_mapping)
+        student_attentions,
+        teacher_attentions,
+        args.attention_student_layer_mapping,
+        args.attention_teacher_layer_mapping)
     if not layer_pairs:
         return zero_loss_like(attention_mask.float())
 
