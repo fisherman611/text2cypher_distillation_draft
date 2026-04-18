@@ -32,7 +32,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/updated_0.6B_4B_Cypherbench_csd_schema_attention"
+SAVE_PATH="${BASE_PATH}/results/qwen3/updated_0.6B_4B_Cypherbench_csd_full_attention"
 # seed
 SEED=42
 
@@ -107,7 +107,7 @@ OPTS+=" --w-logit-kd 1.0"
 OPTS+=" --use-query-attention-loss"
 OPTS+=" --use-cypher-attention-loss"
 OPTS+=" --use-schema-attention-loss"
-OPTS+=" --attention-loss-type kl"
+OPTS+=" --attention-loss-type mse"
 OPTS+=" --attention-head-reduction mean"
 OPTS+=" --attention-student-layer-mapping -1"
 OPTS+=" --attention-teacher-layer-mapping -1"

@@ -32,7 +32,7 @@ MAX_LENGTH=892
 MAX_PROMPT_LENGTH=797
 SEED=42
 
-SAVE_PATH="${BASE_PATH}/results/qwen3/updated_0.6B_4B_Cypherbench_attention_schema_attention"
+SAVE_PATH="${BASE_PATH}/results/qwen3/updated_0.6B_4B_Cypherbench_attention_full_attention"
 
 OPTS=""
 OPTS+=" --base-path ${BASE_PATH}"
@@ -91,7 +91,7 @@ OPTS+=" --use-logit-kd"
 OPTS+=" --use-query-attention-loss"
 OPTS+=" --use-cypher-attention-loss"
 OPTS+=" --use-schema-attention-loss"
-OPTS+=" --attention-loss-type kl"
+OPTS+=" --attention-loss-type mse"
 OPTS+=" --attention-head-reduction mean"
 OPTS+=" --attention-student-layer-mapping -1"
 OPTS+=" --attention-teacher-layer-mapping -1"
