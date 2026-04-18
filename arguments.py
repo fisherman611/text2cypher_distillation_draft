@@ -151,6 +151,25 @@ def add_hp_args(parser: argparse.ArgumentParser):
     group.add_argument("--scheduler-name", type=str, default="constant_trm")
 
     group.add_argument("--w-span-loss", type=float, default=1.0)
+    group.add_argument("--use-logit-kd", action="store_true")
+    group.add_argument("--w-logit-kd", type=float, default=1.0)
+    group.add_argument("--use-attention-loss", action="store_true")
+    group.add_argument("--use-query-attention-loss", action="store_true")
+    group.add_argument("--use-cypher-attention-loss", action="store_true")
+    group.add_argument("--use-schema-attention-loss", action="store_true")
+    group.add_argument("--w-attention-loss", type=float, default=1.0)
+    group.add_argument("--w-query-attention-loss", type=float, default=1.0)
+    group.add_argument("--w-cypher-attention-loss", type=float, default=1.0)
+    group.add_argument("--w-schema-attention-loss", type=float, default=1.0)
+    group.add_argument("--attention-loss-type", type=str, default="kl", choices=["mse", "kl", "js"])
+    group.add_argument("--attention-head-reduction", type=str, default="mean", choices=["mean", "none"])
+    group.add_argument("--attention-eps", type=float, default=1e-8)
+    group.add_argument("--use-span-rep-loss", action="store_true")
+    group.add_argument("--use-span-rel-loss", action="store_true")
+    group.add_argument("--w-span-rep-loss", type=float, default=1.0)
+    group.add_argument("--w-span-rel-loss", type=float, default=1.0)
+    group.add_argument("--use-gen-query-rel-loss", action="store_true")
+    group.add_argument("--w-gen-query-rel-loss", type=float, default=1.0)
 
     return parser
 
