@@ -41,6 +41,7 @@ class LMTrainDataset(Dataset):
                 
                 self.get_span_offsets()
                 self.get_query_offsets()
+                self.get_schema_offsets()
         
         print_rank(len(self.lm_ctx))
         if num == -1:
@@ -129,6 +130,68 @@ class LMTrainDataset(Dataset):
             else:
                 self.query_offsets.append(match.span(1))
 
+    def _extract_response_cypher(self, response):
+        if not isinstance(response, str):
+            return ""
+
+        try:
+            parsed = json.loads(response)
+            if isinstance(parsed, dict):
+                cypher = parsed.get("cypher") or parsed.get("query") or parsed.get("pred_cypher")
+                if isinstance(cypher, str):
+                    return cypher
+        except json.JSONDecodeError:
+            pass
+
+        return response
+
+    def _extract_cypher_schema_terms(self, cypher):
+        if not cypher:
+            return set()
+
+        terms = set()
+        for match in re.finditer(r":\s*([A-Za-z_][A-Za-z0-9_]*)", cypher):
+            terms.add(match.group(1))
+        for match in re.finditer(r"\.\s*([A-Za-z_][A-Za-z0-9_]*)", cypher):
+            terms.add(match.group(1))
+        for match in re.finditer(r"[\{,]\s*([A-Za-z_][A-Za-z0-9_]*)\s*:", cypher):
+            terms.add(match.group(1))
+        return terms
+
+    def _find_schema_term_offsets(self, schema_text, schema_start, terms):
+        offsets = []
+        for term in sorted(terms, key=len, reverse=True):
+            pattern = re.compile(rf'"{re.escape(term)}"')
+            for match in pattern.finditer(schema_text):
+                offsets.append((schema_start + match.start(), schema_start + match.end()))
+        return sorted(set(offsets), key=lambda x: (x[0], x[1]))
+
+    def get_schema_offsets(self):
+        self.schema_offsets = []
+        self.cypher_schema_offsets = []
+        schema_pattern = re.compile(
+            r"SCHEMA:\s*\n(?P<schema>.*?)(?:\n\s*\nGenerate a Cypher query|\Z)",
+            re.DOTALL,
+        )
+
+        for item in self.raw:
+            prompt = item["prompt"]
+            match = schema_pattern.search(prompt)
+            if match is None:
+                self.schema_offsets.append(None)
+                self.cypher_schema_offsets.append([])
+                continue
+
+            schema_start, schema_end = match.span("schema")
+            schema_text = match.group("schema")
+            self.schema_offsets.append((schema_start, schema_end))
+
+            cypher = self._extract_response_cypher(item.get("response", ""))
+            used_terms = self._extract_cypher_schema_terms(cypher)
+            self.cypher_schema_offsets.append(
+                self._find_schema_term_offsets(schema_text, schema_start, used_terms)
+            )
+
     def __len__(self):
         return self.num
    
@@ -150,6 +213,8 @@ class LMTrainDataset(Dataset):
             "span_offsets": self.span_offsets[index],
             "offset_mapping": self.offset_mapping[index],
             "query_offsets": self.query_offsets[index],
+            "schema_offsets": self.schema_offsets[index],
+            "cypher_schema_offsets": self.cypher_schema_offsets[index],
         }
 
     def _process_lm(self, i, samp, model_data, no_model_data, gen_data):
@@ -211,6 +276,23 @@ class LMTrainDataset(Dataset):
             mask[i, :token_mask.size(0)] = token_mask
         return mask
 
+    def _build_char_spans_mask(self, samples, span_key):
+        mask = torch.zeros(len(samples), self.max_length, dtype=torch.bool)
+        for i, sample in enumerate(samples):
+            spans = sample.get(span_key) or []
+            if not spans:
+                continue
+            offsets = sample["offset_mapping"][0, :self.max_length]
+            token_starts = offsets[:, 0]
+            token_ends = offsets[:, 1]
+            sample_mask = torch.zeros_like(token_starts, dtype=torch.bool)
+            for span_start, span_end in spans:
+                token_mask = (token_starts < span_end) & (token_ends > span_start)
+                token_mask = token_mask & (token_ends > token_starts)
+                sample_mask |= token_mask
+            mask[i, :sample_mask.size(0)] = sample_mask
+        return mask
+
     def collate(self, samples):
         bs = len(samples)
 
@@ -230,6 +312,8 @@ class LMTrainDataset(Dataset):
             "span_offsets": [sample["span_offsets"] for sample in samples],
             "offset_mapping": torch.concat([sample["offset_mapping"] for sample in samples]),
             "query_mask": self._build_char_span_mask(samples, "query_offsets"),
+            "schema_mask": self._build_char_span_mask(samples, "schema_offsets"),
+            "cypher_schema_mask": self._build_char_spans_mask(samples, "cypher_schema_offsets"),
         }
         
         gen_data = {

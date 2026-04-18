@@ -328,6 +328,7 @@ def compute_overall_attention_loss(student_attentions, teacher_attentions, no_mo
         "attention_loss": zero,
         "query_attention_loss": zero,
         "cypher_attention_loss": zero,
+        "schema_attention_loss": zero,
     }
     if not student_attentions or not teacher_attentions:
         return (zero, empty_components) if return_components else zero
@@ -342,6 +343,9 @@ def compute_overall_attention_loss(student_attentions, teacher_attentions, no_mo
     schema_mask = no_model_batch.get("schema_mask")
     if schema_mask is not None:
         schema_mask = schema_mask.to(attention_mask.device).bool() & attention_mask.bool()
+    cypher_schema_mask = no_model_batch.get("cypher_schema_mask")
+    if cypher_schema_mask is not None:
+        cypher_schema_mask = cypher_schema_mask.to(attention_mask.device).bool() & attention_mask.bool()
 
     branches = []
     use_query = args.use_query_attention_loss or (
@@ -361,6 +365,7 @@ def compute_overall_attention_loss(student_attentions, teacher_attentions, no_mo
     component_sums = {
         "query_attention_loss": zero,
         "cypher_attention_loss": zero,
+        "schema_attention_loss": zero,
     }
     for s_idx, t_idx in layer_pairs:
         s_attn = student_attentions[s_idx]
@@ -376,8 +381,17 @@ def compute_overall_attention_loss(student_attentions, teacher_attentions, no_mo
             branches.append(cypher_loss)
             component_sums["cypher_attention_loss"] = component_sums["cypher_attention_loss"] + cypher_loss
         if use_schema and schema_mask is not None:
-            branches.append(args.w_schema_attention_loss * compute_attention_branch_loss(
-                s_attn, t_attn, target_mask, schema_mask, args))
+            # Schema attention grounds generated Cypher tokens to the subset of
+            # full-schema tokens referenced by the gold Cypher. If extraction
+            # fails, fall back to the full schema span instead of dropping the
+            # branch entirely.
+            schema_col_mask = cypher_schema_mask
+            if schema_col_mask is None or not schema_col_mask.any():
+                schema_col_mask = schema_mask
+            schema_loss = args.w_schema_attention_loss * compute_attention_branch_loss(
+                s_attn, t_attn, target_mask, schema_col_mask, args)
+            branches.append(schema_loss)
+            component_sums["schema_attention_loss"] = component_sums["schema_attention_loss"] + schema_loss
 
     if not branches:
         return (zero, empty_components) if return_components else zero
@@ -390,6 +404,7 @@ def compute_overall_attention_loss(student_attentions, teacher_attentions, no_mo
         "attention_loss": attention_loss,
         "query_attention_loss": args.w_attention_loss * component_sums["query_attention_loss"] / len(branches),
         "cypher_attention_loss": args.w_attention_loss * component_sums["cypher_attention_loss"] / len(branches),
+        "schema_attention_loss": args.w_attention_loss * component_sums["schema_attention_loss"] / len(branches),
     }
     return attention_loss, components
 
@@ -746,6 +761,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
         "attention_loss",
         "query_attention_loss",
         "cypher_attention_loss",
+        "schema_attention_loss",
         "gen_query_rel_loss",
     ]
     total_loss_components = {name: 0.0 for name in loss_component_names}
@@ -955,7 +971,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 return (
                     "train | epoch {:3d} | Iter: {:6d}/{:6d} | global iter: {:6d}/{:6d} "
                     "| loss: {:.4f} | ds_loss: {:.4f} | lm: {:.4f} | logit_kd: {:.4f} "
-                    "| attn: {:.4f} | q_attn: {:.4f} | cy_attn: {:.4f} | gen_q_rel: {:.4f} "
+                    "| attn: {:.4f} | q_attn: {:.4f} | cy_attn: {:.4f} | sch_attn: {:.4f} | gen_q_rel: {:.4f} "
                     "| lr: {:.4e} | scale: {:10.4f} | micro time: {:.3f} | step time: {:.3f}"
                 ).format(
                     epoch,
@@ -970,6 +986,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                     log_components["attention_loss"],
                     log_components["query_attention_loss"],
                     log_components["cypher_attention_loss"],
+                    log_components["schema_attention_loss"],
                     log_components["gen_query_rel_loss"],
                     lr_scheduler.get_last_lr()[0],
                     optimizer.cur_scale if hasattr(optimizer, "cur_scale") else 0,

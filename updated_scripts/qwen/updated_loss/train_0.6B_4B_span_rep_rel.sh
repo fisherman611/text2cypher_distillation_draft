@@ -32,7 +32,7 @@ MAX_LENGTH=892
 MAX_PROMPT_LENGTH=797
 SEED=42
 
-SAVE_PATH="${BASE_PATH}/results/qwen3/updated_0.6B_4B_Cypherbench_span_rep_rel"
+SAVE_PATH="${BASE_PATH}/results/qwen3/updated_0.6B_4B_Cypherbench_span_rep_rel_schema_attention"
 
 OPTS=""
 OPTS+=" --base-path ${BASE_PATH}"
@@ -88,6 +88,16 @@ OPTS+=" --peft-lora-dropout 0.1"
 OPTS+=" --teacher_layer_mapping 11 23"
 OPTS+=" --student_layer_mapping 9 18"
 OPTS+=" --use-logit-kd"
+OPTS+=" --w-logit-kd 1.0"
+OPTS+=" --use-cypher-attention-loss"
+OPTS+=" --use-schema-attention-loss"
+OPTS+=" --attention-loss-type kl"
+OPTS+=" --attention-head-reduction mean"
+OPTS+=" --attention-student-layer-mapping -1"
+OPTS+=" --attention-teacher-layer-mapping -1"
+OPTS+=" --w-attention-loss 0.2"
+OPTS+=" --w-cypher-attention-loss 1.0"
+OPTS+=" --w-schema-attention-loss 1.0"
 # OPTS+=" --use-span-rep-loss"
 # OPTS+=" --w-span-rep-loss 1.0"
 # OPTS+=" --use-span-rel-loss"

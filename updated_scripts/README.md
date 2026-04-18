@@ -14,10 +14,11 @@ Method folders:
 
 Recommended starting points:
 
-- `qwen/updated_loss/train_0.6B_4B_all_losses.sh`: logit KD + query/cypher attention + span representation + span relational + generated-query relational.
+- `qwen/updated_loss/train_0.6B_4B_all_losses.sh`: logit KD + query attention + Cypher-prefix attention + schema-used attention + span representation + span relational + generated-query relational.
 - `qwen/updated_loss/train_0.6B_4B_attention.sh`: logit KD + attention losses only.
-- `qwen/updated_loss/train_0.6B_4B_span_rep_rel.sh`: logit KD + representation losses only.
+- `qwen/updated_loss/train_0.6B_4B_span_rep_rel.sh`: logit KD + representation losses + schema-used attention.
 
-Schema attention is intentionally left off in these templates because the
-current dataset collate does not provide `schema_mask`. Enable it only after
-adding `schema_mask` to `no_model_batch`.
+`--use-schema-attention-loss` uses the schema terms referenced by the gold
+Cypher as its key/value side, so it distills Cypher-to-used-schema grounding.
+If those masks cannot be built for a batch, training falls back to the full
+schema span. `--use-cypher-attention-loss` remains Cypher-prefix attention.

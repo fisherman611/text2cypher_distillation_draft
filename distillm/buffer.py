@@ -20,10 +20,16 @@ class ReplayBuffer:
         self.bs = args.batch_size
         if args.model_type in ["gpt2", "llama"]:
             self.data = namedtuple("Generation", \
-               field_names=["input_ids", "attention_mask", "position_ids", "label", "loss_mask", "prompt_attention_mask"])
+               field_names=[
+                   "input_ids", "attention_mask", "position_ids", "label", "loss_mask",
+                   "prompt_attention_mask", "query_mask", "schema_mask", "cypher_schema_mask"
+               ])
         else:
             self.data = namedtuple("Generation", \
-               field_names=["input_ids", "attention_mask", "label", "loss_mask", "prompt_attention_mask"])
+               field_names=[
+                   "input_ids", "attention_mask", "label", "loss_mask",
+                   "prompt_attention_mask", "query_mask", "schema_mask", "cypher_schema_mask"
+               ])
             
     def __len__(self):
         return len(self.replay_memory)
@@ -35,6 +41,9 @@ class ReplayBuffer:
         label = torch.stack([d.label for d in data], dim=0)
         loss_mask = torch.stack([d.loss_mask for d in data], dim=0)
         prompt_attention_mask = torch.stack([d.prompt_attention_mask for d in data], dim=0)
+        query_mask = torch.stack([d.query_mask for d in data], dim=0)
+        schema_mask = torch.stack([d.schema_mask for d in data], dim=0)
+        cypher_schema_mask = torch.stack([d.cypher_schema_mask for d in data], dim=0)
         
         if self.args.model_type in ["gpt2", "llama"]:
             position_ids = torch.stack([d.position_ids for d in data], dim=0)
@@ -47,7 +56,11 @@ class ReplayBuffer:
             }
             
         no_model_data = {
-            "label": label, "loss_mask": loss_mask
+            "label": label,
+            "loss_mask": loss_mask,
+            "query_mask": query_mask,
+            "schema_mask": schema_mask,
+            "cypher_schema_mask": cypher_schema_mask,
         }
         gen_data = {"attention_mask": prompt_attention_mask}
         
@@ -76,12 +89,24 @@ class ReplayBuffer:
             no_model_data_cpu[k] = no_model_data[k].to(device)
 
         prompt_attention_mask = gen_data["attention_mask"].to(device)
+        seq_len = model_data_cpu["input_ids"].size(1)
+        default_mask = torch.zeros(
+            no_model_data_cpu["label"].size(0),
+            seq_len,
+            dtype=torch.bool,
+            device=device,
+        )
+        query_mask = no_model_data_cpu.get("query_mask", default_mask)
+        schema_mask = no_model_data_cpu.get("schema_mask", default_mask)
+        cypher_schema_mask = no_model_data_cpu.get("cypher_schema_mask", default_mask)
         
         for idx in range(model_data_cpu["input_ids"].size(0)):
             if self.args.model_type in ["gpt2", "llama"]:
                 e = self.data(model_data_cpu["input_ids"][idx], model_data_cpu["attention_mask"][idx], model_data_cpu["position_ids"][idx],
-                              no_model_data_cpu["label"][idx], no_model_data_cpu["loss_mask"][idx], prompt_attention_mask[idx])
+                              no_model_data_cpu["label"][idx], no_model_data_cpu["loss_mask"][idx], prompt_attention_mask[idx],
+                              query_mask[idx], schema_mask[idx], cypher_schema_mask[idx])
             else:
                 e = self.data(model_data_cpu["input_ids"][idx], model_data_cpu["attention_mask"][idx],
-                              no_model_data_cpu["label"][idx], no_model_data_cpu["loss_mask"][idx], prompt_attention_mask[idx])
+                              no_model_data_cpu["label"][idx], no_model_data_cpu["loss_mask"][idx], prompt_attention_mask[idx],
+                              query_mask[idx], schema_mask[idx], cypher_schema_mask[idx])
             self.replay_memory.append(e)
