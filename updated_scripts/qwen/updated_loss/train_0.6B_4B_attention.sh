@@ -20,7 +20,7 @@ CKPT_NAME="qwen3-0.6B"
 CKPT="Qwen/Qwen3-0.6B"
 TEACHER_CKPT_NAME="qwen3-4B"
 TEACHER_CKPT="Qwen/Qwen3-4B-Instruct-2507"
-TEACHER_PEFT_PATH="${BASE_PATH}/results/qwen3/sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/1065"
+TEACHER_PEFT_PATH="${BASE_PATH}/results/qwen3/updated_sft_4B/e5-bs2-lr1e-05-G8-N2-NN1-lora-32-64-0.1/1065"
 DATA_DIR="${BASE_PATH}/processed_data/benchmarks/Cypherbench/qwen/"
 
 BATCH_SIZE=2
