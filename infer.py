@@ -389,17 +389,29 @@ def main():
     # # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_updated_3_0.json" 
     # # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distillm.json" 
 
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}.json"
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fkl_query_cypher_attention.json"
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_rkl_query_cypher_attention.json"
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_sfkl_query_cypher_attention.json"
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_csd_query_cypher_attention.json"
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_distillm_query_cypher_attention.json"
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_sfkl_query_cypher_attention.json"   #default kd_ratio 0.5
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_query_cypher_attention.json" 
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_updated_1_query_cypher_attention.json" 
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_updated_3_0_query_cypher_attention.json" 
+    # # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distillm_query_cypher_attention.json" 
+
     # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}.json"
-    output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fkl.json"
-    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_rkl.json"
-    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_sfkl.json"
-    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_csd.json"
-    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_distillm.json"
-    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_sfkl.json"   #default kd_ratio 0.5
-    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl.json" 
-    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_updated_1.json" 
-    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_updated_3_0.json" 
-    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distillm.json" 
+    output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fkl_query_attention.json"
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_rkl_query_attention.json"
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_sfkl_query_attention.json"
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_csd_query_attention.json"
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_distillm_query_attention.json"
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_sfkl_query_attention.json"   #default kd_ratio 0.5
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_query_attention.json" 
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_updated_1_query_attention.json" 
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_updated_3_0_query_attention.json" 
+    # output_path = Path(RESULTS_DIR) / f"updated_{args.benchmark}" / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distillm_query_attention.json" 
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(output, f, indent=4, ensure_ascii=False)
 
