@@ -51,6 +51,14 @@ torch.set_num_threads(4)
 
 def get_teacher_model(args, device):
     config = AutoConfig.from_pretrained(args.teacher_model_path)
+    needs_attention_outputs = (
+        args.use_attention_loss
+        or args.use_query_attention_loss
+        or args.use_cypher_attention_loss
+        or args.use_schema_attention_loss
+    )
+    if needs_attention_outputs:
+        config._attn_implementation = "eager"
     if args.model_parallel:
         raise NotImplementedError
     else:
@@ -374,7 +382,7 @@ def build_span_token_map(attention_mask, offsets_mapping, spans_offsets):
     offsets_mapping = offsets_mapping[:, :seq_len, :].to(device)
     token_starts = offsets_mapping[..., 0].unsqueeze(2)
     token_ends = offsets_mapping[..., 1].unsqueeze(2)
-    token_in_span = (token_starts + 1 >= span_starts.unsqueeze(1)) & (token_ends <= span_ends.unsqueeze(1))
+    token_in_span = (token_starts < span_ends.unsqueeze(1)) & (token_ends > span_starts.unsqueeze(1))
     token_in_span = token_in_span & attention_mask.unsqueeze(2).bool() & span_exists.unsqueeze(1)
 
     if not token_in_span.any():
@@ -496,7 +504,6 @@ def prepare_span_indices_and_weights(t_layer_weights, s_layer_weights,
 
     max_spans = max(len(s) for s in spans_offsets)
     if max_spans == 0:
-        print(f"No spans found in the batch.")
         return None, None, None, None, None, None
 
     # (B_size, max_spans)
@@ -525,8 +532,8 @@ def prepare_span_indices_and_weights(t_layer_weights, s_layer_weights,
     span_starts_expanded = padded_span_starts.unsqueeze(1)
     span_ends_expanded = padded_span_ends.unsqueeze(1)
 
-    token_in_span_map = (offsets_start_expanded + 1 >= span_starts_expanded) & \
-                        (offsets_end_expanded <= span_ends_expanded)
+    token_in_span_map = (offsets_start_expanded < span_ends_expanded) & \
+                        (offsets_end_expanded > span_starts_expanded)
 
     attention_mask_expanded = attention_mask.unsqueeze(2).bool()
     span_mask_expanded = padded_span_mask.unsqueeze(1) 
@@ -534,7 +541,6 @@ def prepare_span_indices_and_weights(t_layer_weights, s_layer_weights,
     final_token_to_span_map = token_in_span_map & attention_mask_expanded & span_mask_expanded
 
     if not final_token_to_span_map.any():
-        print(f"No valid tokens found for any spans in the batch.")
         return None, None, None, None, None, None
 
     nonzero_indices = final_token_to_span_map.nonzero(as_tuple=False)

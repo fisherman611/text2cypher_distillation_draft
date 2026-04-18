@@ -119,6 +119,14 @@ def initialize(args):
 # Load and save model
 def get_model(args, device):
     config = AutoConfig.from_pretrained(args.model_path)
+    needs_attention_outputs = (
+        getattr(args, "use_attention_loss", False)
+        or getattr(args, "use_query_attention_loss", False)
+        or getattr(args, "use_cypher_attention_loss", False)
+        or getattr(args, "use_schema_attention_loss", False)
+    )
+    if needs_attention_outputs:
+        config._attn_implementation = "eager"
     
     st_time = time.time()
     if args.model_parallel:

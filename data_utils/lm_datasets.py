@@ -3,6 +3,7 @@ import torch
 import os
 import json
 import pickle
+import re
 import numpy as np
 from torch.utils.data import Dataset
 from .distributed_indexed import DistributedMMapIndexedDataset
@@ -48,41 +49,73 @@ class LMTrainDataset(Dataset):
 
         print_rank(f"Num LM instances: {len(self.lm_ctx)}")
 
+    def _event_span_offsets(self, response_json, full_text, response_start):
+        values_to_find = []
+        for event in response_json.get("events", []):
+            values_to_find.append(event[0])
+            values_to_find.append(event[1])
+
+            if len(event) > 3:
+                for arg in event[2]:
+                    values_to_find.append(arg[0])
+                    values_to_find.append(arg[1])
+
+                values_to_find.append(event[3])
+            else:
+                values_to_find.append(event[2])
+
+        result_tuples = []
+        search_start_idx = response_start
+        for val in values_to_find:
+            search_str = f"{val}"
+            char_start = full_text.find(search_str, search_start_idx)
+
+            if char_start != -1:
+                char_end = char_start + len(search_str)
+                result_tuples.append((char_start, char_end))
+                search_start_idx = char_end
+
+        return result_tuples
+
+    def _cypher_span_offsets(self, response_str, response_start):
+        span_offsets = []
+
+        def add_matches(pattern, group=1, flags=0):
+            for match in re.finditer(pattern, response_str, flags):
+                start, end = match.span(group)
+                if end > start:
+                    span_offsets.append((response_start + start, response_start + end))
+
+        add_matches(r":\s*([A-Za-z_][A-Za-z0-9_]*)")
+        add_matches(r"\.\s*([A-Za-z_][A-Za-z0-9_]*)")
+        add_matches(r"[\{,]\s*([A-Za-z_][A-Za-z0-9_]*)\s*:")
+        add_matches(r"'((?:\\.|[^'\\])*)'")
+        add_matches(r"(?<![A-Za-z0-9_])(-?\d+(?:\.\d+)?)(?![A-Za-z0-9_])")
+        add_matches(
+            r"\b(MATCH|OPTIONAL\s+MATCH|WHERE|WITH|DISTINCT|RETURN|ORDER\s+BY|"
+            r"LIMIT|SKIP|ASC|DESC|COUNT|SUM|AVG|MIN|MAX|CASE|WHEN|THEN|ELSE|END)\b",
+            flags=re.IGNORECASE,
+        )
+
+        return sorted(set(span_offsets), key=lambda x: (x[0], x[1]))
+
     def get_span_offsets(self):
         self.span_offsets = []
         for item, full_text in zip(self.raw, self.full_texts):
             response_str = item["response"]
-            response_json = json.loads(response_str)
+            response_start = len(item["prompt"])
 
-            values_to_find = []
-            for event in response_json.get("events", []):
-                values_to_find.append(event[0])  # 1. trigger
-                values_to_find.append(event[1])  # 2. event_type
-                
-                if len(event) > 3:
-                    for arg in event[2]:             # 3. Duyệt qua các arguments
-                        values_to_find.append(arg[0])  # arg_span
-                        values_to_find.append(arg[1])  # arg_role
-                    
-                    values_to_find.append(event[3])  # 4. description
+            try:
+                response_json = json.loads(response_str)
+            except json.JSONDecodeError:
+                response_json = {}
 
-                else:
-                    values_to_find.append(event[2])  # 3. description
-
-            result_tuples = []
-            # search_start_idx = len(full_text) - len(response_str)
-            search_start_idx = 0
-
-            for val in values_to_find:
-                search_str = f'{val}'
-                char_start = full_text.find(search_str, search_start_idx)
-                
-                if char_start != -1:
-                    char_end = char_start + len(val)
-                    result_tuples.append((char_start, char_end))
-                    search_start_idx = char_end + 1
-
-            self.span_offsets.append(result_tuples)
+            if isinstance(response_json, dict) and "events" in response_json:
+                self.span_offsets.append(
+                    self._event_span_offsets(response_json, full_text, response_start)
+                )
+            else:
+                self.span_offsets.append(self._cypher_span_offsets(response_str, response_start))
 
     def __len__(self):
         return self.num
