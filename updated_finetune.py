@@ -321,9 +321,16 @@ def compute_attention_branch_loss(student_attn, teacher_attn, row_mask, col_mask
         student_dist, teacher_dist, valid_rows, args.attention_loss_type, args.attention_eps)
 
 
-def compute_overall_attention_loss(student_attentions, teacher_attentions, no_model_batch, attention_mask, args):
+def compute_overall_attention_loss(student_attentions, teacher_attentions, no_model_batch, attention_mask, args,
+                                   return_components=False):
+    zero = zero_loss_like(attention_mask.float())
+    empty_components = {
+        "attention_loss": zero,
+        "query_attention_loss": zero,
+        "cypher_attention_loss": zero,
+    }
     if not student_attentions or not teacher_attentions:
-        return zero_loss_like(attention_mask.float())
+        return (zero, empty_components) if return_components else zero
 
     target_mask = get_target_mask(no_model_batch, attention_mask)
     source_mask = get_source_mask(no_model_batch, attention_mask)
@@ -349,24 +356,42 @@ def compute_overall_attention_loss(student_attentions, teacher_attentions, no_mo
         args.attention_student_layer_mapping,
         args.attention_teacher_layer_mapping)
     if not layer_pairs:
-        return zero_loss_like(attention_mask.float())
+        return (zero, empty_components) if return_components else zero
 
+    component_sums = {
+        "query_attention_loss": zero,
+        "cypher_attention_loss": zero,
+    }
     for s_idx, t_idx in layer_pairs:
         s_attn = student_attentions[s_idx]
         t_attn = teacher_attentions[t_idx]
         if use_query:
-            branches.append(args.w_query_attention_loss * compute_attention_branch_loss(
-                s_attn, t_attn, target_mask, query_mask, args))
+            query_loss = args.w_query_attention_loss * compute_attention_branch_loss(
+                s_attn, t_attn, target_mask, query_mask, args)
+            branches.append(query_loss)
+            component_sums["query_attention_loss"] = component_sums["query_attention_loss"] + query_loss
         if use_cypher:
-            branches.append(args.w_cypher_attention_loss * compute_attention_branch_loss(
-                s_attn, t_attn, target_mask, target_mask, args))
+            cypher_loss = args.w_cypher_attention_loss * compute_attention_branch_loss(
+                s_attn, t_attn, target_mask, target_mask, args)
+            branches.append(cypher_loss)
+            component_sums["cypher_attention_loss"] = component_sums["cypher_attention_loss"] + cypher_loss
         if use_schema and schema_mask is not None:
             branches.append(args.w_schema_attention_loss * compute_attention_branch_loss(
                 s_attn, t_attn, target_mask, schema_mask, args))
 
     if not branches:
-        return zero_loss_like(attention_mask.float())
-    return args.w_attention_loss * sum(branches) / len(branches)
+        return (zero, empty_components) if return_components else zero
+
+    attention_loss = args.w_attention_loss * sum(branches) / len(branches)
+    if not return_components:
+        return attention_loss
+
+    components = {
+        "attention_loss": attention_loss,
+        "query_attention_loss": args.w_attention_loss * component_sums["query_attention_loss"] / len(branches),
+        "cypher_attention_loss": args.w_attention_loss * component_sums["cypher_attention_loss"] / len(branches),
+    }
+    return attention_loss, components
 
 
 def build_span_token_map(attention_mask, offsets_mapping, spans_offsets):
@@ -715,6 +740,15 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
 
     step, global_step = 1, 1
     total_loss, total_distil_loss, total_time = 0.0, 0.0, 0.0
+    loss_component_names = [
+        "lm_loss",
+        "logit_kd_loss",
+        "attention_loss",
+        "query_attention_loss",
+        "cypher_attention_loss",
+        "gen_query_rel_loss",
+    ]
+    total_loss_components = {name: 0.0 for name in loss_component_names}
     
     adaptive_threshold = args.init_threshold if "adaptive" in args.type else -1.0
     # prev_avg_loss = evaluate(args, tokenizer, model, dataset["dev"], "dev", 0, device, adaptive_threshold)
@@ -800,6 +834,8 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 raise NotImplementedError
             else:
                 lm_loss = loss_func(logits.float().reshape(-1, logits.shape[-1]), no_model_batch["label"].view(-1))
+            loss_components = {name: zero_loss_like(lm_loss) for name in loss_component_names}
+            loss_components["lm_loss"] = lm_loss
             
             if teacher_model is not None:
                 with torch.no_grad():
@@ -822,16 +858,21 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                     or args.use_gen_query_rel_loss
                 )
                 if use_logit_kd:
-                    distil_terms.append(args.w_logit_kd * get_distil_loss(
-                        args, teacher_logits, no_model_batch, logits))
+                    logit_kd_loss = args.w_logit_kd * get_distil_loss(
+                        args, teacher_logits, no_model_batch, logits)
+                    distil_terms.append(logit_kd_loss)
+                    loss_components["logit_kd_loss"] = logit_kd_loss
 
                 if need_attentions:
-                    distil_terms.append(compute_overall_attention_loss(
+                    attention_loss, attention_components = compute_overall_attention_loss(
                         outputs.attentions,
                         teacher_outputs.attentions,
                         no_model_batch,
                         model_batch["attention_mask"],
-                        args))
+                        args,
+                        return_components=True)
+                    distil_terms.append(attention_loss)
+                    loss_components.update(attention_components)
 
                 spans_offsets = no_model_batch.get("span_offsets")
                 offset_mapping = no_model_batch.get("offset_mapping")
@@ -862,20 +903,23 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 if args.use_gen_query_rel_loss:
                     assert spans_offsets is not None and offset_mapping is not None, \
                         "gen-query relational loss requires span_offsets and offset_mapping in no_model_batch"
-                    distil_terms.append(compute_gen_query_relation_loss(
+                    gen_query_rel_loss = compute_gen_query_relation_loss(
                         model_batch["attention_mask"],
                         no_model_batch,
                         outputs.hidden_states,
                         teacher_outputs.hidden_states,
                         offset_mapping,
                         spans_offsets,
-                        args))
+                        args)
+                    distil_terms.append(gen_query_rel_loss)
+                    loss_components["gen_query_rel_loss"] = gen_query_rel_loss
 
                 distil_loss = sum(distil_terms) if distil_terms else zero_loss_like(lm_loss)
                 kd_ratio = args.kd_ratio if args.kd_ratio is not None else 1.0
                 loss = (1 - kd_ratio) * lm_loss + kd_ratio * distil_loss
             else:
                 loss = lm_loss
+                distil_loss = zero_loss_like(lm_loss)
                 
             if args.lm_data_dir is not None:
                 assert args.lm_coef is not None
@@ -886,6 +930,11 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
              
             dist.all_reduce(loss, dist.ReduceOp.SUM, group=dp_group)
             global_loss = loss.item() / dp_world_size
+            global_loss_components = {}
+            for name, component in loss_components.items():
+                component_for_log = component.detach().clone()
+                dist.all_reduce(component_for_log, dist.ReduceOp.SUM, group=dp_group)
+                global_loss_components[name] = component_for_log.item() / dp_world_size
 
             global_distil_loss = 0
             if teacher_model is not None:
@@ -898,10 +947,17 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
 
             total_loss += global_loss
             total_time += elapsed_time
+            for name in loss_component_names:
+                total_loss_components[name] += global_loss_components[name]
 
             # Logging
-            def get_log(log_loss, log_distil_loss, log_time):
-                return "train | epoch {:3d} | Iter: {:6d}/{:6d} | global iter: {:6d}/{:6d} | loss: {:.4f} | ds_loss: {:.4f} | lr: {:.4e} | scale: {:10.4f} | micro time: {:.3f} | step time: {:.3f}".format(
+            def get_log(log_loss, log_distil_loss, log_components, log_time):
+                return (
+                    "train | epoch {:3d} | Iter: {:6d}/{:6d} | global iter: {:6d}/{:6d} "
+                    "| loss: {:.4f} | ds_loss: {:.4f} | lm: {:.4f} | logit_kd: {:.4f} "
+                    "| attn: {:.4f} | q_attn: {:.4f} | cy_attn: {:.4f} | gen_q_rel: {:.4f} "
+                    "| lr: {:.4e} | scale: {:10.4f} | micro time: {:.3f} | step time: {:.3f}"
+                ).format(
                     epoch,
                     step,
                     args.total_iters * args.gradient_accumulation_steps,
@@ -909,6 +965,12 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                     args.total_iters,
                     log_loss,
                     log_distil_loss,
+                    log_components["lm_loss"],
+                    log_components["logit_kd_loss"],
+                    log_components["attention_loss"],
+                    log_components["query_attention_loss"],
+                    log_components["cypher_attention_loss"],
+                    log_components["gen_query_rel_loss"],
                     lr_scheduler.get_last_lr()[0],
                     optimizer.cur_scale if hasattr(optimizer, "cur_scale") else 0,
                     elapsed_time,
@@ -919,12 +981,18 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 mid_log_step = args.gradient_accumulation_steps // args.mid_log_num
                 mid_log_step = 1 if mid_log_step == 0 else mid_log_step
                 if step % mid_log_step == 0:
-                    print_rank(get_log(global_loss, global_distil_loss, 0))
+                    print_rank(get_log(global_loss, global_distil_loss, global_loss_components, 0))
 
             if global_step % args.log_interval == 0 and step % args.gradient_accumulation_steps == 0:
+                log_steps = args.log_interval * args.gradient_accumulation_steps
+                avg_loss_components = {
+                    name: total_loss_components[name] / log_steps
+                    for name in loss_component_names
+                }
                 log_str = get_log(
-                    total_loss / (args.log_interval * args.gradient_accumulation_steps),
-                    total_distil_loss / (args.log_interval * args.gradient_accumulation_steps),
+                    total_loss / log_steps,
+                    total_distil_loss / log_steps,
+                    avg_loss_components,
                     total_time / (args.log_interval))
                 print_rank("*" * 100)
                 print_rank(log_str)
@@ -932,6 +1000,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 print_rank("*" * 100)
                 save_rank(log_str, os.path.join(args.save, "log.txt"))
                 total_loss, total_distil_loss, total_time = 0.0, 0.0, 0.0
+                total_loss_components = {name: 0.0 for name in loss_component_names}
 
                 # --- MEMORY MEASUREMENT BLOCK ---
                 allocated   = torch.cuda.memory_allocated() / 1e9
