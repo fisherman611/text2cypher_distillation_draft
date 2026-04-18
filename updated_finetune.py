@@ -327,6 +327,11 @@ def compute_overall_attention_loss(student_attentions, teacher_attentions, no_mo
 
     target_mask = get_target_mask(no_model_batch, attention_mask)
     source_mask = get_source_mask(no_model_batch, attention_mask)
+    query_mask = no_model_batch.get("query_mask")
+    if query_mask is not None:
+        query_mask = query_mask.to(attention_mask.device).bool() & attention_mask.bool()
+    else:
+        query_mask = source_mask
     schema_mask = no_model_batch.get("schema_mask")
     if schema_mask is not None:
         schema_mask = schema_mask.to(attention_mask.device).bool() & attention_mask.bool()
@@ -351,7 +356,7 @@ def compute_overall_attention_loss(student_attentions, teacher_attentions, no_mo
         t_attn = teacher_attentions[t_idx]
         if use_query:
             branches.append(args.w_query_attention_loss * compute_attention_branch_loss(
-                s_attn, t_attn, target_mask, source_mask, args))
+                s_attn, t_attn, target_mask, query_mask, args))
         if use_cypher:
             branches.append(args.w_cypher_attention_loss * compute_attention_branch_loss(
                 s_attn, t_attn, target_mask, target_mask, args))
