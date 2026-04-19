@@ -79,7 +79,7 @@ def calculate_result(result, metrics=['execution_accuracy', 'psjs', 'executable'
 
 # with open(r"format_results/Cypherbench/qwen3/sft_4B/calculated_scores/test_result.json", "r", encoding="utf-8") as f:
 # with open(r"results\Mind_the_query\calculated_scores_Qwen3_0.6B_4B_csd\test_result.json", "r", encoding="utf-8") as f:
-with open(r"results\updated_Cypherbench\calculated_scores_Qwen3_0.6B_4B_fkl_query_cypher_kl_attn0.2_kd0.5_lr3e-5\test_result.json", "r", encoding="utf-8") as f:
+with open(r"results\updated_Cypherbench\calculated_scores_Qwen3_0.6B_4B_fkl_query_cypher_kl_attn0.05_budget_kd0.5_lr3e-5\test_result.json", "r", encoding="utf-8") as f:
     result = json.load(f)
 
 metric_scores = calculate_result(result)
