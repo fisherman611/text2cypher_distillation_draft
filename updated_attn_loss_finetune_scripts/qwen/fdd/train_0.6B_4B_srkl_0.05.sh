@@ -64,6 +64,7 @@ OPTS+=" --weight-decay 1e-2"
 OPTS+=" --clip-grad 1.0"
 OPTS+=" --epochs ${EPOCHS}"
 OPTS+=" --kd-ratio 0.5"
+OPTS+=" --w-logit-kd-loss 1.0"
 OPTS+=" --fdd-weight 0.05"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"

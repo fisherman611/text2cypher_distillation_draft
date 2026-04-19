@@ -136,6 +136,7 @@ def add_hp_args(parser: argparse.ArgumentParser):
     group.add_argument('--loss-scale', type=float, default=65536,
                        help='loss scale')
     group.add_argument("--kd-ratio", type=float, default=None)
+    group.add_argument("--w-logit-kd-loss", type=float, default=1.0)
     group.add_argument("--fdd-weight", type=float, default=None)
 
     group.add_argument('--warmup-iters', type=int, default=0,
