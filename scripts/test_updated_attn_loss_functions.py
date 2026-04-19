@@ -186,6 +186,13 @@ def test_masked_attention_distribution_loss():
     print("mass_mse different attention loss:", float(loss))
     assert float(loss) > 0
 
+    args.attention_loss_type = "raw_mse"
+    args.attention_head_reduction = "auto"
+    student_many_heads = student.repeat(1, 16, 1, 1)
+    teacher_more_heads = teacher.repeat(1, 32, 1, 1)
+    loss = attn_ft.masked_attention_distribution_loss(student_many_heads, teacher_more_heads, pair_mask, args)
+    assert_close("raw_mse mismatched heads auto-reduced", loss.item(), 0.0, tol=1e-5)
+
     args.attention_loss_type = "cka"
     scaled_teacher = student * 2.0
     loss = attn_ft.masked_attention_distribution_loss(student, scaled_teacher, pair_mask, args)

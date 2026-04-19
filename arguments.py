@@ -223,6 +223,7 @@ def add_distillm_args(parser: argparse.ArgumentParser):
     group.add_argument("--query-attention-loss-type", type=str, default=None, choices=["kl", "js", "mse", "raw_mse", "mass_mse", "cka"])
     group.add_argument("--schema-attention-loss-type", type=str, default=None, choices=["kl", "js", "mse", "raw_mse", "mass_mse", "cka"])
     group.add_argument("--cypher-attention-loss-type", type=str, default=None, choices=["kl", "js", "mse", "raw_mse", "mass_mse", "cka"])
+    group.add_argument("--attention-head-reduction", type=str, default="auto", choices=["auto", "mean", "none"])
     group.add_argument("--attention-eps", type=float, default=1e-8)
     group.add_argument("--attention-student-layer-mapping", nargs='+', type=int, default=None)
     group.add_argument("--attention-teacher-layer-mapping", nargs='+', type=int, default=None)

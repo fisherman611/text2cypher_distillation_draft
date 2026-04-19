@@ -567,6 +567,28 @@ def get_attention_region_masks(args, tokenizer, model_batch, no_model_batch):
     return query_mask, schema_mask, cypher_mask
 
 
+def align_attention_heads(student_attn, teacher_attn, args):
+    """Make student/teacher attention head dimensions compatible.
+
+    Student and teacher models can have different head counts, for example
+    Qwen3-0.6B has 16 heads while Qwen3-4B has 32. In that case, compare their
+    head-averaged attention maps.
+    """
+    reduction = getattr(args, "attention_head_reduction", "auto")
+    if reduction == "mean" or (
+        reduction == "auto" and student_attn.size(1) != teacher_attn.size(1)
+    ):
+        student_attn = student_attn.mean(dim=1, keepdim=True)
+        teacher_attn = teacher_attn.mean(dim=1, keepdim=True)
+    elif student_attn.size(1) != teacher_attn.size(1):
+        raise ValueError(
+            "Student/teacher attention heads differ "
+            f"({student_attn.size(1)} vs {teacher_attn.size(1)}). "
+            "Use --attention-head-reduction auto or mean."
+        )
+    return student_attn, teacher_attn
+
+
 def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, args):
     """Compare student/teacher attention distributions on a masked region.
 
@@ -574,6 +596,7 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
     columns are query/schema/prefix positions depending on the branch.
     """
     eps = args.attention_eps
+    student_attn, teacher_attn = align_attention_heads(student_attn, teacher_attn, args)
     pair_mask = pair_mask.to(student_attn.device)
 
     if args.attention_loss_type == "raw_mse":
@@ -631,6 +654,7 @@ def masked_attention_loss_with_type(student_attn, teacher_attn, pair_mask, args,
     local_args = SimpleNamespace(
         attention_eps=args.attention_eps,
         attention_loss_type=loss_type,
+        attention_head_reduction=getattr(args, "attention_head_reduction", "auto"),
     )
     return masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, local_args)
 

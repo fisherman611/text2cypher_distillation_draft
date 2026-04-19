@@ -91,6 +91,7 @@ OPTS+=" --use-schema-attention-loss"
 OPTS+=" --use-cypher-attention-loss"
 OPTS+=" --w-attention-loss 0.1"
 OPTS+=" --attention-loss-type kl"
+OPTS+=" --attention-head-reduction mean"
 OPTS+=" --attention-student-layer-mapping -1"
 OPTS+=" --attention-teacher-layer-mapping -1"
 # gen
