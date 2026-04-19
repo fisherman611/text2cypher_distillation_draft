@@ -730,7 +730,8 @@ def build_cypher_prefix_pair_mask(cypher_mask):
 
 def compute_overall_attention_loss(args, tokenizer, model_batch, no_model_batch,
                                    student_attn_cache, teacher_attn_cache,
-                                   student_layer_mapping, teacher_layer_mapping):
+                                   student_layer_mapping, teacher_layer_mapping,
+                                   return_details=False):
     query_mask, schema_mask, cypher_mask = get_attention_region_masks(
         args,
         tokenizer,
@@ -739,6 +740,7 @@ def compute_overall_attention_loss(args, tokenizer, model_batch, no_model_batch,
     )
 
     branch_losses = []
+    query_losses, schema_losses, cypher_losses = [], [], []
     for s_idx, t_idx in zip(student_layer_mapping, teacher_layer_mapping):
         if s_idx not in student_attn_cache or t_idx not in teacher_attn_cache:
             continue
@@ -751,12 +753,14 @@ def compute_overall_attention_loss(args, tokenizer, model_batch, no_model_batch,
             query_loss_type = get_branch_attention_loss_type(args, "query")
             q_loss = masked_attention_loss_with_type(s_attn, t_attn, pair_mask, args, query_loss_type)
             branch_losses.append(args.w_query_attention_loss * q_loss)
+            query_losses.append(q_loss)
 
         if getattr(args, "use_schema_attention_loss", False):
             pair_mask = build_pair_mask(cypher_mask, schema_mask)
             schema_loss_type = get_branch_attention_loss_type(args, "schema")
             s_loss = masked_attention_loss_with_type(s_attn, t_attn, pair_mask, args, schema_loss_type)
             branch_losses.append(args.w_schema_attention_loss * s_loss)
+            schema_losses.append(s_loss)
 
         if getattr(args, "use_cypher_attention_loss", False):
             pair_mask = build_cypher_prefix_pair_mask(cypher_mask)
@@ -766,10 +770,40 @@ def compute_overall_attention_loss(args, tokenizer, model_batch, no_model_batch,
             cypher_loss_type = get_branch_attention_loss_type(args, "cypher")
             c_loss = masked_attention_loss_with_type(s_attn, t_attn, pair_mask, args, cypher_loss_type)
             branch_losses.append(args.w_cypher_attention_loss * c_loss)
+            cypher_losses.append(c_loss)
 
     if not branch_losses:
-        return model_batch["input_ids"].new_tensor(0.0, dtype=torch.float32)
-    return args.w_attention_loss * sum(branch_losses) / len(branch_losses)
+        zero = model_batch["input_ids"].new_tensor(0.0, dtype=torch.float32)
+        if return_details:
+            return zero, {
+                "query_attention_loss": zero,
+                "schema_attention_loss": zero,
+                "cypher_attention_loss": zero,
+            }
+        return zero
+
+    attention_loss = args.w_attention_loss * sum(branch_losses) / len(branch_losses)
+    if not return_details:
+        return attention_loss
+
+    zero = attention_loss.new_tensor(0.0)
+
+    def mean_or_zero(values):
+        return sum(values) / len(values) if values else zero
+
+    return attention_loss, {
+        "query_attention_loss": mean_or_zero(query_losses),
+        "schema_attention_loss": mean_or_zero(schema_losses),
+        "cypher_attention_loss": mean_or_zero(cypher_losses),
+    }
+
+
+def reduce_metric_value(value, dp_world_size, dp_group=None):
+    if value is None:
+        return 0.0
+    metric = value.detach().float().clone()
+    dist.all_reduce(metric, dist.ReduceOp.SUM, group=dp_group)
+    return metric.item() / dp_world_size
 
 
 def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, optimizer: AdamW, lr_scheduler, dataset, device, teacher_model=None):
@@ -798,6 +832,11 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
 
     step, global_step = 1, 1
     total_loss, total_distil_loss, total_time = 0.0, 0.0, 0.0
+    total_kd_logit_loss = 0.0
+    total_attention_loss = 0.0
+    total_query_attention_loss = 0.0
+    total_schema_attention_loss = 0.0
+    total_cypher_attention_loss = 0.0
     
     adaptive_threshold = args.init_threshold if "adaptive" in args.type else -1.0
     prev_avg_loss = evaluate(args, tokenizer, model, dataset["dev"], "dev", 0, device, adaptive_threshold)
@@ -917,6 +956,16 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 raise NotImplementedError
             else:
                 lm_loss = loss_func(logits.float().view(-1, logits.shape[-1]), no_model_batch["label"].view(-1))
+
+            zero_loss = lm_loss.new_tensor(0.0)
+            distil_loss = zero_loss
+            logit_distil_loss = zero_loss
+            attention_loss = zero_loss
+            attention_details = {
+                "query_attention_loss": zero_loss,
+                "schema_attention_loss": zero_loss,
+                "cypher_attention_loss": zero_loss,
+            }
             
             if teacher_model is not None:
                 with torch.no_grad():
@@ -927,7 +976,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 logit_distil_loss = get_logit_distil_loss(args, teacher_logits, no_model_batch, logits)
                 distil_loss = args.w_logit_kd_loss * logit_distil_loss
                 if attention_enabled:
-                    attention_loss = compute_overall_attention_loss(
+                    attention_loss, attention_details = compute_overall_attention_loss(
                         args,
                         tokenizer,
                         model_batch,
@@ -936,6 +985,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                         teacher_attn_cache,
                         attn_student_layers,
                         attn_teacher_layers,
+                        return_details=True,
                     )
                     distil_loss = distil_loss + attention_loss
                 loss = (1 - args.kd_ratio) * lm_loss + args.kd_ratio * distil_loss
@@ -948,15 +998,20 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 
             model.backward(loss)
             model.step()
-             
-            dist.all_reduce(loss, dist.ReduceOp.SUM, group=dp_group)
-            global_loss = loss.item() / dp_world_size
 
-            global_distil_loss = 0
-            if teacher_model is not None:
-                dist.all_reduce(distil_loss, dist.ReduceOp.SUM, group=dp_group)
-                global_distil_loss = distil_loss.item() / dp_world_size
-                total_distil_loss += global_distil_loss
+            global_loss = reduce_metric_value(loss, dp_world_size, dp_group)
+            global_distil_loss = reduce_metric_value(distil_loss, dp_world_size, dp_group)
+            global_kd_logit_loss = reduce_metric_value(logit_distil_loss, dp_world_size, dp_group)
+            global_attention_loss = reduce_metric_value(attention_loss, dp_world_size, dp_group)
+            global_query_attention_loss = reduce_metric_value(attention_details["query_attention_loss"], dp_world_size, dp_group)
+            global_schema_attention_loss = reduce_metric_value(attention_details["schema_attention_loss"], dp_world_size, dp_group)
+            global_cypher_attention_loss = reduce_metric_value(attention_details["cypher_attention_loss"], dp_world_size, dp_group)
+            total_distil_loss += global_distil_loss
+            total_kd_logit_loss += global_kd_logit_loss
+            total_attention_loss += global_attention_loss
+            total_query_attention_loss += global_query_attention_loss
+            total_schema_attention_loss += global_schema_attention_loss
+            total_cypher_attention_loss += global_cypher_attention_loss
     
             torch.cuda.synchronize()
             elapsed_time = time.time() - st_time
@@ -965,8 +1020,11 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
             total_time += elapsed_time
 
             # Logging
-            def get_log(log_loss, log_distil_loss, log_time):
-                return "train | epoch {:3d} | Iter: {:6d}/{:6d} | global iter: {:6d}/{:6d} | loss: {:.4f} | ds_loss: {:.4f} | lr: {:.4e} | scale: {:10.4f} | micro time: {:.3f} | step time: {:.3f}".format(
+            def get_log(log_loss, log_distil_loss, log_kd_logit_loss,
+                        log_attention_loss, log_query_attention_loss,
+                        log_schema_attention_loss, log_cypher_attention_loss,
+                        log_time):
+                return "train | epoch {:3d} | Iter: {:6d}/{:6d} | global iter: {:6d}/{:6d} | loss: {:.4f} | ds_loss: {:.4f} | kd_logit_loss: {:.4f} | attn_loss: {:.4f} | query_attn_loss: {:.4f} | schema_attn_loss: {:.4f} | cypher_attn_loss: {:.4f} | lr: {:.4e} | scale: {:10.4f} | micro time: {:.3f} | step time: {:.3f}".format(
                     epoch,
                     step,
                     args.total_iters * args.gradient_accumulation_steps,
@@ -974,6 +1032,11 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                     args.total_iters,
                     log_loss,
                     log_distil_loss,
+                    log_kd_logit_loss,
+                    log_attention_loss,
+                    log_query_attention_loss,
+                    log_schema_attention_loss,
+                    log_cypher_attention_loss,
                     lr_scheduler.get_last_lr()[0],
                     optimizer.cur_scale if hasattr(optimizer, "cur_scale") else 0,
                     elapsed_time,
@@ -984,12 +1047,27 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 mid_log_step = args.gradient_accumulation_steps // args.mid_log_num
                 mid_log_step = 1 if mid_log_step == 0 else mid_log_step
                 if step % mid_log_step == 0:
-                    print_rank(get_log(global_loss, global_distil_loss, 0))
+                    print_rank(get_log(
+                        global_loss,
+                        global_distil_loss,
+                        global_kd_logit_loss,
+                        global_attention_loss,
+                        global_query_attention_loss,
+                        global_schema_attention_loss,
+                        global_cypher_attention_loss,
+                        0,
+                    ))
 
             if global_step % args.log_interval == 0 and step % args.gradient_accumulation_steps == 0:
+                denom = args.log_interval * args.gradient_accumulation_steps
                 log_str = get_log(
-                    total_loss / (args.log_interval * args.gradient_accumulation_steps),
-                    total_distil_loss / (args.log_interval * args.gradient_accumulation_steps),
+                    total_loss / denom,
+                    total_distil_loss / denom,
+                    total_kd_logit_loss / denom,
+                    total_attention_loss / denom,
+                    total_query_attention_loss / denom,
+                    total_schema_attention_loss / denom,
+                    total_cypher_attention_loss / denom,
                     total_time / (args.log_interval))
                 print_rank("*" * 100)
                 print_rank(log_str)
@@ -997,6 +1075,11 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 print_rank("*" * 100)
                 save_rank(log_str, os.path.join(args.save, "log.txt"))
                 total_loss, total_distil_loss, total_time = 0.0, 0.0, 0.0
+                total_kd_logit_loss = 0.0
+                total_attention_loss = 0.0
+                total_query_attention_loss = 0.0
+                total_schema_attention_loss = 0.0
+                total_cypher_attention_loss = 0.0
             
             # Checkpointing
             if args.save and args.save_interval and global_step % args.save_interval == 0 and step % args.gradient_accumulation_steps == 0:
