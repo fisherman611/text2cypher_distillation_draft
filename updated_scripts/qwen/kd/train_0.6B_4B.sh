@@ -32,7 +32,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.2_kd0.5_lr3e-5"
+SAVE_PATH="${BASE_PATH}/results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.05_budget_kd0.5_lr3e-5"
 # seed
 SEED=42
 
@@ -110,9 +110,9 @@ OPTS+=" --use-cypher-attention-loss"
 OPTS+=" --attention-loss-type kl"
 OPTS+=" --attention-eps 1e-8"
 OPTS+=" --attention-head-reduction mean"
-OPTS+=" --attention-student-layer-mapping -1"
-OPTS+=" --attention-teacher-layer-mapping -1"
-OPTS+=" --w-attention-loss 0.2"
+OPTS+=" --attention-student-layer-mapping 9 18"
+OPTS+=" --attention-teacher-layer-mapping 11 23"
+OPTS+=" --w-attention-loss 0.05"
 OPTS+=" --w-query-attention-loss 1.0"
 OPTS+=" --w-cypher-attention-loss 1.0"
 # OPTS+=" --use-span-rep-loss"

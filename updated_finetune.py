@@ -863,7 +863,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                         use_cache=False)
                     teacher_logits = teacher_outputs.logits
 
-                distil_terms = []
+                aux_distil_terms = []
                 use_logit_kd = args.use_logit_kd or not (
                     args.use_attention_loss
                     or args.use_query_attention_loss
@@ -876,8 +876,9 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 if use_logit_kd:
                     logit_kd_loss = args.w_logit_kd * get_distil_loss(
                         args, teacher_logits, no_model_batch, logits)
-                    distil_terms.append(logit_kd_loss)
                     loss_components["logit_kd_loss"] = logit_kd_loss
+                else:
+                    logit_kd_loss = zero_loss_like(lm_loss)
 
                 if need_attentions:
                     attention_loss, attention_components = compute_overall_attention_loss(
@@ -887,7 +888,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                         model_batch["attention_mask"],
                         args,
                         return_components=True)
-                    distil_terms.append(attention_loss)
+                    aux_distil_terms.append(attention_loss)
                     loss_components.update(attention_components)
 
                 spans_offsets = no_model_batch.get("span_offsets")
@@ -896,7 +897,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 if args.use_span_rep_loss:
                     assert spans_offsets is not None and offset_mapping is not None, \
                         "span representation loss requires span_offsets and offset_mapping in no_model_batch"
-                    distil_terms.append(compute_span_representation_loss(
+                    aux_distil_terms.append(compute_span_representation_loss(
                         model_batch["attention_mask"],
                         outputs.hidden_states,
                         teacher_outputs.hidden_states,
@@ -914,7 +915,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                         offset_mapping,
                         spans_offsets,
                         args)
-                    distil_terms.append(args.w_span_rel_loss * span_rel_loss)
+                    aux_distil_terms.append(args.w_span_rel_loss * span_rel_loss)
 
                 if args.use_gen_query_rel_loss:
                     assert spans_offsets is not None and offset_mapping is not None, \
@@ -927,10 +928,27 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                         offset_mapping,
                         spans_offsets,
                         args)
-                    distil_terms.append(gen_query_rel_loss)
+                    aux_distil_terms.append(gen_query_rel_loss)
                     loss_components["gen_query_rel_loss"] = gen_query_rel_loss
 
-                distil_loss = sum(distil_terms) if distil_terms else zero_loss_like(lm_loss)
+                if use_logit_kd and aux_distil_terms:
+                    aux_budget = 0.0
+                    if need_attentions:
+                        aux_budget += args.w_attention_loss
+                    if args.use_span_rep_loss:
+                        aux_budget += args.w_span_rep_loss
+                    if args.use_span_rel_loss:
+                        aux_budget += args.w_span_rel_loss
+                    if args.use_gen_query_rel_loss:
+                        aux_budget += args.w_gen_query_rel_loss
+                    aux_budget = min(max(aux_budget, 0.0), 0.9)
+                    distil_loss = (1.0 - aux_budget) * logit_kd_loss + sum(aux_distil_terms)
+                elif use_logit_kd:
+                    distil_loss = logit_kd_loss
+                elif aux_distil_terms:
+                    distil_loss = sum(aux_distil_terms) / len(aux_distil_terms)
+                else:
+                    distil_loss = zero_loss_like(lm_loss)
                 kd_ratio = args.kd_ratio if args.kd_ratio is not None else 1.0
                 loss = (1 - kd_ratio) * lm_loss + kd_ratio * distil_loss
             else:
