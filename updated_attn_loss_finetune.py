@@ -25,6 +25,7 @@ import json
 from tqdm import tqdm
 import math
 import datetime
+from types import SimpleNamespace
 
 from transformers import (
     AutoModelForCausalLM,
@@ -616,23 +617,60 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
     return (per_row * valid_rows).sum() / valid_rows.sum().clamp(min=1.0)
 
 
+def masked_attention_loss_with_type(student_attn, teacher_attn, pair_mask, args, loss_type):
+    """Run masked attention loss with a branch-specific loss type.
+
+    This avoids mutating args when a branch needs a different objective. In
+    particular, CKA is suitable for query/schema regions whose source columns
+    are shared across rows, but cypher-prefix has row-dependent causal support,
+    so compute_overall_attention_loss falls back to mass_mse for that branch.
+    """
+    if loss_type == args.attention_loss_type:
+        return masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, args)
+
+    local_args = SimpleNamespace(
+        attention_eps=args.attention_eps,
+        attention_loss_type=loss_type,
+    )
+    return masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, local_args)
+
+
+def get_branch_attention_loss_type(args, branch_name):
+    """Resolve loss type for a branch, falling back to the global type.
+
+    If global loss is CKA and cypher loss is not explicitly specified, use
+    mass_mse for cypher-prefix because its causal support changes per row.
+    """
+    branch_loss_type = getattr(args, f"{branch_name}_attention_loss_type", None)
+    if branch_loss_type is not None:
+        return branch_loss_type
+    return args.attention_loss_type
+
+
 def masked_attention_cka_loss(student_attn, teacher_attn, pair_mask, eps=1e-8):
     """CKA loss between masked attention maps.
 
-    We flatten each valid row's selected columns into features and compare the
-    centered Gram matrices of student and teacher. Loss is 1 - linear CKA.
+    We compare head-averaged attention rows as feature vectors using linear CKA:
+
+        CKA(X, Y) = ||X_c^T Y_c||_F^2 / (||X_c^T X_c||_F ||Y_c^T Y_c||_F)
+
+    where rows are selected target tokens and columns are selected source tokens.
+    Loss is 1 - CKA. This is scale-invariant, unlike raw MSE.
     """
     pair_mask = pair_mask.to(student_attn.device)
-    valid_rows = pair_mask.any(dim=-1).squeeze(1)  # [B, L]
-    if valid_rows.sum() < 2:
-        return student_attn.new_tensor(0.0)
-
     s = (student_attn.float() * pair_mask).mean(dim=1)  # [B, L, L]
     t = (teacher_attn.float() * pair_mask).mean(dim=1)  # [B, L, L]
 
+    row_mask = pair_mask.squeeze(1).bool()
+    s_mass = s.abs().sum(dim=-1)
+    t_mass = t.abs().sum(dim=-1)
+    valid_rows = row_mask.any(dim=-1) & (s_mass > eps) & (t_mass > eps)
+    if valid_rows.sum() < 3:
+        return student_attn.new_tensor(0.0)
+
     s_rows = s[valid_rows]
     t_rows = t[valid_rows]
-    col_mask = pair_mask.squeeze(1)[valid_rows].bool()
+    col_mask = row_mask[valid_rows]
     valid_cols = col_mask.any(dim=0)
     if valid_cols.sum() < 2:
         return student_attn.new_tensor(0.0)
@@ -645,7 +683,13 @@ def masked_attention_cka_loss(student_attn, teacher_attn, pair_mask, eps=1e-8):
     hsic = (x.T @ y).pow(2).sum()
     x_norm = (x.T @ x).pow(2).sum().sqrt()
     y_norm = (y.T @ y).pow(2).sum().sqrt()
-    cka = hsic / (x_norm * y_norm).clamp(min=eps)
+    denom = x_norm * y_norm
+    if denom <= eps:
+        # CKA is undefined for zero-variance matrices. If both are effectively
+        # identical constants, make the auxiliary loss neutral.
+        return x.new_tensor(0.0 if torch.allclose(x, y, atol=eps, rtol=0.0) else 1.0)
+
+    cka = hsic / denom
     return 1.0 - cka.clamp(min=0.0, max=1.0)
 
 
@@ -680,17 +724,23 @@ def compute_overall_attention_loss(args, tokenizer, model_batch, no_model_batch,
 
         if getattr(args, "use_query_attention_loss", False):
             pair_mask = build_pair_mask(cypher_mask, query_mask)
-            q_loss = masked_attention_distribution_loss(s_attn, t_attn, pair_mask, args)
+            query_loss_type = get_branch_attention_loss_type(args, "query")
+            q_loss = masked_attention_loss_with_type(s_attn, t_attn, pair_mask, args, query_loss_type)
             branch_losses.append(args.w_query_attention_loss * q_loss)
 
         if getattr(args, "use_schema_attention_loss", False):
             pair_mask = build_pair_mask(cypher_mask, schema_mask)
-            s_loss = masked_attention_distribution_loss(s_attn, t_attn, pair_mask, args)
+            schema_loss_type = get_branch_attention_loss_type(args, "schema")
+            s_loss = masked_attention_loss_with_type(s_attn, t_attn, pair_mask, args, schema_loss_type)
             branch_losses.append(args.w_schema_attention_loss * s_loss)
 
         if getattr(args, "use_cypher_attention_loss", False):
             pair_mask = build_cypher_prefix_pair_mask(cypher_mask)
-            c_loss = masked_attention_distribution_loss(s_attn, t_attn, pair_mask, args)
+            # CKA assumes rows live in a reasonably shared feature space. If
+            # global loss is CKA and no cypher-specific loss is set, fallback
+            # to mass_mse for causal prefix attention.
+            cypher_loss_type = get_branch_attention_loss_type(args, "cypher")
+            c_loss = masked_attention_loss_with_type(s_attn, t_attn, pair_mask, args, cypher_loss_type)
             branch_losses.append(args.w_cypher_attention_loss * c_loss)
 
     if not branch_losses:

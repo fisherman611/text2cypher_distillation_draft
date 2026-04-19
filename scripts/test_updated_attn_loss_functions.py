@@ -186,6 +186,54 @@ def test_masked_attention_distribution_loss():
     print("mass_mse different attention loss:", float(loss))
     assert float(loss) > 0
 
+    args.attention_loss_type = "cka"
+    scaled_teacher = student * 2.0
+    loss = attn_ft.masked_attention_distribution_loss(student, scaled_teacher, pair_mask, args)
+    assert_close("cka scaled-identical attention loss", loss.item(), 0.0, tol=1e-5)
+
+    loss = attn_ft.masked_attention_distribution_loss(student, teacher2, pair_mask, args)
+    print("cka different attention loss with two rows (degenerate/neutral):", float(loss))
+    assert float(loss) >= 0
+
+    # CKA needs enough valid rows to be informative. With only two rows,
+    # centered linear CKA is often degenerate, so test a larger non-collinear map.
+    student_big = torch.tensor([[[
+        [0.40, 0.30, 0.20, 0.10],
+        [0.10, 0.60, 0.20, 0.10],
+        [0.25, 0.15, 0.50, 0.10],
+        [0.10, 0.20, 0.20, 0.50],
+    ]]])
+    teacher_big = torch.tensor([[[
+        [0.10, 0.20, 0.60, 0.10],
+        [0.50, 0.20, 0.20, 0.10],
+        [0.10, 0.60, 0.20, 0.10],
+        [0.30, 0.10, 0.10, 0.50],
+    ]]])
+    big_mask = torch.ones(1, 1, 4, 4, dtype=torch.bool)
+    loss = attn_ft.masked_attention_distribution_loss(student_big, teacher_big, big_mask, args)
+    print("cka different attention loss with four rows:", float(loss))
+    assert float(loss) > 0
+
+
+def test_branch_attention_loss_type():
+    print("\n[8] get_branch_attention_loss_type")
+    args = SimpleNamespace(
+        attention_loss_type="cka",
+        query_attention_loss_type=None,
+        schema_attention_loss_type="raw_mse",
+        cypher_attention_loss_type=None,
+    )
+    print("query loss type: ", attn_ft.get_branch_attention_loss_type(args, "query"))
+    print("schema loss type:", attn_ft.get_branch_attention_loss_type(args, "schema"))
+    print("cypher loss type:", attn_ft.get_branch_attention_loss_type(args, "cypher"))
+    assert attn_ft.get_branch_attention_loss_type(args, "query") == "cka"
+    assert attn_ft.get_branch_attention_loss_type(args, "schema") == "raw_mse"
+    assert attn_ft.get_branch_attention_loss_type(args, "cypher") == "mass_mse"
+
+    args.cypher_attention_loss_type = "cka"
+    print("explicit cypher loss type:", attn_ft.get_branch_attention_loss_type(args, "cypher"))
+    assert attn_ft.get_branch_attention_loss_type(args, "cypher") == "cka"
+
 
 def load_sample(args, device):
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, padding_side="right")
@@ -213,7 +261,7 @@ def load_sample(args, device):
 
 
 def test_region_masks(args):
-    print("\n[8] get_attention_region_masks fallback on one real sample")
+    print("\n[9] get_attention_region_masks fallback on one real sample")
     device = torch.device("cpu")
     tokenizer, sample, model_batch, no_model_batch = load_sample(args, device)
 
@@ -237,7 +285,7 @@ def test_region_masks(args):
 
 
 def test_cypher_mask_from_labels(args):
-    print("\n[9] cypher_mask is taken from label != -100")
+    print("\n[10] cypher_mask is taken from label != -100")
     device = torch.device("cpu")
     tokenizer, sample, model_batch, no_model_batch = load_sample(args, device)
 
@@ -266,7 +314,7 @@ def test_cypher_mask_from_labels(args):
 
 
 def test_model_attention_hooks(args):
-    print("\n[10] get_transformer_layers + register_attention_hooks + reconstruct_attention")
+    print("\n[11] get_transformer_layers + register_attention_hooks + reconstruct_attention")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tokenizer, sample, model_batch, no_model_batch = load_sample(args, device)
 
@@ -354,13 +402,14 @@ def main():
     test_find_between_and_span_mask()
     test_pair_masks()
     test_masked_attention_distribution_loss()
+    test_branch_attention_loss_type()
     test_region_masks(args)
     test_cypher_mask_from_labels(args)
 
     if args.with_model:
         test_model_attention_hooks(args)
     else:
-        print("\n[10] model hook test skipped. Add --with-model to compare hook attention with output_attentions=True.")
+        print("\n[11] model hook test skipped. Add --with-model to compare hook attention with output_attentions=True.")
 
     print("\nAll requested tests finished.")
 
