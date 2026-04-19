@@ -322,6 +322,12 @@ results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.2_kd0.5_lr3e
 results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.2_kd0.5_lr3e-5/852/
 results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.2_kd0.5_lr3e-5/1065/
 
+results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.05_budget_kd0.5_lr3e-5/213/
+results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.05_budget_kd0.5_lr3e-5/426/
+results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.05_budget_kd0.5_lr3e-5/639/
+results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.05_budget_kd0.5_lr3e-5/852/
+results/qwen3/updated_0.6B_4B_Cypherbench_fkl_query_cypher_kl_attn0.05_budget_kd0.5_lr3e-5/1065/
+
 distill_results/
 benchmarks.zip
 results.zip
