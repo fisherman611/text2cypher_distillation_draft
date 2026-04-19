@@ -208,6 +208,21 @@ def add_distillm_args(parser: argparse.ArgumentParser):
     group.add_argument("--use_dsa", action="store_true")
     group.add_argument("--use_hs", action="store_true")
 
+    # Attention distillation. These flags are used by updated_attn_loss_finetune.py.
+    # Defaults keep the original finetune.py behavior unchanged.
+    group.add_argument("--use-attention-loss", action="store_true")
+    group.add_argument("--use-query-attention-loss", action="store_true")
+    group.add_argument("--use-schema-attention-loss", action="store_true")
+    group.add_argument("--use-cypher-attention-loss", action="store_true")
+    group.add_argument("--w-attention-loss", type=float, default=0.0)
+    group.add_argument("--w-query-attention-loss", type=float, default=1.0)
+    group.add_argument("--w-schema-attention-loss", type=float, default=1.0)
+    group.add_argument("--w-cypher-attention-loss", type=float, default=1.0)
+    group.add_argument("--attention-loss-type", type=str, default="kl", choices=["kl", "js", "mse"])
+    group.add_argument("--attention-eps", type=float, default=1e-8)
+    group.add_argument("--attention-student-layer-mapping", nargs='+', type=int, default=None)
+    group.add_argument("--attention-teacher-layer-mapping", nargs='+', type=int, default=None)
+
     return parser
 
 
