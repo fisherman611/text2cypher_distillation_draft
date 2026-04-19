@@ -575,6 +575,22 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
     eps = args.attention_eps
     pair_mask = pair_mask.to(student_attn.device)
 
+    if args.attention_loss_type == "raw_mse":
+        # Plain masked MSE on the attention map. This keeps the original
+        # attention mass instead of renormalizing each selected row.
+        diff = ((student_attn.float() - teacher_attn.float()) ** 2) * pair_mask
+        return diff.sum() / pair_mask.sum().clamp(min=1.0)
+
+    if args.attention_loss_type == "mass_mse":
+        # Sum-squared error normalized by teacher attention mass in the region.
+        # This matches the "reduce sum then divide by sum of attention map" idea.
+        diff = ((student_attn.float() - teacher_attn.float()) ** 2) * pair_mask
+        denom = (teacher_attn.float() * pair_mask).sum().clamp(min=eps)
+        return diff.sum() / denom
+
+    if args.attention_loss_type == "cka":
+        return masked_attention_cka_loss(student_attn, teacher_attn, pair_mask, eps)
+
     s = student_attn.float() * pair_mask
     t = teacher_attn.float() * pair_mask
     s_sum = s.sum(dim=-1, keepdim=True)
@@ -598,6 +614,39 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
         per_row = (t_dist * ((t_dist + eps).log() - (s_dist + eps).log()) * pair_mask).sum(dim=-1, keepdim=True)
 
     return (per_row * valid_rows).sum() / valid_rows.sum().clamp(min=1.0)
+
+
+def masked_attention_cka_loss(student_attn, teacher_attn, pair_mask, eps=1e-8):
+    """CKA loss between masked attention maps.
+
+    We flatten each valid row's selected columns into features and compare the
+    centered Gram matrices of student and teacher. Loss is 1 - linear CKA.
+    """
+    pair_mask = pair_mask.to(student_attn.device)
+    valid_rows = pair_mask.any(dim=-1).squeeze(1)  # [B, L]
+    if valid_rows.sum() < 2:
+        return student_attn.new_tensor(0.0)
+
+    s = (student_attn.float() * pair_mask).mean(dim=1)  # [B, L, L]
+    t = (teacher_attn.float() * pair_mask).mean(dim=1)  # [B, L, L]
+
+    s_rows = s[valid_rows]
+    t_rows = t[valid_rows]
+    col_mask = pair_mask.squeeze(1)[valid_rows].bool()
+    valid_cols = col_mask.any(dim=0)
+    if valid_cols.sum() < 2:
+        return student_attn.new_tensor(0.0)
+
+    x = s_rows[:, valid_cols]
+    y = t_rows[:, valid_cols]
+    x = x - x.mean(dim=0, keepdim=True)
+    y = y - y.mean(dim=0, keepdim=True)
+
+    hsic = (x.T @ y).pow(2).sum()
+    x_norm = (x.T @ x).pow(2).sum().sqrt()
+    y_norm = (y.T @ y).pow(2).sum().sqrt()
+    cka = hsic / (x_norm * y_norm).clamp(min=eps)
+    return 1.0 - cka.clamp(min=0.0, max=1.0)
 
 
 def build_pair_mask(row_mask, col_mask):

@@ -170,15 +170,20 @@ def test_masked_attention_distribution_loss():
     col_mask = torch.tensor([[True, True, False]])
     pair_mask = attn_ft.build_pair_mask(row_mask, col_mask)
 
-    for loss_type in ["kl", "js", "mse"]:
+    for loss_type in ["kl", "js", "mse", "raw_mse", "mass_mse", "cka"]:
         args.attention_loss_type = loss_type
         loss = attn_ft.masked_attention_distribution_loss(student, teacher, pair_mask, args)
-        assert_close(f"{loss_type} identical attention loss", loss.item(), 0.0)
+        assert_close(f"{loss_type} identical attention loss", loss.item(), 0.0, tol=1e-5)
 
     args.attention_loss_type = "kl"
     teacher2 = torch.tensor([[[[0.7, 0.3, 0.0], [0.8, 0.1, 0.1], [0.9, 0.05, 0.05]]]])
     loss = attn_ft.masked_attention_distribution_loss(student, teacher2, pair_mask, args)
     print("kl different attention loss:", float(loss))
+    assert float(loss) > 0
+
+    args.attention_loss_type = "mass_mse"
+    loss = attn_ft.masked_attention_distribution_loss(student, teacher2, pair_mask, args)
+    print("mass_mse different attention loss:", float(loss))
     assert float(loss) > 0
 
 
