@@ -65,9 +65,9 @@ def get_teacher_model(args, device):
         raise NotImplementedError
     else:
         config.is_model_parallel = False
-        try: model = AutoModelForCausalLM.from_pretrained(args.teacher_model_path, config=config, device_map={"": device}, torch_dtype=torch.bfloat16)
+        try: model = AutoModelForCausalLM.from_pretrained(args.teacher_model_path, config=config, device_map={"": device}, torch_dtype=torch.bfloat16, attn_implementation="eager")
         except:
-            model = AutoModelForCausalLM.from_pretrained(args.teacher_model_path, config=config, device_map={"": device}, torch_dtype=torch.float32)
+            model = AutoModelForCausalLM.from_pretrained(args.teacher_model_path, config=config, device_map={"": device}, torch_dtype=torch.float32, attn_implementation="eager")
             model = model.half()
         
         if args.teacher_peft_path is not None:
