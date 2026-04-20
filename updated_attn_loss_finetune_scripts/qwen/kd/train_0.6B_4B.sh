@@ -25,14 +25,14 @@ TEACHER_CKPT="Qwen/Qwen3-4B-Instruct-2507"
 DATA_DIR="${BASE_PATH}/processed_data/benchmarks/Cypherbench/qwen/"
 # hp
 BATCH_SIZE=1
-LR=0.0001
+LR=0.0005
 GRAD_ACC=16
 EVAL_BATCH_SIZE=16
 EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2_log_raw_mse"
+SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2_log_mass_mse"
 # seed
 SEED=42
 
@@ -93,7 +93,7 @@ OPTS+=" --w-attention-loss 0.5"
 OPTS+=" --w-query-attention-loss 1.0"
 OPTS+=" --w-schema-attention-loss 1.0"
 OPTS+=" --w-cypher-attention-loss 1.0"
-OPTS+=" --attention-loss-type log_raw_mse"
+OPTS+=" --attention-loss-type log_mass_mse"
 OPTS+=" --attention-head-reduction mean"
 OPTS+=" --attention-student-layer-mapping -1"
 OPTS+=" --attention-teacher-layer-mapping -1"
