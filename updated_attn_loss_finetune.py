@@ -1024,7 +1024,7 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                         log_attention_loss, log_query_attention_loss,
                         log_schema_attention_loss, log_cypher_attention_loss,
                         log_time):
-                return "train | epoch {:3d} | Iter: {:6d}/{:6d} | global iter: {:6d}/{:6d} | loss: {:.4f} | ds_loss: {:.4f} | kd_logit_loss: {:.4f} | attn_loss: {:.4f} | query_attn_loss: {:.4f} | schema_attn_loss: {:.4f} | cypher_attn_loss: {:.4f} | lr: {:.4e} | scale: {:10.4f} | micro time: {:.3f} | step time: {:.3f}".format(
+                return "train | epoch {:3d} | Iter: {:6d}/{:6d} | global iter: {:6d}/{:6d} | loss: {:.4f} | ds_loss: {:.4f} | kd_logit_loss: {:.4f} | attn_loss: {:.4e} | query_attn_loss: {:.4e} | schema_attn_loss: {:.4e} | cypher_attn_loss: {:.4e} | lr: {:.4e} | scale: {:10.4f} | micro time: {:.3f} | step time: {:.3f}".format(
                     epoch,
                     step,
                     args.total_iters * args.gradient_accumulation_steps,

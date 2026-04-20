@@ -8,41 +8,41 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 import json
-# with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/company_cyphers_result.json", "r", encoding="utf-8") as f:
-#     company = json.load(f)
+with open(r"results\Cypherbench\calculated_scores_Qwen3_0.6B_4B_rkl_attn_loss/company_cyphers_result.json", "r", encoding="utf-8") as f:
+    company = json.load(f)
 
-# with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/fictional_character_cyphers_result.json", "r", encoding="utf-8") as f:
-#     fictional_character = json.load(f)
+with open(r"results\Cypherbench\calculated_scores_Qwen3_0.6B_4B_rkl_attn_loss/fictional_character_cyphers_result.json", "r", encoding="utf-8") as f:
+    fictional_character = json.load(f)
     
-# with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/flight_accident_cyphers_result.json", "r", encoding="utf-8") as f:
-#     flight_accident = json.load(f)
+with open(r"results\Cypherbench\calculated_scores_Qwen3_0.6B_4B_rkl_attn_loss/flight_accident_cyphers_result.json", "r", encoding="utf-8") as f:
+    flight_accident = json.load(f)
     
-# with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/geography_cyphers_result.json", "r", encoding="utf-8") as f:
-#     geography = json.load(f)
+with open(r"results\Cypherbench\calculated_scores_Qwen3_0.6B_4B_rkl_attn_loss/geography_cyphers_result.json", "r", encoding="utf-8") as f:
+    geography = json.load(f)
     
-# with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/movie_cyphers_result.json", "r", encoding="utf-8") as f:
-#     movie = json.load(f)
+with open(r"results\Cypherbench\calculated_scores_Qwen3_0.6B_4B_rkl_attn_loss/movie_cyphers_result.json", "r", encoding="utf-8") as f:
+    movie = json.load(f)
     
-# with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/nba_cyphers_result.json", "r", encoding="utf-8") as f:
-#     nba = json.load(f)
+with open(r"results\Cypherbench\calculated_scores_Qwen3_0.6B_4B_rkl_attn_loss/nba_cyphers_result.json", "r", encoding="utf-8") as f:
+    nba = json.load(f)
     
-# with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/politics_cyphers_result.json", "r", encoding="utf-8") as f:
-#     politics = json.load(f)
+with open(r"results\Cypherbench\calculated_scores_Qwen3_0.6B_4B_rkl_attn_loss/politics_cyphers_result.json", "r", encoding="utf-8") as f:
+    politics = json.load(f)
 
-# test = company + fictional_character + flight_accident + geography + movie + nba + politics
+test = company + fictional_character + flight_accident + geography + movie + nba + politics
 
-# with open(r"results/Cypherbench/calculated_scores_Qwen3_0.6B_4B_distillm/test_result.json", "w", encoding="utf-8") as f:
-#     json.dump(test, f, ensure_ascii=False, indent=2)
-
-with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_csd/bloom50_cyphers_result.json", "r", encoding="utf-8") as f:
-    bloom50 = json.load(f)
-
-with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_csd/healthcare_cyphers_result.json", "r", encoding="utf-8") as f:
-    healthcare = json.load(f)
-
-with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_csd/wwc_cyphers_result.json", "r", encoding="utf-8") as f:
-    wwc = json.load(f)
-
-test = bloom50 + healthcare + wwc
-with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_csd/test_result.json", "w", encoding="utf-8") as f:
+with open(r"results\Cypherbench\calculated_scores_Qwen3_0.6B_4B_rkl_attn_loss/test_result.json", "w", encoding="utf-8") as f:
     json.dump(test, f, ensure_ascii=False, indent=2)
+
+# with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_csd/bloom50_cyphers_result.json", "r", encoding="utf-8") as f:
+#     bloom50 = json.load(f)
+
+# with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_csd/healthcare_cyphers_result.json", "r", encoding="utf-8") as f:
+#     healthcare = json.load(f)
+
+# with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_csd/wwc_cyphers_result.json", "r", encoding="utf-8") as f:
+#     wwc = json.load(f)
+
+# test = bloom50 + healthcare + wwc
+# with open(r"results/Mind_the_query/calculated_scores_Qwen3_0.6B_4B_csd/test_result.json", "w", encoding="utf-8") as f:
+#     json.dump(test, f, ensure_ascii=False, indent=2)
