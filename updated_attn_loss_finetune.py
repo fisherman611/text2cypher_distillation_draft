@@ -338,77 +338,6 @@ def get_transformer_layers(model):
     raise AttributeError("Could not find transformer layers for attention hooks.")
 
 
-def rotate_half(x):
-    x1 = x[..., : x.shape[-1] // 2]
-    x2 = x[..., x.shape[-1] // 2 :]
-    return torch.cat((-x2, x1), dim=-1)
-
-
-def apply_rope(q, k, cos, sin):
-    """Apply Qwen/LLaMA-style rotary embeddings to [B, H, L, D] Q/K."""
-    cos = cos.unsqueeze(1)
-    sin = sin.unsqueeze(1)
-    q = (q * cos) + (rotate_half(q) * sin)
-    k = (k * cos) + (rotate_half(k) * sin)
-    return q, k
-
-
-def repeat_kv(hidden_states, num_key_value_groups):
-    """Repeat grouped-query attention KV heads to match query heads."""
-    if num_key_value_groups == 1:
-        return hidden_states
-    bsz, num_kv_heads, slen, head_dim = hidden_states.shape
-    hidden_states = hidden_states[:, :, None, :, :].expand(
-        bsz, num_kv_heads, num_key_value_groups, slen, head_dim
-    )
-    return hidden_states.reshape(bsz, num_kv_heads * num_key_value_groups, slen, head_dim)
-
-
-def reconstruct_attention_from_self_attn_inputs(self_attn, hidden_states, position_embeddings, attention_mask):
-    """Reconstruct the exact eager attention probabilities from a Qwen3 attention block.
-
-    We intentionally do not use output_attentions=True in the training forward.
-    Instead, a forward pre-hook receives the self-attention inputs and recomputes:
-        q_proj/k_proj -> q_norm/k_norm -> RoPE -> repeat_kv -> QK^T -> mask -> softmax
-
-    This keeps the training code compatible with PEFT/DeepSpeed wrappers and lets
-    us capture only selected layers.
-    """
-    input_shape = hidden_states.shape[:-1]
-    hidden_shape = (*input_shape, -1, self_attn.head_dim)
-
-    query_states = self_attn.q_proj(hidden_states).view(hidden_shape)
-    key_states = self_attn.k_proj(hidden_states).view(hidden_shape)
-
-    if hasattr(self_attn, "q_norm"):
-        query_states = self_attn.q_norm(query_states)
-    if hasattr(self_attn, "k_norm"):
-        key_states = self_attn.k_norm(key_states)
-
-    query_states = query_states.transpose(1, 2)
-    key_states = key_states.transpose(1, 2)
-
-    cos, sin = position_embeddings
-    query_states, key_states = apply_rope(query_states, key_states, cos, sin)
-
-    num_key_value_groups = getattr(
-        self_attn,
-        "num_key_value_groups",
-        query_states.size(1) // key_states.size(1),
-    )
-    key_states = repeat_kv(key_states, num_key_value_groups)
-
-    scaling = getattr(self_attn, "scaling", 1.0 / math.sqrt(self_attn.head_dim))
-    scores = torch.matmul(query_states.float(), key_states.float().transpose(-1, -2)) * scaling
-
-    if attention_mask is not None:
-        # Qwen3 passes the internal additive 4D causal/padding mask to self_attn.
-        causal_mask = attention_mask[:, :, :, : key_states.shape[-2]]
-        scores = scores + causal_mask.float()
-
-    return F.softmax(scores, dim=-1)
-
-
 def get_attention_layer_mapping(args, student_model, teacher_model):
     """Return selected student/teacher layer indices for attention distillation."""
     student_layers, _ = get_transformer_layers(student_model)
@@ -429,7 +358,7 @@ def get_attention_layer_mapping(args, student_model, teacher_model):
 
 
 def register_attention_hooks(model, selected_layers, captured, detach=False, require_training=False):
-    """Register forward pre-hooks that capture reconstructed attention.
+    """Register forward hooks to capture attention weights directly from self_attn.
 
     detach=False for the student so attention loss can backprop through LoRA.
     detach=True for the teacher because it is a frozen no_grad target.
@@ -438,30 +367,23 @@ def register_attention_hooks(model, selected_layers, captured, detach=False, req
     handles = []
 
     def make_hook(layer_idx):
-        def hook(module, args, kwargs):
+        def hook(module, inputs, outputs):
             if require_training and not module.training:
                 return
-
-            hidden_states = args[0] if len(args) > 0 else kwargs["hidden_states"]
-            position_embeddings = kwargs.get("position_embeddings")
-            attention_mask = kwargs.get("attention_mask")
-            if position_embeddings is None and len(args) > 1:
-                position_embeddings = args[1]
-            if attention_mask is None and len(args) > 2:
-                attention_mask = args[2]
-
-            attn = reconstruct_attention_from_self_attn_inputs(
-                module,
-                hidden_states,
-                position_embeddings,
-                attention_mask,
-            )
-            captured[layer_idx] = attn.detach() if detach else attn
+            
+            if isinstance(outputs, tuple) and len(outputs) > 1:
+                attn_weights = outputs[1]
+                if attn_weights is not None:
+                    # Đưa ra CPU ngay lập tức để giữ VRAM cho việc train (như reviewer cung cấp cho teacher)
+                    if detach:
+                        captured[layer_idx] = attn_weights.detach().cpu()
+                    else:
+                        captured[layer_idx] = attn_weights
         return hook
 
     for layer_idx in selected_layers:
         handles.append(
-            layers[layer_idx].self_attn.register_forward_pre_hook(make_hook(layer_idx), with_kwargs=True)
+            layers[layer_idx].self_attn.register_forward_hook(make_hook(layer_idx))
         )
     return handles
 
