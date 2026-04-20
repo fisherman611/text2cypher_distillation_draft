@@ -382,7 +382,13 @@ def register_attention_hooks(model, selected_layers, captured, detach=False, req
                         if attn_weights is None:
                             print(f"\n[ATTENTION LOG] ⚠️ Hook layer {layer_idx} (Teacher={detach}): attn_weights is NONE! Có thể do thiếu output_attentions=True hoặc FlashAttention chập.\n")
                         else:
-                            print(f"\n[ATTENTION LOG] ✅ Hook layer {layer_idx} (Teacher={detach}): Bắt thành công attention map Shape: {attn_weights.shape}, Min: {attn_weights.min():.4f}, Max: {attn_weights.max():.4f}\n")
+                            print(f"\n[ATTENTION LOG] ✅ Hook layer {layer_idx} (Teacher={detach}): Bắt thành công!")
+                            print(f"   -> Shape: {attn_weights.shape}, Min: {attn_weights.min():.6f}, Max: {attn_weights.max():.6f}")
+                            # Lấy 1 dòng probability ra để nhìn tận mắt
+                            sample_row = attn_weights[0, 0, 0, :10].tolist()
+                            row_sum = attn_weights[0, 0, -1, :].sum().item()
+                            print(f"   -> Mẫu prob 10 token đầu (Batch 0, Head 0, Token cuối): {[f'{v:.6e}' for v in sample_row]}")
+                            print(f"   -> Tổng xác suất của 1 hàng (Softmax phải = 1.0): {row_sum:.4f}\n")
                         module._has_logged_attn = True
 
                 if attn_weights is not None:
@@ -537,6 +543,18 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
         # Plain masked MSE on the attention map. This keeps the original
         # attention mass instead of renormalizing each selected row.
         diff = ((student_attn.float() - teacher_attn.float()) ** 2) * pair_mask
+        
+        # [THÊM LOG CHI TIẾT TÍNH TOÁN]
+        import torch.distributed as dist
+        if dist.is_initialized() and dist.get_rank() == 0 and not getattr(args, "_logged_raw_mse", False):
+            val_diff = diff.sum().item()
+            val_denom = pair_mask.sum().clamp(min=1.0).item()
+            print(f"\n[RAW MSE BREAKDOWN] 👇")
+            print(f"   -> Tổng số pair thỏa mãn Mask (H x Mask_True): {val_denom}")
+            print(f"   -> Tổng chênh lệch bình phương (Tử số): {val_diff:.8e}")
+            print(f"   => KẾT QUẢ RAW_MSE LOSS ({val_diff} / {val_denom}): {val_diff/val_denom:.8e}\n")
+            args._logged_raw_mse = True
+
         return diff.sum() / pair_mask.sum().clamp(min=1.0)
 
     if args.attention_loss_type == "mass_mse":
@@ -544,6 +562,18 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
         # This matches the "reduce sum then divide by sum of attention map" idea.
         diff = ((student_attn.float() - teacher_attn.float()) ** 2) * pair_mask
         denom = (teacher_attn.float() * pair_mask).sum().clamp(min=eps)
+        
+        # [THÊM LOG CHI TIẾT TÍNH TOÁN]
+        import torch.distributed as dist
+        if dist.is_initialized() and dist.get_rank() == 0 and not getattr(args, "_logged_mass_mse", False):
+            val_diff = diff.sum().item()
+            val_denom = denom.item()
+            print(f"\n[MASS MSE BREAKDOWN] 👇")
+            print(f"   -> Attention Mass (Mẫu số): {val_denom:.8e}")
+            print(f"   -> Tổng chênh lệch bình phương (Tử số): {val_diff:.8e}")
+            print(f"   => KẾT QUẢ MASS_MSE LOSS ({val_diff} / {val_denom}): {val_diff/val_denom:.8e}\n")
+            args._logged_mass_mse = True
+            
         return diff.sum() / denom
 
     if args.attention_loss_type == "cka":
