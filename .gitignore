@@ -340,6 +340,12 @@ results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2/639/
 results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2/852/
 results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2/1065/
 
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2_log_raw_mse/213/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2_log_raw_mse/426/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2_log_raw_mse/639/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2_log_raw_mse/852/
+results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2_log_raw_mse/1065/
+
 results/qwen3/distillm_0.6B_4B_Cypherbench_rkl_attn_loss/213/
 results/qwen3/distillm_0.6B_4B_Cypherbench_rkl_attn_loss/426/
 results/qwen3/distillm_0.6B_4B_Cypherbench_rkl_attn_loss/639/
