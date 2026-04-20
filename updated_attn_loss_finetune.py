@@ -26,7 +26,7 @@ from tqdm import tqdm
 import math
 import datetime
 from types import SimpleNamespace
-
+    
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -534,6 +534,20 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
 
     pair_mask has shape [B, 1, L, L]. Rows are target/Cypher positions and
     columns are query/schema/prefix positions depending on the branch.
+
+    Supported loss types:
+      - raw_mse   : MSE trực tiếp trên prob space. Loss rất bé (~1e-6) do prob nhỏ
+                    và mẫu số lớn (diện tích mask). Không nên dùng.
+      - mass_mse  : MSE chia cho teacher attention mass. Bé hơn một chút so với raw_mse.
+      - mse       : MSE sau khi chuẩn hóa từng hàng. Cải thiện hơn nhưng vẫn còn bé.
+      - js        : Jensen-Shannon Divergence trên normalized dist. Khoảng [0, ln(2)].
+      - kl        : KL Divergence thủ công trên normalized dist. Khá ổn định.
+      - log_kl    : KL Divergence dùng F.kl_div với log-probabilities (KHUYẾN NGHỊ).
+                    Dùng log khuếch đại vùng attention thấp, tránh vanishing gradient.
+                    Loss scale ~0.01 - 0.5, dễ debug và học tốt hơn.
+      - log_mse   : MSE trong log-probability space. Phạt nặng hơn khi model sai
+                    ở vùng attention thấp so với raw_mse.
+      - cka       : Centered Kernel Alignment, bất biến với scale. Loss trong [0, 1].
     """
     eps = args.attention_eps
     student_attn, teacher_attn = align_attention_heads(student_attn, teacher_attn, args)
@@ -542,9 +556,10 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
     if args.attention_loss_type == "raw_mse":
         # Plain masked MSE on the attention map. This keeps the original
         # attention mass instead of renormalizing each selected row.
+        # CẢNH BÁO: Loss thường rất bé (~1e-6) do xác suất softmax nhỏ và
+        # mẫu số (pair_mask.sum) lớn. Gradient gần bằng 0, model khó học.
         diff = ((student_attn.float() - teacher_attn.float()) ** 2) * pair_mask
         
-        # [THÊM LOG CHI TIẾT TÍNH TOÁN]
         import torch.distributed as dist
         if dist.is_initialized() and dist.get_rank() == 0 and not getattr(args, "_logged_raw_mse", False):
             val_diff = diff.sum().item()
@@ -563,7 +578,6 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
         diff = ((student_attn.float() - teacher_attn.float()) ** 2) * pair_mask
         denom = (teacher_attn.float() * pair_mask).sum().clamp(min=eps)
         
-        # [THÊM LOG CHI TIẾT TÍNH TOÁN]
         import torch.distributed as dist
         if dist.is_initialized() and dist.get_rank() == 0 and not getattr(args, "_logged_mass_mse", False):
             val_diff = diff.sum().item()
@@ -576,9 +590,75 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
             
         return diff.sum() / denom
 
+    if args.attention_loss_type == "log_raw_mse":
+        # Giống raw_mse nhưng tính sai số trong log-probability space.
+        #
+        # raw_mse:     (s        - t       )^2  / n_mask  ~> 1e-6  (quá bé, gradient vanish)
+        # log_raw_mse: (log(s)   - log(t)  )^2  / n_mask  ~> 0.1-5 (scale tự nhiên, ổn định)
+        #
+        # Ưu điểm so với raw_mse:
+        # - Không cần normalize từng hàng -> giữ thông tin về "mass" (mật độ) của attention.
+        # - log khuếch đại vùng attention thấp: diff giữa 1e-4 và 1e-5 trong prob-space
+        #   là 9e-5 (gần bằng 0), nhưng trong log-space là |-9.2 - (-11.5)| = 2.3 (rõ ràng).
+        # - Mẫu số vẫn là n_mask (giống raw_mse), đảm bảo nhất quán về cách chuẩn hóa.
+        s_log = torch.log(student_attn.float().clamp(min=eps))
+        t_log = torch.log(teacher_attn.float().clamp(min=eps))
+        diff = ((s_log - t_log) ** 2) * pair_mask
+        return diff.sum() / pair_mask.sum().clamp(min=1.0)
+
+    if args.attention_loss_type == "log_mass_mse":
+        # Giống mass_mse nhưng tính sai số trong log-probability space.
+        #
+        # mass_mse:     (s     - t    )^2  / teacher_attention_mass  ~> 1e-4 (vẫn còn bé)
+        # log_mass_mse: (log(s)- log(t))^2 / teacher_log_mass        ~> 0.05-2 (ổn định hơn)
+        #
+        # Ưu điểm so với mass_mse:
+        # - Mẫu số (teacher_attention_mass) trong log-space cũng lớn hơn (teacher_log_mass
+        #   được tính từ tổng giá trị log của teacher trong vùng mask, khuếch đại tín hiệu).
+        # - Phạt nặng hơn khi student bỏ lỡ token mà teacher đang chú ý nhiều.
+        s_log = torch.log(student_attn.float().clamp(min=eps))
+        t_log = torch.log(teacher_attn.float().clamp(min=eps))
+        diff = ((s_log - t_log) ** 2) * pair_mask
+        # Dùng tổng giá trị tuyệt đối log của teacher (dương lên vì log(prob) âm) làm mẫu số.
+        # Clamp để tránh chia cho 0 khi mask rỗng.
+        denom = (t_log.abs() * pair_mask).sum().clamp(min=eps)
+        return diff.sum() / denom
+
     if args.attention_loss_type == "cka":
         return masked_attention_cka_loss(student_attn, teacher_attn, pair_mask, eps)
 
+    if args.attention_loss_type == "log_kl":
+        # KL Divergence trong log-probability space dùng F.kl_div (KHUYẾN NGHỊ).
+        #
+        # Tại sao log_kl tốt hơn raw_mse/mse?
+        # - MSE: diff của 2 số bé (0.001) rồi bình phương -> 1e-6 (vanish hoàn toàn)
+        # - log: log(0.001) = -6.9, log(0.0001) = -9.2 -> diff = 2.3 (gradient rõ ràng)
+        # - Nhờ đó, token attention nhỏ nhưng QUAN TRỌNG vẫn được học đúng mức.
+        #
+        # F.kl_div(log_input, target, reduction='none') tính:
+        #   target * (log(target) - log_input) = target * (log(target) - log(student))
+        # => Đây chính là KL(teacher || student) - chiều đúng cho distillation.
+        s = student_attn.float()
+        t = teacher_attn.float()
+        # Áp mask trước khi chuẩn hóa để chỉ học trên vùng quan trọng
+        s_masked = s * pair_mask
+        t_masked = t * pair_mask
+        s_sum = s_masked.sum(dim=-1, keepdim=True)
+        t_sum = t_masked.sum(dim=-1, keepdim=True)
+        valid_rows = (pair_mask.any(dim=-1, keepdim=True) & (s_sum > eps) & (t_sum > eps)).float()
+        if valid_rows.sum() == 0:
+            return student_attn.new_tensor(0.0)
+        # Chuẩn hóa lại trong vùng mask để tổng = 1 (valid distribution)
+        s_dist = s_masked / s_sum.clamp(min=eps)
+        t_dist = t_masked / t_sum.clamp(min=eps)
+        # Chuyển student sang log-space để đưa vào F.kl_div
+        log_s_dist = torch.log(s_dist + eps)
+        # F.kl_div output: t * (log(t+eps) - log_s), sum trên dim=-1
+        per_elem = F.kl_div(log_s_dist, t_dist, reduction="none") * pair_mask
+        per_row = per_elem.sum(dim=-1, keepdim=True)
+        return (per_row * valid_rows).sum() / valid_rows.sum().clamp(min=1.0)
+
+    # Các loss type dưới đây dùng normalized distribution (chuẩn hóa từng hàng)
     s = student_attn.float() * pair_mask
     t = teacher_attn.float() * pair_mask
     s_sum = s.sum(dim=-1, keepdim=True)
@@ -599,6 +679,7 @@ def masked_attention_distribution_loss(student_attn, teacher_attn, pair_mask, ar
         t_kl = (t_dist * ((t_dist + eps).log() - (mixed + eps).log()) * pair_mask).sum(dim=-1, keepdim=True)
         per_row = 0.5 * (s_kl + t_kl)
     else:
+        # kl: KL(teacher || student) thủ công
         per_row = (t_dist * ((t_dist + eps).log() - (s_dist + eps).log()) * pair_mask).sum(dim=-1, keepdim=True)
 
     return (per_row * valid_rows).sum() / valid_rows.sum().clamp(min=1.0)
