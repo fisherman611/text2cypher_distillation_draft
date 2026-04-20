@@ -129,9 +129,9 @@ def get_model(args, device):
         if args.bf16:
             dtype = torch.bfloat16
         try:
-            model = AutoModelForCausalLM.from_pretrained(args.model_path, config=config, device_map={"": device}, torch_dtype=dtype)
+            model = AutoModelForCausalLM.from_pretrained(args.model_path, config=config, device_map={"": device}, torch_dtype=dtype, attn_implementation="eager")
         except:
-            model = AutoModelForCausalLM.from_pretrained(args.model_path, config=config, device_map={"": device}, torch_dtype=torch.float32)
+            model = AutoModelForCausalLM.from_pretrained(args.model_path, config=config, device_map={"": device}, torch_dtype=torch.float32, attn_implementation="eager")
             model = model.half()
         
         if args.peft is not None:
