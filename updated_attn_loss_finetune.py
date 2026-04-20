@@ -373,6 +373,18 @@ def register_attention_hooks(model, selected_layers, captured, detach=False, req
             
             if isinstance(outputs, tuple) and len(outputs) > 1:
                 attn_weights = outputs[1]
+                
+                # [THÊM LOG ĐỂ THEO DÕI ATTENTION]
+                # Chỉ log ở rank 0 và của layer đầu tiên để tránh spam màn hình
+                import torch.distributed as dist
+                if dist.is_initialized() and dist.get_rank() == 0 and layer_idx == selected_layers[0]:
+                    if not getattr(module, "_has_logged_attn", False):
+                        if attn_weights is None:
+                            print(f"\n[ATTENTION LOG] ⚠️ Hook layer {layer_idx} (Teacher={detach}): attn_weights is NONE! Có thể do thiếu output_attentions=True hoặc FlashAttention chập.\n")
+                        else:
+                            print(f"\n[ATTENTION LOG] ✅ Hook layer {layer_idx} (Teacher={detach}): Bắt thành công attention map Shape: {attn_weights.shape}, Min: {attn_weights.min():.4f}, Max: {attn_weights.max():.4f}\n")
+                        module._has_logged_attn = True
+
                 if attn_weights is not None:
                     # Đưa ra CPU ngay lập tức để giữ VRAM cho việc train (như reviewer cung cấp cho teacher)
                     if detach:
@@ -871,7 +883,8 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                     
                 model.train()
 
-            outputs = model(**model_batch, use_cache=False)
+            # Cấp cờ output_attentions=True để model sinh ra attention mask (cách 1)
+            outputs = model(**model_batch, use_cache=False, output_attentions=True)
             
             logits = outputs.logits
             if args.model_parallel:
@@ -892,7 +905,8 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
             if teacher_model is not None:
                 with torch.no_grad():
                     teacher_model.eval()
-                    teacher_outputs = teacher_model(**model_batch, use_cache=False)
+                    # Cấp cờ output_attentions=True cho teacher
+                    teacher_outputs = teacher_model(**model_batch, use_cache=False, output_attentions=True)
                     teacher_logits = teacher_outputs.logits
 
                 logit_distil_loss = get_logit_distil_loss(args, teacher_logits, no_model_batch, logits)
