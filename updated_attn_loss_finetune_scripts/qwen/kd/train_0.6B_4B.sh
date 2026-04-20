@@ -24,15 +24,15 @@ TEACHER_CKPT="Qwen/Qwen3-4B-Instruct-2507"
 # data
 DATA_DIR="${BASE_PATH}/processed_data/benchmarks/Cypherbench/qwen/"
 # hp
-BATCH_SIZE=2
+BATCH_SIZE=1
 LR=0.0001
-GRAD_ACC=8
-EVAL_BATCH_SIZE=8
+GRAD_ACC=16
+EVAL_BATCH_SIZE=16
 EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss"
+SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2"
 # seed
 SEED=42
 

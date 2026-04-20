@@ -388,8 +388,8 @@ def main():
     # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fdd_srkl_updated_3_0.json" 
     # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distillm.json" 
 
-    # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fkl_attn_loss.json"
-    output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_rkl_attn_loss.json"
+    output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_fkl_attn_loss_2.json"
+    # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_rkl_attn_loss.json"
     # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_sfkl.json"
     # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_csd.json"
     # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_distillm.json"
