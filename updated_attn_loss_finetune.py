@@ -373,6 +373,7 @@ def register_attention_hooks(model, selected_layers, captured, detach=False, req
             
             if isinstance(outputs, tuple) and len(outputs) > 1:
                 attn_weights = outputs[1]
+                # print(outputs[1] is None)
                 
                 # [THÊM LOG ĐỂ THEO DÕI ATTENTION]
                 # Chỉ log ở rank 0 và của layer đầu tiên để tránh spam màn hình
