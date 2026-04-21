@@ -995,7 +995,8 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 model.train()
 
             # Cấp cờ output_attentions=True để model sinh ra attention mask (cách 1)
-            outputs = model(**model_batch, use_cache=False, output_attentions=True)
+            # outputs = model(**model_batch, use_cache=False, output_attentions=True)
+            outputs = model(**model_batch, use_cache=False)
             
             logits = outputs.logits
             if args.model_parallel:
@@ -1017,7 +1018,8 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                 with torch.no_grad():
                     teacher_model.eval()
                     # Cấp cờ output_attentions=True cho teacher
-                    teacher_outputs = teacher_model(**model_batch, use_cache=False, output_attentions=True)
+                    # teacher_outputs = teacher_model(**model_batch, use_cache=False, output_attentions=True)
+                    teacher_outputs = teacher_model(**model_batch, use_cache=False)
                     teacher_logits = teacher_outputs.logits
 
                 logit_distil_loss = get_logit_distil_loss(args, teacher_logits, no_model_batch, logits)
