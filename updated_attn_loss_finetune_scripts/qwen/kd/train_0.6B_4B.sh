@@ -24,15 +24,15 @@ TEACHER_CKPT="Qwen/Qwen3-4B-Instruct-2507"
 # data
 DATA_DIR="${BASE_PATH}/processed_data/benchmarks/Cypherbench/qwen/"
 # hp
-BATCH_SIZE=1
+BATCH_SIZE=2
 LR=0.0001
-GRAD_ACC=16
+GRAD_ACC=8
 EVAL_BATCH_SIZE=8
 EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2_1_log_mass_mse"
+SAVE_PATH="${BASE_PATH}/results/qwen3/distillm_0.6B_4B_Cypherbench_fkl_attn_loss_2_1_log_raw_mse"
 # seed
 SEED=42
 
@@ -64,7 +64,7 @@ OPTS+=" --weight-decay 1e-2"
 OPTS+=" --clip-grad 1.0"
 OPTS+=" --epochs ${EPOCHS}"
 OPTS+=" --kd-ratio 0.7"
-OPTS+=" --w-logit-kd-loss 1"
+OPTS+=" --w-logit-kd-loss 0.5"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-prompt-length 797"
@@ -89,11 +89,11 @@ OPTS+=" --use-attention-loss"
 OPTS+=" --use-query-attention-loss"
 OPTS+=" --use-schema-attention-loss"
 OPTS+=" --use-cypher-attention-loss"
-OPTS+=" --w-attention-loss 1"
+OPTS+=" --w-attention-loss 0.5"
 OPTS+=" --w-query-attention-loss 1.0"
 OPTS+=" --w-schema-attention-loss 1.0"
 OPTS+=" --w-cypher-attention-loss 1.0"
-OPTS+=" --attention-loss-type log_mass_mse"
+OPTS+=" --attention-loss-type log_raw_mse"
 OPTS+=" --attention-head-reduction mean"
 OPTS+=" --attention-student-layer-mapping -1"
 OPTS+=" --attention-teacher-layer-mapping -1"
