@@ -22,6 +22,7 @@ if hf_token:
 
 import random
 import json
+import re
 from tqdm import tqdm
 import math
 import datetime
@@ -209,11 +210,7 @@ def pt_loss(args, model, model_batch, no_model_batch):
     return lm_loss
 
 
-def get_distil_loss(args, tokenizer, model, teacher_model, model_batch, no_model_batch, logits):
-    with torch.no_grad():
-        teacher_model.eval()
-        teacher_outputs = teacher_model(**model_batch, use_cache=False)
-        teacher_logits = teacher_outputs.logits
+def get_distil_loss(args, teacher_logits, no_model_batch, logits):
     if args.model_parallel:
         raise NotImplementedError
     else:
@@ -276,35 +273,6 @@ def get_teacher_lm_loss(args, tokenizer, model, teacher_model, model_batch):
     lm_loss = loss_fn(logits.view(-1, logits.size(-1)), labels.view(-1))
 
     return lm_loss
-
-
-def get_logit_distil_loss(args, teacher_logits, no_model_batch, logits):
-    """Compute the original logit-level KD loss.
-
-    This is the same branch selection as get_distil_loss(), but it receives
-    teacher_logits directly. The attention-loss finetune path forwards teacher
-    once per step, then reuses teacher_logits and captured attention.
-    """
-    if args.model_parallel:
-        raise NotImplementedError
-    else:
-        if "sfkl" in args.type:
-            distil_loss = skewed_forward_kl(logits, teacher_logits, no_model_batch, lam=args.skew_alpha)
-        elif "srkl" in args.type:
-            distil_loss = skewed_reverse_kl(logits, teacher_logits, no_model_batch, lam=args.skew_alpha)
-        elif "jsd" in args.type:
-            distil_loss = js_distance(logits, teacher_logits, no_model_batch)
-        elif "tvd" in args.type:
-            distil_loss = tv_distance(logits, teacher_logits, no_model_batch)
-        elif "fkl" in args.type or args.type == "kd":
-            distil_loss = forward_kl(logits, teacher_logits, no_model_batch)
-        elif "rkl" in args.type:
-            distil_loss = reverse_kl(logits, teacher_logits, no_model_batch)
-        elif "csd" in args.type:
-            distil_loss = csd(logits, teacher_logits, no_model_batch)
-        else:
-            raise NotImplementedError
-    return distil_loss
 
 
 def resolve_layer_index(idx, num_layers):
@@ -483,6 +451,109 @@ def build_query_schema_masks_from_text(args, tokenizer, model_batch, no_model_ba
     return query_mask, schema_mask
 
 
+def extract_cypher_identifiers(cypher_text):
+    """Extract schema-relevant identifiers that appear in a Cypher string."""
+    identifiers = set()
+
+    for pattern in [
+        r":`([^`]+)`",
+        r":([A-Za-z_][A-Za-z0-9_]*)",
+        r"\.([A-Za-z_][A-Za-z0-9_]*)",
+        r"\{\s*`([^`]+)`\s*:",
+        r"\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*:",
+    ]:
+        identifiers.update(re.findall(pattern, cypher_text))
+
+    keywords = {
+        "MATCH", "OPTIONAL", "WHERE", "RETURN", "ORDER", "BY", "LIMIT", "ASC", "DESC",
+        "WITH", "DISTINCT", "AND", "OR", "NOT", "AS", "CASE", "WHEN", "THEN", "ELSE",
+        "END", "UNION", "ALL", "UNWIND", "CREATE", "MERGE", "SET", "DELETE", "DETACH",
+        "REMOVE", "FOREACH", "CALL", "YIELD", "TRUE", "FALSE", "NULL", "IN", "IS",
+        "COUNT", "SUM", "AVG", "MIN", "MAX", "COLLECT", "EXISTS",
+    }
+    identifiers = {
+        ident for ident in identifiers
+        if ident and ident.upper() not in keywords and not ident.isdigit()
+    }
+    return identifiers
+
+
+def expand_match_to_schema_segment(schema_text, match_start, match_end):
+    """Expand a text match to a nearby schema field/line for a less sparse mask."""
+    delimiters = ",\n{}[]"
+
+    seg_start = match_start
+    while seg_start > 0 and schema_text[seg_start - 1] not in delimiters:
+        seg_start -= 1
+
+    seg_end = match_end
+    while seg_end < len(schema_text) and schema_text[seg_end] not in delimiters:
+        seg_end += 1
+
+    return seg_start, seg_end
+
+
+def build_used_schema_mask_from_text(args, tokenizer, model_batch, no_model_batch, schema_mask):
+    """Keep only schema tokens referenced by the target Cypher."""
+    device = model_batch["input_ids"].device
+    input_ids = model_batch["input_ids"]
+    labels = no_model_batch["label"]
+    bs, max_length = input_ids.shape
+    used_schema_mask = torch.zeros(bs, max_length, dtype=torch.bool, device=device)
+
+    for i in range(bs):
+        target_positions = torch.where(labels[i] != -100)[0]
+        if target_positions.numel() == 0:
+            continue
+
+        prompt_end = int(target_positions[0].item()) + 1
+        prompt_ids = input_ids[i, :prompt_end].detach().cpu().tolist()
+        prompt_text = tokenizer.decode(prompt_ids, skip_special_tokens=False)
+
+        cypher_ids = labels[i][target_positions].detach().cpu().tolist()
+        cypher_text = tokenizer.decode(cypher_ids, skip_special_tokens=False)
+
+        try:
+            schema_text = find_between(prompt_text, "SCHEMA:\n", "\n\nGenerate a Cypher query")
+            schema_start = prompt_text.find(schema_text)
+            if schema_start < 0:
+                continue
+        except ValueError:
+            continue
+
+        encoded = tokenizer(
+            prompt_text,
+            return_offsets_mapping=True,
+            add_special_tokens=False,
+            truncation=True,
+            max_length=prompt_end,
+        )
+        offsets = encoded["offset_mapping"]
+
+        matched_any = False
+        for ident in sorted(extract_cypher_identifiers(cypher_text), key=len, reverse=True):
+            for match in re.finditer(rf"(?<![A-Za-z0-9_]){re.escape(ident)}(?![A-Za-z0-9_])", schema_text):
+                seg_start, seg_end = expand_match_to_schema_segment(schema_text, match.start(), match.end())
+                used_schema_mask[i] |= build_token_span_mask(
+                    offsets,
+                    schema_start + seg_start,
+                    schema_start + seg_end,
+                    max_length,
+                    device,
+                )
+                matched_any = True
+
+        if not matched_any and schema_mask is not None:
+            used_schema_mask[i] = schema_mask[i]
+
+    if schema_mask is not None:
+        empty_rows = ~used_schema_mask.any(dim=-1)
+        used_schema_mask[empty_rows] = schema_mask[empty_rows]
+        used_schema_mask &= schema_mask
+
+    return used_schema_mask
+
+
 def get_attention_region_masks(args, tokenizer, model_batch, no_model_batch):
     cypher_mask = (no_model_batch["label"] != -100) & model_batch["attention_mask"].bool()
 
@@ -504,6 +575,15 @@ def get_attention_region_masks(args, tokenizer, model_batch, no_model_batch):
             query_mask = fallback_query
         if schema_mask is None:
             schema_mask = fallback_schema
+
+    if getattr(args, "filter_schema_attention_by_cypher", True):
+        schema_mask = build_used_schema_mask_from_text(
+            args,
+            tokenizer,
+            model_batch,
+            no_model_batch,
+            schema_mask,
+        )
 
     return query_mask, schema_mask, cypher_mask
 
@@ -1023,7 +1103,16 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
                     teacher_outputs = teacher_model(**model_batch, use_cache=False)
                     teacher_logits = teacher_outputs.logits
 
-                logit_distil_loss = get_logit_distil_loss(args, teacher_logits, no_model_batch, logits)
+                logit_distil_loss = get_distil_loss(
+                    args,
+                    tokenizer,
+                    model,
+                    teacher_model,
+                    model_batch,
+                    no_model_batch,
+                    logits,
+                    teacher_logits=teacher_logits,
+                )
                 distil_loss = args.w_logit_kd_loss * logit_distil_loss
                 if attention_enabled:
                     attention_loss, attention_details = compute_overall_attention_loss(
