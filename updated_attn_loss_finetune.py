@@ -1105,13 +1105,9 @@ def finetune(args, tokenizer: AutoTokenizer, model: deepspeed.DeepSpeedEngine, o
 
                 logit_distil_loss = get_distil_loss(
                     args,
-                    tokenizer,
-                    model,
-                    teacher_model,
-                    model_batch,
+                    teacher_logits,
                     no_model_batch,
                     logits,
-                    teacher_logits=teacher_logits,
                 )
                 distil_loss = args.w_logit_kd_loss * logit_distil_loss
                 if attention_enabled:
