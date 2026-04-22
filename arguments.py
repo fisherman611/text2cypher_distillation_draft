@@ -150,7 +150,20 @@ def add_hp_args(parser: argparse.ArgumentParser):
                        help='learning rate decay function')
     group.add_argument("--scheduler-name", type=str, default="constant_trm")
 
+    # Legacy span weight (used as fallback in updated grounding loss).
     group.add_argument("--w-span-loss", type=float, default=1.0)
+
+    # Grounding loss weights for updated_span_finetune.py
+    group.add_argument("--w-attn-loss", type=float, default=0.0)
+    group.add_argument("--w-query-loss", type=float, default=0.0)
+    group.add_argument("--w-rel-loss", type=float, default=0.0)
+
+    # Optional compatibility weight for relational_representation_loss_finetune.py
+    group.add_argument("--w-relational-loss", type=float, default=1.0)
+
+    # Loss type controls for grounding loss.
+    group.add_argument("--attn-loss-type", type=str, default="kl", choices=["kl", "js", "mse"])
+    group.add_argument("--query-loss-type", type=str, default="mse", choices=["mse", "cosine"])
 
     return parser
 
