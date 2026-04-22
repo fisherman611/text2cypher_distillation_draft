@@ -37,6 +37,8 @@ def get_grounding_loss_config(args):
 
     attn_loss_type = getattr(args, "attn_loss_type", "kl").lower()
     query_loss_type = getattr(args, "query_loss_type", "mse").lower()
+    grounding_loss_cap = getattr(args, "grounding_loss_cap", 5.0)
+    grounding_warmup_steps = getattr(args, "grounding_warmup_steps", 200)
 
     return {
         "w_attn": w_attn,
@@ -44,6 +46,8 @@ def get_grounding_loss_config(args):
         "w_rel": w_rel,
         "attn_loss_type": attn_loss_type,
         "query_loss_type": query_loss_type,
+        "loss_cap": grounding_loss_cap,
+        "warmup_steps": grounding_warmup_steps,
     }
 
 
@@ -113,9 +117,11 @@ def compute_query_conditioned_representations(hidden_state, span_repr, span_mask
 
     scores = torch.matmul(span_repr, hidden_state.transpose(1, 2))
     scores = scores / math.sqrt(hidden_state.size(-1))
-    scores = scores.masked_fill(~source_mask.unsqueeze(1), torch.finfo(scores.dtype).min)
+    # Use a finite large negative number to keep softmax numerically stable.
+    scores = scores.masked_fill(~source_mask.unsqueeze(1), -1e4)
 
     attn_weights = torch.softmax(scores, dim=-1)
+    attn_weights = torch.nan_to_num(attn_weights, nan=0.0, posinf=0.0, neginf=0.0)
     attn_weights = attn_weights * source_mask.unsqueeze(1).float()
     attn_weights = attn_weights / attn_weights.sum(dim=-1, keepdim=True).clamp(min=1e-5)
     attn_weights = attn_weights * span_mask.unsqueeze(-1).float()
@@ -143,9 +149,11 @@ def compute_attention_alignment_loss(student_attn, teacher_attn, span_mask, sour
         # Default: KL(teacher || student).
         per_token = t * (t.log() - s.log())
 
+    per_token = torch.nan_to_num(per_token, nan=0.0, posinf=50.0, neginf=0.0).clamp(min=0.0, max=50.0)
     per_span = (per_token * source_weight).sum(dim=-1)
     weights = span_mask.float()
-    return (per_span * weights).sum() / weights.sum().clamp(min=1e-5)
+    loss = (per_span * weights).sum() / weights.sum().clamp(min=1e-5)
+    return torch.nan_to_num(loss, nan=0.0, posinf=50.0, neginf=0.0)
 
 
 def _match_last_dim(student_tensor, teacher_tensor):
@@ -177,16 +185,20 @@ def compute_query_alignment_loss(student_query, teacher_query, span_mask, span_l
     else:
         per_span = ((student_query - teacher_query) ** 2).mean(dim=-1)
 
+    per_span = torch.nan_to_num(per_span, nan=0.0, posinf=50.0, neginf=0.0).clamp(min=0.0, max=50.0)
     weights = span_lengths * span_mask.float()
-    return (per_span * weights).sum() / weights.sum().clamp(min=1e-5)
+    loss = (per_span * weights).sum() / weights.sum().clamp(min=1e-5)
+    return torch.nan_to_num(loss, nan=0.0, posinf=50.0, neginf=0.0)
 
 
 def compute_span_query_relation_loss(student_span, student_query, teacher_span, teacher_query, span_mask, span_lengths):
     student_rel = F.cosine_similarity(student_span, student_query, dim=-1)
     teacher_rel = F.cosine_similarity(teacher_span, teacher_query, dim=-1)
     per_span = (student_rel - teacher_rel) ** 2
+    per_span = torch.nan_to_num(per_span, nan=0.0, posinf=50.0, neginf=0.0).clamp(min=0.0, max=50.0)
     weights = span_lengths * span_mask.float()
-    return (per_span * weights).sum() / weights.sum().clamp(min=1e-5)
+    loss = (per_span * weights).sum() / weights.sum().clamp(min=1e-5)
+    return torch.nan_to_num(loss, nan=0.0, posinf=50.0, neginf=0.0)
 
 
 def compute_grounding_losses_for_layer(
@@ -229,6 +241,9 @@ def compute_grounding_losses_for_layer(
         student_span, student_query, teacher_span, teacher_query, span_mask, span_lengths
     )
 
+    attn_loss = torch.nan_to_num(attn_loss, nan=0.0, posinf=50.0, neginf=0.0)
+    query_loss = torch.nan_to_num(query_loss, nan=0.0, posinf=50.0, neginf=0.0)
+    rel_loss = torch.nan_to_num(rel_loss, nan=0.0, posinf=50.0, neginf=0.0)
     return attn_loss, query_loss, rel_loss
 
 
@@ -407,6 +422,7 @@ def finetune(
                     teacher_logits = teacher_outputs.logits
 
                 distil_loss = get_distil_loss(args, teacher_logits, no_model_batch, logits)
+                distil_loss = torch.nan_to_num(distil_loss, nan=0.0, posinf=100.0, neginf=0.0)
                 attn_loss, query_loss, rel_loss = compute_overall_grounding_losses(
                     model_batch["attention_mask"],
                     no_model_batch["label"],
@@ -417,10 +433,20 @@ def finetune(
                     args,
                 )
 
-                weighted_attn_loss = grounding_cfg["w_attn"] * attn_loss
-                weighted_query_loss = grounding_cfg["w_query"] * query_loss
-                weighted_rel_loss = grounding_cfg["w_rel"] * rel_loss
+                warmup_steps = max(1, int(grounding_cfg["warmup_steps"]))
+                grounding_scale = min(1.0, float(global_step) / float(warmup_steps))
+
+                weighted_attn_loss = grounding_scale * grounding_cfg["w_attn"] * attn_loss
+                weighted_query_loss = grounding_scale * grounding_cfg["w_query"] * query_loss
+                weighted_rel_loss = grounding_scale * grounding_cfg["w_rel"] * rel_loss
                 weighted_grounding_loss = weighted_attn_loss + weighted_query_loss + weighted_rel_loss
+                weighted_grounding_loss = torch.nan_to_num(
+                    weighted_grounding_loss,
+                    nan=0.0,
+                    posinf=grounding_cfg["loss_cap"],
+                    neginf=0.0,
+                )
+                weighted_grounding_loss = weighted_grounding_loss.clamp(min=0.0, max=grounding_cfg["loss_cap"])
 
                 distil_loss = distil_loss + weighted_grounding_loss
                 loss = (1 - args.kd_ratio) * lm_loss + args.kd_ratio * distil_loss
@@ -431,6 +457,8 @@ def finetune(
             if args.lm_data_dir is not None:
                 assert args.lm_coef is not None
                 loss = loss + args.lm_coef * pt_loss(args, model, pt_model_batch, pt_no_model_batch)
+
+            loss = torch.nan_to_num(loss, nan=0.0, posinf=100.0, neginf=0.0)
 
             model.backward(loss)
             model.step()

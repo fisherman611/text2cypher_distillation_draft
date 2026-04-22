@@ -37,11 +37,13 @@ SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_rkl"
 SEED=42
 
 # grounding loss weights
-W_ATTN_LOSS=0.2
-W_QUERY_LOSS=1.0
-W_REL_LOSS=0.2
-ATTN_LOSS_TYPE="kl"
+W_ATTN_LOSS=0.05
+W_QUERY_LOSS=0.2
+W_REL_LOSS=0.05
+ATTN_LOSS_TYPE="mse"
 QUERY_LOSS_TYPE="mse"
+GROUNDING_LOSS_CAP=2.0
+GROUNDING_WARMUP_STEPS=500
 
 OPTS=""
 # model
@@ -75,6 +77,8 @@ OPTS+=" --w-query-loss ${W_QUERY_LOSS}"
 OPTS+=" --w-rel-loss ${W_REL_LOSS}"
 OPTS+=" --attn-loss-type ${ATTN_LOSS_TYPE}"
 OPTS+=" --query-loss-type ${QUERY_LOSS_TYPE}"
+OPTS+=" --grounding-loss-cap ${GROUNDING_LOSS_CAP}"
+OPTS+=" --grounding-warmup-steps ${GROUNDING_WARMUP_STEPS}"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-prompt-length 797"

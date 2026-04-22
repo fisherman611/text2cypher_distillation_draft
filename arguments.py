@@ -164,6 +164,8 @@ def add_hp_args(parser: argparse.ArgumentParser):
     # Loss type controls for grounding loss.
     group.add_argument("--attn-loss-type", type=str, default="kl", choices=["kl", "js", "mse"])
     group.add_argument("--query-loss-type", type=str, default="mse", choices=["mse", "cosine"])
+    group.add_argument("--grounding-loss-cap", type=float, default=5.0)
+    group.add_argument("--grounding-warmup-steps", type=int, default=200)
 
     return parser
 
