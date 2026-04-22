@@ -148,7 +148,29 @@ def compute_attention_alignment_loss(student_attn, teacher_attn, span_mask, sour
     return (per_span * weights).sum() / weights.sum().clamp(min=1e-5)
 
 
+def _match_last_dim(student_tensor, teacher_tensor):
+    """Resize both tensors to a shared feature size for cross-model comparison."""
+    student_dim = student_tensor.size(-1)
+    teacher_dim = teacher_tensor.size(-1)
+    if student_dim == teacher_dim:
+        return student_tensor, teacher_tensor
+
+    target_dim = min(student_dim, teacher_dim)
+
+    def _resize_last_dim(x, new_dim):
+        if x.size(-1) == new_dim:
+            return x
+        original_shape = x.shape
+        flat = x.reshape(-1, original_shape[-1]).unsqueeze(1)
+        flat = F.adaptive_avg_pool1d(flat, new_dim).squeeze(1)
+        return flat.reshape(*original_shape[:-1], new_dim)
+
+    return _resize_last_dim(student_tensor, target_dim), _resize_last_dim(teacher_tensor, target_dim)
+
+
 def compute_query_alignment_loss(student_query, teacher_query, span_mask, span_lengths, loss_type="mse"):
+    student_query, teacher_query = _match_last_dim(student_query, teacher_query)
+
     if loss_type == "cosine":
         sim = F.cosine_similarity(student_query, teacher_query, dim=-1)
         per_span = 1.0 - sim
