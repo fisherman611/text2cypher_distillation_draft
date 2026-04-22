@@ -3,6 +3,7 @@ import torch
 import os
 import json
 import pickle
+import re
 import numpy as np
 from torch.utils.data import Dataset
 from .distributed_indexed import DistributedMMapIndexedDataset
@@ -10,6 +11,243 @@ from .distributed_indexed import DistributedMMapIndexedDataset
 from torch.distributed import get_rank, get_world_size, barrier
 from utils import print_rank
 from utils import save_rank
+
+
+CLAUSE_KEYWORDS = [
+    "OPTIONAL MATCH",
+    "DETACH DELETE",
+    "ORDER BY",
+    "UNION ALL",
+    "MATCH",
+    "WHERE",
+    "WITH",
+    "RETURN",
+    "UNWIND",
+    "MERGE",
+    "CREATE",
+    "DELETE",
+    "REMOVE",
+    "FOREACH",
+    "SET",
+    "CALL",
+    "UNION",
+    "SKIP",
+    "LIMIT",
+]
+
+CLAUSE_PATTERN = re.compile(
+    r"(?i)\b(" + "|".join(re.escape(x) for x in CLAUSE_KEYWORDS) + r")\b"
+)
+NODE_PATTERN = re.compile(r"\([^()]*\)")
+REL_PATTERN = re.compile(r"<-\[[^\[\]]*\]-|-\[[^\[\]]*\]->|-\[[^\[\]]*\]-")
+ALIAS_PATTERN = re.compile(r"(?i)\bAS\s+([A-Za-z_][A-Za-z0-9_]*)")
+
+
+def _find_response_start(full_text, response_str):
+    idx = full_text.find(response_str)
+    if idx != -1:
+        return idx
+    return max(0, len(full_text) - len(response_str))
+
+
+def _split_top_level_expressions(text):
+    chunks = []
+    start = 0
+    depth_paren = 0
+    depth_bracket = 0
+    depth_brace = 0
+    in_single_quote = False
+    in_double_quote = False
+
+    for i, ch in enumerate(text):
+        if ch == "'" and not in_double_quote:
+            in_single_quote = not in_single_quote
+        elif ch == '"' and not in_single_quote:
+            in_double_quote = not in_double_quote
+        elif not in_single_quote and not in_double_quote:
+            if ch == "(":
+                depth_paren += 1
+            elif ch == ")":
+                depth_paren = max(0, depth_paren - 1)
+            elif ch == "[":
+                depth_bracket += 1
+            elif ch == "]":
+                depth_bracket = max(0, depth_bracket - 1)
+            elif ch == "{":
+                depth_brace += 1
+            elif ch == "}":
+                depth_brace = max(0, depth_brace - 1)
+            elif (
+                ch == ","
+                and depth_paren == 0
+                and depth_bracket == 0
+                and depth_brace == 0
+            ):
+                chunks.append((start, i))
+                start = i + 1
+
+    chunks.append((start, len(text)))
+    return chunks
+
+
+def extract_text2cypher_span_items(cypher_query):
+    span_items = []
+
+    def add_span(span_type, start, end):
+        if start >= end:
+            return
+        if start < 0 or end > len(cypher_query):
+            return
+        span_items.append(
+            {
+                "type": span_type,
+                "start": start,
+                "end": end,
+                "text": cypher_query[start:end],
+            }
+        )
+
+    clause_matches = list(CLAUSE_PATTERN.finditer(cypher_query))
+    for m in clause_matches:
+        add_span("clause", m.start(), m.end())
+
+    node_pattern_matches = []
+    for m in NODE_PATTERN.finditer(cypher_query):
+        inner = cypher_query[m.start() + 1 : m.end() - 1]
+        inner_stripped = inner.strip()
+        left = cypher_query[m.start() - 1] if m.start() > 0 else " "
+        right = cypher_query[m.end()] if m.end() < len(cypher_query) else " "
+        is_pattern = (
+            ":" in inner_stripped
+            or "{" in inner_stripped
+            or "}" in inner_stripped
+            or (
+                re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", inner_stripped) is not None
+                and (left in "-<" or right in "->")
+            )
+        )
+        if is_pattern:
+            add_span("pattern", m.start(), m.end())
+            node_pattern_matches.append(m)
+
+    rel_matches = list(REL_PATTERN.finditer(cypher_query))
+    for m in rel_matches:
+        add_span("pattern", m.start(), m.end())
+
+    for idx, clause_match in enumerate(clause_matches):
+        clause_name = clause_match.group(0).upper()
+        body_start = clause_match.end()
+        body_end = clause_matches[idx + 1].start() if idx + 1 < len(clause_matches) else len(cypher_query)
+        body = cypher_query[body_start:body_end]
+
+        if clause_name in {"RETURN", "WITH", "ORDER BY"}:
+            for local_start, local_end in _split_top_level_expressions(body):
+                raw_part = body[local_start:local_end]
+                part = raw_part.strip()
+                if not part:
+                    continue
+                ws_left = len(raw_part) - len(raw_part.lstrip())
+                ws_right = len(raw_part.rstrip())
+                add_span("expression", body_start + local_start + ws_left, body_start + local_start + ws_right)
+        elif clause_name == "WHERE":
+            part = body.strip()
+            if part:
+                ws_left = len(body) - len(body.lstrip())
+                ws_right = len(body.rstrip())
+                add_span("expression", body_start + ws_left, body_start + ws_right)
+
+    for m in node_pattern_matches:
+        inner = cypher_query[m.start() + 1 : m.end() - 1]
+        var_match = re.match(r"\s*([A-Za-z_][A-Za-z0-9_]*)", inner)
+        if var_match:
+            add_span("variable_alias", m.start() + 1 + var_match.start(1), m.start() + 1 + var_match.end(1))
+
+    for m in rel_matches:
+        left_bracket = cypher_query.find("[", m.start(), m.end())
+        right_bracket = cypher_query.find("]", m.start(), m.end())
+        if left_bracket == -1 or right_bracket == -1:
+            continue
+        inner = cypher_query[left_bracket + 1 : right_bracket]
+        var_match = re.match(r"\s*([A-Za-z_][A-Za-z0-9_]*)", inner)
+        if var_match:
+            add_span("variable_alias", left_bracket + 1 + var_match.start(1), left_bracket + 1 + var_match.end(1))
+
+    for m in ALIAS_PATTERN.finditer(cypher_query):
+        add_span("variable_alias", m.start(), m.end())
+        add_span("variable_alias", m.start(1), m.end(1))
+
+    unique = {}
+    for item in span_items:
+        unique[(item["type"], item["start"], item["end"])] = item
+    span_items = list(unique.values())
+    span_items.sort(key=lambda x: (x["start"], x["end"], x["type"]))
+    return span_items
+
+
+def extract_text2cypher_span_items_from_response(response_str):
+    try:
+        response_json = json.loads(response_str)
+    except Exception:
+        return []
+
+    if not isinstance(response_json, dict):
+        return []
+    cypher_query = response_json.get("cypher")
+    if not isinstance(cypher_query, str) or not cypher_query.strip():
+        return []
+
+    cypher_start = response_str.find(cypher_query)
+    if cypher_start == -1:
+        return []
+
+    span_items = extract_text2cypher_span_items(cypher_query)
+    for item in span_items:
+        item["start"] += cypher_start
+        item["end"] += cypher_start
+    return span_items
+
+
+def extract_text2cypher_span_offsets(full_text, response_str):
+    response_start = _find_response_start(full_text, response_str)
+    span_items = extract_text2cypher_span_items_from_response(response_str)
+
+    offsets = []
+    for item in span_items:
+        offsets.append((response_start + item["start"], response_start + item["end"]))
+
+    offsets = sorted(set(offsets), key=lambda x: (x[0], x[1]))
+    return offsets
+
+
+def extract_event_span_offsets(full_text, response_str):
+    try:
+        response_json = json.loads(response_str)
+    except Exception:
+        return []
+
+    values_to_find = []
+    for event in response_json.get("events", []):
+        values_to_find.append(event[0])
+        values_to_find.append(event[1])
+
+        if len(event) > 3:
+            for arg in event[2]:
+                values_to_find.append(arg[0])
+                values_to_find.append(arg[1])
+            values_to_find.append(event[3])
+        else:
+            values_to_find.append(event[2])
+
+    result_tuples = []
+    search_start_idx = 0
+    for val in values_to_find:
+        search_str = f"{val}"
+        char_start = full_text.find(search_str, search_start_idx)
+        if char_start != -1:
+            char_end = char_start + len(val)
+            result_tuples.append((char_start, char_end))
+            search_start_idx = char_end + 1
+    return result_tuples
 
 
 class LMTrainDataset(Dataset):
@@ -52,36 +290,9 @@ class LMTrainDataset(Dataset):
         self.span_offsets = []
         for item, full_text in zip(self.raw, self.full_texts):
             response_str = item["response"]
-            response_json = json.loads(response_str)
-
-            values_to_find = []
-            for event in response_json.get("events", []):
-                values_to_find.append(event[0])  # 1. trigger
-                values_to_find.append(event[1])  # 2. event_type
-                
-                if len(event) > 3:
-                    for arg in event[2]:             # 3. Duyệt qua các arguments
-                        values_to_find.append(arg[0])  # arg_span
-                        values_to_find.append(arg[1])  # arg_role
-                    
-                    values_to_find.append(event[3])  # 4. description
-
-                else:
-                    values_to_find.append(event[2])  # 3. description
-
-            result_tuples = []
-            # search_start_idx = len(full_text) - len(response_str)
-            search_start_idx = 0
-
-            for val in values_to_find:
-                search_str = f'{val}'
-                char_start = full_text.find(search_str, search_start_idx)
-                
-                if char_start != -1:
-                    char_end = char_start + len(val)
-                    result_tuples.append((char_start, char_end))
-                    search_start_idx = char_end + 1
-
+            result_tuples = extract_text2cypher_span_offsets(full_text, response_str)
+            if not result_tuples:
+                result_tuples = extract_event_span_offsets(full_text, response_str)
             self.span_offsets.append(result_tuples)
 
     def __len__(self):
@@ -299,3 +510,4 @@ class LMEvalDataset(Dataset):
             self._process_lm(i, samp, model_data, no_model_data, gen_data)
         
         return model_data, no_model_data, gen_data
+
