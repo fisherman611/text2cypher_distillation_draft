@@ -583,7 +583,7 @@ def finetune(
                 if "adaptive" in args.type and curr_avg_loss >= prev_avg_loss + args.loss_eps:
                     adaptive_threshold = min(adaptive_threshold + 0.1, 1.0)
                     prev_avg_loss = curr_avg_loss
-                evaluate(args, tokenizer, model, dataset["test"], "test", epoch, device)
+                # evaluate(args, tokenizer, model, dataset["test"], "test", epoch, device)
                 model.train()
 
             step += 1
