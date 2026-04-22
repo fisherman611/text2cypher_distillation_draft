@@ -664,7 +664,7 @@ def main():
         model = finetune(args, tokenizer, model, optimizer, lr_scheduler, dataset, device, teacher_model=teacher_model)
 
     if args.do_eval:
-        evaluate(args, tokenizer, model, dataset["test"], "test", 0, device)
+        # evaluate(args, tokenizer, model, dataset["test"], "test", 0, device)
 
 
 if __name__ == "__main__":
