@@ -389,6 +389,12 @@ results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl/639/
 results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl/852/
 results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl/1065/
 
+results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl_new/213/
+results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl_new/426/
+results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl_new/639/
+results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl_new/852/
+results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl_new/1065/
+
 results/qwen3/updated_span_0.6B_4B_Cypherbench_rkl/213/
 results/qwen3/updated_span_0.6B_4B_Cypherbench_rkl/426/
 results/qwen3/updated_span_0.6B_4B_Cypherbench_rkl/639/

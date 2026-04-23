@@ -32,7 +32,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl"
+SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl_new"
 # seed
 SEED=42
 
