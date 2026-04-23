@@ -32,14 +32,15 @@ EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_rkl"
+# SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_rkl"
+SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_rkl_2"
 # seed
 SEED=42
 
 # grounding loss weights
 # W_ATTN_LOSS=0.05
 # W_QUERY_LOSS=0.2
-W_REL_LOSS=1
+W_REL_LOSS=0.6
 # ATTN_LOSS_TYPE="mse"
 # QUERY_LOSS_TYPE="mse"
 GROUNDING_LOSS_CAP=1000000000
