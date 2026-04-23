@@ -390,8 +390,8 @@ def main():
 
         # Differentiate output file based on whether a custom ckpt was used
     # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}.json"
-    output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_updated_span_fkl.json"
-    # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_rkl.json"
+    # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_updated_span_fkl.json"
+    output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_updated_span_rkl.json"
     # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_sfkl.json"
     # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_csd.json"
     # output_path = Path(RESULTS_DIR) / args.benchmark / f"{db_name}_cyphers_result_{args.model.split('/')[-1]}_distill_distillm.json"
