@@ -136,6 +136,11 @@ def extract_text2cypher_span_items(cypher_query):
         body_start = clause_match.end()
         body_end = clause_matches[idx + 1].start() if idx + 1 < len(clause_matches) else len(cypher_query)
         body = cypher_query[body_start:body_end]
+        body_stripped = body.strip()
+        if body_stripped:
+            ws_left = len(body) - len(body.lstrip())
+            ws_right = len(body.rstrip())
+            add_span("clause_body", body_start + ws_left, body_start + ws_right)
 
         if clause_name in {"RETURN", "WITH", "ORDER BY"}:
             for local_start, local_end in _split_top_level_expressions(body):
