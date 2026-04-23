@@ -32,7 +32,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_fkl"
+SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_sfkl"
 # seed
 SEED=42
 
@@ -97,7 +97,7 @@ OPTS+=" --seed ${SEED}"
 OPTS+=" --deepspeed"
 OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config_fp16.json"
 # type
-OPTS+=" --type fkl"
+OPTS+=" --type sfkl"
 # gen
 OPTS+=" --do-sample"
 OPTS+=" --top-k 0"
