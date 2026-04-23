@@ -40,9 +40,6 @@ CLAUSE_PATTERN = re.compile(
 )
 NODE_PATTERN = re.compile(r"\([^()]*\)")
 REL_PATTERN = re.compile(r"<-\[[^\[\]]*\]-|-\[[^\[\]]*\]->|-\[[^\[\]]*\]-")
-ALIAS_PATTERN = re.compile(r"(?i)\bAS\s+([A-Za-z_][A-Za-z0-9_]*)")
-
-
 def _find_response_start(full_text, response_str):
     idx = full_text.find(response_str)
     if idx != -1:
@@ -155,26 +152,6 @@ def extract_text2cypher_span_items(cypher_query):
                 ws_left = len(body) - len(body.lstrip())
                 ws_right = len(body.rstrip())
                 add_span("expression", body_start + ws_left, body_start + ws_right)
-
-    for m in node_pattern_matches:
-        inner = cypher_query[m.start() + 1 : m.end() - 1]
-        var_match = re.match(r"\s*([A-Za-z_][A-Za-z0-9_]*)", inner)
-        if var_match:
-            add_span("variable_alias", m.start() + 1 + var_match.start(1), m.start() + 1 + var_match.end(1))
-
-    for m in rel_matches:
-        left_bracket = cypher_query.find("[", m.start(), m.end())
-        right_bracket = cypher_query.find("]", m.start(), m.end())
-        if left_bracket == -1 or right_bracket == -1:
-            continue
-        inner = cypher_query[left_bracket + 1 : right_bracket]
-        var_match = re.match(r"\s*([A-Za-z_][A-Za-z0-9_]*)", inner)
-        if var_match:
-            add_span("variable_alias", left_bracket + 1 + var_match.start(1), left_bracket + 1 + var_match.end(1))
-
-    for m in ALIAS_PATTERN.finditer(cypher_query):
-        add_span("variable_alias", m.start(), m.end())
-        add_span("variable_alias", m.start(1), m.end(1))
 
     unique = {}
     for item in span_items:
