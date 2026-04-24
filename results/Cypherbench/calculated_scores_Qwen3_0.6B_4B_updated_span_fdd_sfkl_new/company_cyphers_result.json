@@ -1,0 +1,3474 @@
+[
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Russia'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Russia'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasBoardMember]-(m0:Company) WITH DISTINCT n WHERE n.date_of_death > date('1940-05-05') RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasBoardMember]->(m1:Person) WITH DISTINCT n WHERE n.date_of_death > date('1940-05-05') RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasBoardMember]-(m0:Company) WITH DISTINCT n WHERE NOT 'Austria' IN n.country_of_citizenship RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Company'}) WITH DISTINCT n WHERE NOT 'Austria' IN n.country_OF_CITIZENS RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Agrofert'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Agrofert'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Norman Welsh'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)<-[r1:hasCEO]-(m1:Person {name: 'Norman Welsh'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Viacom'}) OPTIONAL MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Viacom'}) OPTIONAL MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Global Market Insite'}),(n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Global Market Insite'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundBy]-(m0:Company {name: 'Global Market Insite'}) AND (n:Person)<-[r1:hasCEO]-(m1:Company) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jason Jones'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jason Jones'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'publishing'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Nancy McKinstry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'publishing industry'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:hasCEO]-(m1:Person {name: 'Nancy McKinstry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Mercedes-AMG'}) WHERE r0.start_year <= 1999 AND (r0.end_year >= 1999 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company {name: 'Mercedes-AMG'}) WITH DISTINCT n RETURN n.hasCEO = true AND n.launch_year = 1999",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'John Alexander Thain'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'John Alexander Thain'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Best Buy'}) WHERE r0.start_year <= 2009 AND (r0.end_year >= 2009 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company {name: 'Best Buy'}), (m0:hasBoardMember) RETURN n.name DISTINCT FROM m0",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Novo Nordisk (Germany)'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Novo Nordisk (Germany)'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}), (m0:Company {name: 'Plaza & Janés'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
+    "pred_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}), (m0:Company {name: 'Plaza & Janés'}) RETURN CASE WHEN n.launch_year > m0.launch_year THEN n.name ELSE m0.name END AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Canada'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Canadian company'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'footwear industry'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'footwear'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Neal Harmon'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'VidAngel'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Neal Harmon'}) WITH DISTINCT n WHERE 'VidAngel' IN n.subspcies RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Boeing'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Company {name: 'Boeing'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Czech Republic'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'John'}) WITH DISTINCT n RETURN n.name, n.hasCEO",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Liberty Media'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Liberty Media'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Charles Prince'}) WHERE r0.start_year <= 2006 AND (r0.end_year >= 2006 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Charles Prince'}) WHERE r0.start_year <= 2006 AND (r0.end_year >= 2006 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Meta Platforms'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'video game industry'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'video game industry'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0003606202668589975
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'academic publishing'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasIndustry]->(m0:Industry {name: 'academic publishing industry'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Italy'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'ferrous metallurgy'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Italy'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'ferrous metallurgy'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Tikhon Bernstam'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:basedIn]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Tikhon Bernstam'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Marie-Etienne Nitot'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Marie-Etienne Nitot'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Groupe Flammarion'}) OPTIONAL MATCH (n:Company)-[r0:foundedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Groupe Flammarion'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.2
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Bret Taylor'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Bret Taylor'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'General Electric'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundBy]-(m0:Person)-[r1:hasBoardMember]->(m1:Company {name: 'General Electric'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person {name: 'Paul Stone'}) WITH DISTINCT n RETURN n.gender",
+    "pred_cypher": "MATCH (n:Person {name: 'Paul Stone'}) WITH DISTINCT n RETURN n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Andreas Sommer'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Ita Wegman'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Andreas Sommer'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundBy]->(m1:Company {name: 'Ita Wegman'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.6666666666666666
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company {name: 'PENAM'}) WITH DISTINCT n RETURN n.launch_year",
+    "pred_cypher": "MATCH (n:Company {name: 'PENAM'}) WITH DISTINCT n RETURN n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Gunnar Hordvik'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'EMI'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:foundBy]->(m0:Person {name: 'Gunnar Hordvik'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'EMI'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.041666666666666664
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Bardel Entertainment'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Bardel Entertainment'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Hiro Kamezawa'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Hiro Kamezawa'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Gerald Johnson'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'mechanical engineering'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Gerald Johnson'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'mechanical engineering'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'tyre industry'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'John'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company),(n:Person)<-[r1:foundedBy]-(m0:Company) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasCEO]->(m0:Company)-[r1:foundBy]->(m1:Company) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:foundedBy]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person)-[r1:hasCEO]->(m1:Company {name: 'hasCEO'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Novo Nordisk (Germany)'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Novo Nordisk (Germany)'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Mentor Graphics (Hungary)'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Company {name: 'Mentor Graphics (Hungary)'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.9999756649551018
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) OPTIONAL MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) OPTIONAL MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'BFM DICI Haute-Provence'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company {name: 'BFM DICI Haute-Provence'}) WITH DISTINCT n RETURN n.country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Peter Henry'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Peter Henry'}) WITH n, count(DISTINCT n) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person),(n:Company)-[r1:foundedBy]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasCEO]-(m1:Company) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6697834645669292
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Gerald Hassell'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Ralph J. Roberts'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Gerald Hassell'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:foundBy]-(m1:Person {name: 'Ralph J. Roberts'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'television'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'television'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person),(n:Company)-[r1:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person)-[r1:hasBoardMember]->(m1:Company) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'United Kingdom'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'United Kingdom'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Czech Media Invest'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Czech Media Invest'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Goldman Sachs'}),(n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Dell Inc.'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Goldman Sachs'}),(n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Dell Inc.'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Richard E. Snyder'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Richard E. Snyder'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'HSBC'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Singapore'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'HSBC'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Singapore'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Interscope Records'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Vincent Herbert'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Vincent Herbert'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Interscope Records'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Sirius XM'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Sirius XM'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:foundedBy]->(m0:Person) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Nederlandse Spoorwegen'}) OPTIONAL MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Nederlandse Spoorwegen'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Yasir Al-Rumayyan'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Yasir Al-Rumayyan'}) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'IT service management'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'IT service management'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'Howard Miller Clock Company'}),(n:Country)<-[r1:basedIn]-(m1:Company {name: 'Dynetics'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'Howard Miller Clock Company'}),(n:Country)<-[r1:basedIn]-(m1:Company {name: 'Dynetics'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Republic of Ireland'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:hasOpenedIn]->(m1:Industry) OPTIONAL MATCH (n:Company)-[r0:hasOpenedIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'phonographic industry'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'music industry'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC LIMIT 1",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'phonographic'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'music'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC LIMIT 3",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Sergey Brin'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Jambool'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:foundBy]->(m0:Person {name: 'Sergey Brin'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Jambool'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Patricia Barbizet'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Patricia Barbizet'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jan Nordlund'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Stefan Enberg'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:foundBy]->(m0:Person {name: 'Jan Nordlund'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundBy]->(m1:Person {name: 'Stefan Enberg'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Marianne Laigneau'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Marianlieau'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Italy'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Italy'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Mario Rossetti'}) WITH DISTINCT n RETURN min(n.launch_year)",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Mario Rossetti'}) WITH DISTINCT n RETURN min(n.launch_year)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundBy]->(m0:Person)<-[r1:hasCEO]-(m1:Company) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Simon Rogerson'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Simon Rogerson'}) WITH DISTINCT n RETURN n.name, n.country_of_citizenship",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'public relations'}) WITH DISTINCT n WHERE n.launch_year > 1927 RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasIndustry]->(m0:Industry {name: 'public relations'}) WITH DISTINCT n WHERE n.launch_year > 1927 RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Bertelsmann'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Alfred Hugenberg'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Bertelsmann'}),(n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Alfred Hugenberg'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'EMI'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'EMI'}) WITH n, count(DISTINCT m0) AS num RETURN n, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.13043478260869565
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r1:hasCEO]-(m1:Company {name: 'GitHub Inc.'}) OPTIONAL MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasCEO]->(m0:Company {name: 'GitHub Inc.'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company),(n:Person)<-[r1:foundedBy]-(m0:Company) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasCEO]->(m0:Company)-[r1:foundedBy]->(m1:Person) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company)-[r1:hasCEO]->(m1:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Best Buy'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company {name: 'Best Buy'}) WHERE n.date_of_birth IS NOT NULL AND n.date_of_birth IS NULL WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Amy Chang'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Amy Chang'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'phonographic industry'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Sony (United Kingdom)'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'phonographic industry'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Sony (United Kingdom)'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9968454258675079
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Richard K. Davis'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Richard K. Davis'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'jewelry industry'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country)<-[r0:belongsTo]-(m0:Company)-[r1:industry]->(m1:Industry {name: 'jewelry'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Paul Desmarais, Jr.'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Paul Desmarais, Jr.'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'CDP Reti'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Company {name: 'CDP Reti'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Parke-Davis'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Parke-Davis'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Bob Swan'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'electrical industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Bob Swan'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'electrical industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Emmett Shear'}) WITH DISTINCT n WHERE n.date_of_birth.year > 1982 RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundBy]-(m0:Company) WITH DISTINCT n WHERE n.date_of_birth.year > 1982 RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": {
+        "error": "execution_accuracy failed: {neo4j_code: Neo.ClientError.Statement.TypeError} {message: Type mismatch: expected a map but was String(\"1982-10-07\")} {gql_status: 22G03} {gql_status_description: error: data exception - invalid value type}"
+      },
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Meg Whitman'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Meg Whitman'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'John Alexander Thain'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'John Alexander Thain'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Audi AG'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Audi AG'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.07692307692307693
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'IBM'}) OPTIONAL MATCH (n:Company)-[r0:foundedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r1:hasCEO]-(m1:Person {name: 'IBM'}) OPTIONAL MATCH (n:Company)<-[r0:hasCEO]-(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Volkswagen Group'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Volkswagen Group'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.017543859649122806
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Campbell Soup Company'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Campbell Soup Company'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'General Motors'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company {name: 'General Motors'}) WHERE n.date_of_birth IS NOT NULL AND n.date_of_death IS NULL WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'banking industry'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'Mexico'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'banking'}) WITH DISTINCT n WHERE 'Mexico' IN n.country RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'electronics'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:Industry]->(m1:Industry {name: 'electronics'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company {name: 'On2 Technologies'}), (m0:Company {name: 'LaCie'}) RETURN n.launch_year - m0.launch_year AS answer",
+    "pred_cypher": "MATCH (n:Company {name: 'On2 Technologies'}), (m0:Company {name: 'LaCie'}) RETURN n.launch_year - m0.launch_year AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Makoto Uchida'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Nissan New Zealand'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Makoto Uchida'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Nissan New Zealand'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Oakpont Professionals'}),(n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Oakpont'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundBy]-(m0:Company {name: 'Oakpont Professionals'}),(n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Oakpont'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Adobe'}),(n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Eli Lilly and Company'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company {name: 'Adobe'}) RETURN n, m0 as m UNION MATCH (n:Person)-[r1:hasCEO]->(m1:Company {name: 'Eli Lilly and Company'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'rail transport'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'rail transport'}) OPTIONAL MATCH (n:Company)<-[r0:hasCEO]-(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.930032292787944
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.302066772655008
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'SIE Worldwide Studios'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Andy Gavin'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'SIE Worldwide Studios'}) WITH DISTINCT n WHERE n.hasCEO = 'Andy Gavin' RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'payment card industry'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'payment card'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'phonographic industry'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'phonographic industry'}) OPTIONAL MATCH (n:Company)<-[r0:hasCEO]-(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9692307692307692
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Republic of Ireland'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Republic of Ireland'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'business travel'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Nathan Blecharczyk'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Nathan Blecharczyk'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'business travel'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Ramon Laguarta'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Ramon Laguarta'}) WITH DISTINCT n WHERE n.country_of_citizenship = 'United States of America' RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Irene Dorner'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Irene Dorner'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'France'}) WITH DISTINCT n RETURN min(n.launch_year)",
+    "pred_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'France'}) WITH DISTINCT n RETURN min(n.launch_year)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Thierry Desmarest'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Marcel Champin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Thierry Desmarest'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:hasCEO]-(m1:Person {name: 'Marcel Champin'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}), (m0:Company {name: 'Plaza & Janés'}) RETURN n.launch_year - m0.launch_year AS answer",
+    "pred_cypher": "MATCH (n:Company {name: 'Fresenius Kabi (United States)'}), (m0:Company {name: 'Plaza & Janés'}) RETURN n.launch_year - m0.launch_year AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'David M. Solomon'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'David M. Solomon'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Marie-Etienne Nitot'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundBy]->(m0:Person {name: 'Marie-Etienne Nitot'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'media & entertainment industry'}) OPTIONAL MATCH (n:Company)-[r0:foundedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'media and entertainment'}) OPTIONAL MATCH (n:Company)<-[r0:hasCEO]-(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Sandra Lerner'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Okena'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Sandra Lerner'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Okena'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Mike Lazzo'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundBy]->(m1:Person {name: 'Mike Lazzo'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.9999756649551018
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person {name: 'Henry A. Clark'}), (m0:Person {name: 'Harvey Samuel Firestone'}) RETURN CASE WHEN n.date_of_death > m0.date_of_death THEN n.name ELSE m0.name END AS answer",
+    "pred_cypher": "MATCH (n:Person {name: 'Henry A. Clark'}), (m0:Person {name: 'Harvey Samuel Firestone'}) RETURN CASE WHEN n.date_of_death > m0.date_of_death THEN n.name ELSE m0.name END AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasCEO]->(m1:Person) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.19605204127411396
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Vista Equity Partners'}),(n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Vista Equity Partners'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasCEO]->(m0:Company {name: 'Vista Equity Partners'}),(n:Person)-[r1:foundBy]->(m1:Company) WITH DISTINCT n RETURN n.name, n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Twinkl'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Twinkl'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'HSBC'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'HSBC'}) WITH DISTINCT n RETURN n.name, n.foundedBy",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasCEO]->(m0:Company)-[r1:foundedBy]->(m1:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'High Moon Studios'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC",
+    "pred_cypher": "MATCH (n:Company)<-[r0:basedIn]-(m0:Company)<-[r1:basedIn]-(m1:Company {name: 'High Moon Studios'}) WITH DISTINCT n RETURN n.name ORDER BY n.start_year DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'H. J. Heinz Company'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'H. J. Heinz Company'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.14285714285714285
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company),(n:Person)<-[r1:hasCEO]-(m0:Company) WITH DISTINCT n WHERE n.place_of_birth <> 'Taipei' RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'CEO'}) WITH DISTINCT n WHERE NOT 'Taipei' IN n.date_of_birth RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'The Coca-Cola Company'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC LIMIT 1",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'The Coca-Cola Company'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC LIMIT 1",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'mobile phone industry'}) OPTIONAL MATCH (n:Company)-[r0:basedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'mobile phone'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Heinrich von Pierer'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Heinrich von Pierer'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Oakpont'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Bell Resources'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Person)-[r0:foundBy]->(m0:Company {name: 'Oakpont'}) RETURN n, m0 as m UNION MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Bell Resources'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Twinkl'}) WITH DISTINCT n WHERE n.place_of_birth = 'Huntingdon' RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)-[r0:foundBy]->(m0:Company {name: 'Twinkl'}),(n:Person)-[r1:hasBirthday]->(m1:date) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'John Alexander Thain'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundedBy]-(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'John Alexander Thain'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'Norwegian Air International'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Company {name: 'Norwegian Air International'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Gaurdie Banister'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Samuel R. Allen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Gaurdie Banister'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Samuel R. Allen'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Marianne Laigneau'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Marianne Laigneau'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Doug McMillon'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Doug McMillon'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'film industry'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'film industry'}) OPTIONAL MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9674657534246576
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Canada'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Company)-[r1:hasSubdirectory]->(m1:Company {name: 'Canadian-based'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Latvijas Gāze'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Latvijas Gōias'}) WITH DISTINCT n RETURN n.name JOIN n WITH DISTINCT m0 RETURN m0.name",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Russia'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'Netherlands'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Russia'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'Netherlands'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'hotel industry'}) OPTIONAL MATCH (n:Company)-[r0:basedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'hotel industry'}) WITH DISTINCT n RETURN n.name, n.count",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.8125
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Risa Lavizzo-Mourey'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Risa Lavizzo-Mourey'}) OPTIONAL MATCH (n:Company)<-[r1:hasCEO]-(m1:Person) WITH n, count(DISTINCT m1) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Roberto Setúbal'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Roberto Setâbal'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Marcel Renault'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:foundedBy]->(m1:Company {name: 'Marcel Renault'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Russia'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Russia'}) OPTIONAL MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9957347809228383
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Republic of Ireland'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:hasCEO]->(m1:Person) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.004498106060606061
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Disney Platform Distribution'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)<-[r1:basedIn]-(m1:Company {name: 'Disney Platform Distribution'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: '3SHAPE HOLDING'}),(n:Person)<-[r1:foundedBy]-(m1:Company {name: '3Shape'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: '3SHAPE HOLDING'}),(n:Person)<-[r1:foundBy]-(m1:Company {name: '3SHAPE'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Foxconn'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Foxconn'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Czech Republic'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Czech Republic'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Campbell Soup Company'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Campbell Soup Company'}) WITH DISTINCT n RETURN n.name, n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundBy]-(m0:Company)<-[r1:hasCEO]-(m1:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Nike'}) OPTIONAL MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Nike'}) OPTIONAL MATCH (n:Person)-[r0:hasCEO]->(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'AT&T'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person)-[r1:hasCEO]->(m1:Company {name: 'AT&T'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Stefan Hartung'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Bosch (China) Investment'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Stefan Hartung'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Bosch (China) Investment'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.6666666666666666
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Seznam.cz'}) WITH DISTINCT n WHERE n.date_of_birth = date('1974-02-07') RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasCEO]->(m0:Company {name: 'Seznam.cz'}) WITH DISTINCT n WHERE n.date_of_birth.year = 1974 AND n.date_of_birth.date >= date('1974-02-07') AND n.date_of_birth.date <= date('1974-02-07') RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Ford Motor Company'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Deere & Company'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company {name: 'Ford Motor Company'}) RETURN n, m0 as m UNION MATCH (n:Person)-[r1:hasCEO]->(m1:Company {name: 'Deere & Company'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'GE Healthcare'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'GE Healthcare'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.2
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person),(n:Company)-[r1:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundBy]-(m0:Person)<-[r1:hasBoardMember]-(m1:Company) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Lampiris'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Lampiris'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'leisure industries'}) WITH DISTINCT n WHERE n.place_of_birth = 'Addis Ababa' RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasIndustry]->(m1:Industry {name: 'leisure industry'}) WITH DISTINCT n WHERE n.place_of_birth = 'Addis Abaya' RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'France'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'France'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Samuel Whitbread'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Alison Brittain'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:foundBy]->(m0:Person {name: 'Samuel Whitbread'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:hasCEO]-(m1:Person {name: 'Alison Brittain'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Tennman Records'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundBy]-(m0:Company {name: 'Tennman Records'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'human resource management'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasSubidiary]->(m0:Company)-[r1:hasIndustry]->(m1:Industry {name: 'human resource management'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Cisco'}) OPTIONAL MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Cisco'}) OPTIONAL MATCH (n:Person)-[r0:hasCEO]->(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'CCH'}),(n:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Adobe'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'CCH'}),(n:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Adobe'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'General Motors'}) WHERE r0.start_year <= 2015 AND (r0.end_year >= 2015 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company {name: 'General Motors'}) WITH DISTINCT n RETURN n.name, n.hasBoardMember",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.125
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Cisco'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'General Motors'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company {name: 'Cisco'}) RETURN n, m0 as m UNION MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'General Motors'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'David C. Page'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Indra Nooyi'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'David C. Page'}) WITH DISTINCT n WHERE n.hasCEO = 'Indra Nooyi' RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'General Motors'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person)-[r1:hasCEO]->(m1:Company {name: 'General Motors'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Mapbox'}) OPTIONAL MATCH (n:Person)<-[r0:foundedBy]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Mapbox'}) OPTIONAL MATCH (n:Person)-[r0:foundBy]->(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Rolls-Royce (Sweden)'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Rolls-Royce (Sweden)'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'General Electric'}) WHERE r0.start_year <= 2001 AND (r0.end_year >= 2001 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company {name: 'General Electric'}) WITH DISTINCT n RETURN n.hasCEO",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.3333333333333333
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Mitsubishi'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'M Mitsubishi'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Jeffrey O. Henley'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Larry Ellison'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Jeffrey O. Henley'}),(n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Larry Ellison'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Fiat'}),(n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Abarth'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Fiat'}),(n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Abarth'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'Frigidaire'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundBy]-(m0:Person)-[r1:foundBy]->(m1:Company {name: 'Frigidaire'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company {name: 'On2 Technologies'}), (m0:Company {name: 'LaCie'}) RETURN n.launch_year = m0.launch_year AS answer",
+    "pred_cypher": "MATCH (n:Company {name: 'On2 Technologies'}), (m0:Company {name: 'LaCie'}) RETURN n.launch_year = m0.launch_year AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Industry) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'academic publishing'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'academic publishing'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Jack J. Pelton'}) WHERE r0.start_year <= 2003 AND (r0.end_year >= 2003 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Jack J. Pelton'}) WHERE r0.start_year <= 2003 AND (r0.end_year >= 2003 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Marvel Entertainment'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Marvel Music'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Marvel Entertainment'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Marvel Music'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Société Générale'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Societé Générale'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person),(n:Company)-[r1:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC LIMIT 1",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person)-[r1:hasBoardMember]->(m1:Company) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC LIMIT 1",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person {name: 'Dan Schulman'}), (m0:Person {name: 'Ivo Lukačovič'}) RETURN CASE WHEN n.date_of_birth > m0.date_of_birth THEN n.name ELSE m0.name END AS answer",
+    "pred_cypher": "MATCH (n:Person {name: 'Dan Schulman'}), (m0:Person {name: 'Ivo Lukačavec'}) RETURN CASE WHEN n.date_of_birth > m0.date_of_birth THEN n.name ELSE m0.name END AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'petroleum industry'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'petroleum'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Mark Zuckerberg'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Mark Zuckerberg'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Henry A. Wallace'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'DuPont'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundBy]->(m0:Company {name: 'Henry A. Wallace'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'DuPont'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Boeing'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Boeing'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Brian Krzanich'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Lip-Bu Tan'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Brian Krzanich'}) OPTIONAL MATCH (n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Lip-Bu Tan'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'software industry'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Juha Varelius'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'software industry'}),(n:Company)<-[r1:hasCEO]-(m1:Person {name: 'Juha Varelius'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Walmart'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Walmart'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Person)-[r0:hasCEO]->(m0:Company {name: 'Walmart'}) RETURN n, m0 as m UNION MATCH (n:Person)-[r1:foundedBy]->(m1:Company) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'J Sainsbury'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Mike Coupe'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'J Sainsbury'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:hasCEO]-(m1:Person {name: 'Mike Coupe'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.date_of_birth > date('1962-04-21') RETURN n.name",
+    "pred_cypher": "MATCH (n:Person) WITH DISTINCT n WHERE n.date_of_birth > date('1962-04-21') RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jérôme Hatt'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jéréome Hatt'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'John Mackey'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'John Mackey'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Seznam.cz'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Seznam.cz'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Nancy McKinstry'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Nancy McKinstry'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'ADOR'}) RETURN n, m0 as m UNION MATCH (n:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Siengdee Thaweesuk'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'ADOR'}) RETURN n, m0 as m UNION MATCH (n:Industry)<-[r1:operatesIn]-(m1:Company {name: 'Siengdee Thaweesuk'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Netherlands'}) WITH DISTINCT n WHERE n.launch_year > 1969 RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Netherlands'}) WITH DISTINCT n WHERE n.launch_year > 1969 RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person {name: 'Christine E. Seidman'}), (m0:Person {name: 'Wojciech Jasiński'}) RETURN n.gender = m0.gender AS answer",
+    "pred_cypher": "MATCH (n:Person {name: 'Christine E. Seidman'}), (m0:Person {name: 'Wojciech Jasičí'}) RETURN n.gender = m0.gender AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: '3SHAPE HOLDING'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: '3SHAPE HOLDING'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Lampiris'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Lampiris'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'public relations'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'public relations'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person {name: 'Henry VIII of England'}) WITH DISTINCT n RETURN n.gender",
+    "pred_cypher": "MATCH (n:Person {name: 'Henry VIII of England'}) WITH DISTINCT n RETURN n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'Courrèges'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person)-[r1:foundedBy]->(m1:Company {name: 'Courrèges'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person),(n:Company)-[r1:foundedBy]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC LIMIT 1",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasCEO]-(m1:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC LIMIT 5",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Czech News Center'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Czech News Center'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Nancy McKinstry'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Nancy McKinstry'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'logistics'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Christiana Smith Shi'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'logistics'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Christiana Smith Shi'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.9968253968253968
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Bob Chapek'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Roy O. Disney'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Bob Chapek'}),(n:Company)-[r1:foundedBy]->(m1:Company {name: 'Roy O. Disney'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Jason Kapalka'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Jason Kapalka'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Tennman Records'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Tennman Records'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasCEO]->(m0:Company) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH DISTINCT n RETURN min(n.launch_year)",
+    "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Husten'}) WITH DISTINCT n RETURN min(n.launch_year)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Hewlett Packard Enterprise'}),(n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Hewlett Packard Enterprise'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Hewlett Packard Enterprise'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6666666666666666
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person),(n:Company)-[r1:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundedBy]-(m0:Person)<-[r1:hasBoardMember]-(m1:Company) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'HP Inc.'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person)-[r1:hasBoardMember]->(m1:Company {name: 'HP Inc.'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Doug McMillon'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death DESC",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Doug McMillon'}) WITH DISTINCT n RETURN n.name, n.hasBoardMember",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.15384615384615385
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company),(n:Person)<-[r1:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)<-[r1:hasBoardMember]-(m1:Person) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC LIMIT 1",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Owen D. Young'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'electronics industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:foundBy]->(m0:Person {name: 'Owen D. Young'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'electronics'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.00641025641025641
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Netherlands'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Fremantle'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Netherlands'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Fremantle'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'chemical industry'}) OPTIONAL MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'chemical industry'}) OPTIONAL MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.9127086007702182
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'entertainment industry'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Disney Digital Network'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'entertainment'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Disney Digital Network'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'KLM'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person)-[r1:hasFounder]->(m1:Company {name: 'KLM'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'James E. Casey'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:foundedBy]->(m1:Company {name: 'James E. Casey'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Gazprom'}) OPTIONAL MATCH (n:Company)-[r0:basedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Gazprom'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.7419354838709677
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Jean-François van Boxmeer'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Jean-François van Boxmeer'}) WITH DISTINCT n RETURN n.name, n.foundedBy",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'England'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'England'}) WITH DISTINCT n RETURN n.name, n.hasCEO",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.09836065573770492
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Jacob Schram'}) OPTIONAL MATCH (n:Company)-[r0:basedIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Jacob Schram'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Country) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6666666666666666
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Harvey C. Jones'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'semiconductor industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Harvey C. Jones'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'semiconductor'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.01834862385321101
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company) WITH DISTINCT n WHERE n.launch_year < 1868 RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH DISTINCT n WHERE n.launch_year < 1868 RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.15447154471544716
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Sony Corporation of America'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Sony Music Entertainment (Norway) AS'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Sony Corporation of America'}),(n:Company)<-[r1:hasCEO]-(m1:Company {name: 'Sony Music Entertainment (Norway) AS'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Garmin (United Kingdom)'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Garmin (United Kingdom)'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'France'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundBy]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'France'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Walgreens Boots Alliance'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'Walgreens Boots Alliance'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.8
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Ericsson'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'Netherlands'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Ericsson'}) WITH DISTINCT n WHERE 'Netherlands' IN n.country RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'People\\'s Republic of China'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'People\\'s Republic of China'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'mass media'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Mark Palmer'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'mass media'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundBy]->(m1:Person {name: 'Mark Palmer'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.9979757085020243
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Country) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'metal industry'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'metal industry'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Société Générale'}) WITH DISTINCT n WHERE n.place_of_birth <> 'Saint-Dizier' RETURN n.name",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company {name: 'Societé Générale'}) WITH DISTINCT n WHERE n.date_of_birth <> date('1980-05-06') RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Renault Korea Motors'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Nissan Motor Co. Ltd.'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasSubdirectory]->(m0:Company {name: 'Renault Korea Motors'}),(n:Company)-[r1:hasSubdirectory]->(m1:Company {name: 'Nissan Motor Co. Ltd.'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year ASC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Daniel Yohannes'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Daniel Yohannes'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Andrej Babiš'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Agrofert'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Andrej Babičí'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Agrofert'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person {name: 'Charles Edelstenne'}), (m0:Person {name: 'Alessandro Perrone'}) RETURN n.gender = m0.gender AS answer",
+    "pred_cypher": "MATCH (n:Person {name: 'Charles Edelstenne'}), (m0:Person {name: 'Alessandro Perrone'}) RETURN n.gender = m0.gender AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Steve Jobs'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Bob Iger'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundedBy]-(m0:Person {name: 'Steve Jobs'}) WITH DISTINCT n WHERE 'Bob Iger' IN n.hasBoardMember RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Hartmut Mehdorn'}) WHERE r0.start_year <= 2009 AND (r0.end_year >= 2009 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Hartmut Mehdorn'}) WHERE r0.start_year <= 2009 AND (r0.end_year >= 2009 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person {name: 'Marie Krogh'}), (m0:Person {name: 'Ron W. Miller'}) RETURN CASE WHEN n.date_of_death > m0.date_of_death THEN n.name ELSE m0.name END AS answer",
+    "pred_cypher": "MATCH (n:Person {name: 'Marie Krogh'}), (m0:Person {name: 'Ron W. Miller'}) RETURN CASE WHEN n.date_of_death > m0.date_of_death THEN n.name ELSE m0.name END AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Wolters Kluwer Health'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Wolters Kluwer Health'}) WITH DISTINCT n RETURN n.name, n.date_of_death",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'retail'}),(n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Tim Cook'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'retail industry'}),(n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Tim Cook'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Industry) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Hewlett-Packard'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'HP Software Division'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Person)<-[r0:foundBy]-(m0:Company {name: 'Hewlett-Packard'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:foundBy]-(m1:Company {name: 'HP Software Division'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person {name: 'Henry VIII of England'}) WITH DISTINCT n RETURN n.place_of_birth",
+    "pred_cypher": "MATCH (n:Person {name: 'Henry VIII of England'}) WITH DISTINCT n RETURN n.place_of_birth",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC LIMIT 1",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC LIMIT 1",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Chrysler UK'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Chrysler UK'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.6666666666666666
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Tesla, Inc.'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundBy]-(m0:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Tesla, Inc.'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person {name: 'Kurt Kokhauge Larsen'}), (m0:Person {name: 'Pavel Baudiš'}) RETURN CASE WHEN n.date_of_birth > m0.date_of_birth THEN n.name ELSE m0.name END AS answer",
+    "pred_cypher": "MATCH (n:Person {name: 'Kurt Kokhauge Larsen'}), (m0:Person {name: 'Pavel BaudiŎií'}) RETURN CASE WHEN n.date_of_birth > m0.date_of_birth THEN n.name ELSE m0.name END AS answer",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'James A. Bell'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'James A. Bell'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'hospitality industry'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Raffles Hotels & Resorts'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'health and hospitality'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Raffles Hotels & Resorts'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'The Coca-Cola Company'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'The Coca-Cola Company'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_birth DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Lexicon'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Lexicon'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Dell Technologies'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Dell Technologies'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Leslie Ireland'}) WHERE r0.start_year <= 2017 AND (r0.end_year >= 2017 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Leslie Ireland'}) WHERE r0.start_year <= 2017 AND (r0.end_year >= 2017 OR r0.end_year IS NULL) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'Broderbund'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundBy]-(m0:Person)-[r1:hasCEO]->(m1:Company {name: 'Broderbund'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Bell Resources'}) OPTIONAL MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company {name: 'Bell Resources'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Anthony Earley'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'John S. Gray'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Anthony Earley'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'John S. Gray'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Czech News Center'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Czech News Center'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Bobby Kotick'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Bobby Kotick'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Brazil'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Brazil'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Harry Williams'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Harry Williams'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Foxconn'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company {name: 'Foxconn'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Merck & Co.'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Merck & Co.'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Person)-[r0:hasCEO]->(m0:Company {name: 'Merck & Co.'}) RETURN n, m0 as m UNION MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Merck & Co.'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person)-[r1:hasBoardMember]->(m1:Company) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Apple'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Company)<-[r1:hasBoardMember]-(m1:Company {name: 'Apple'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'media industry'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Sky Mobile'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'media'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Sky Mobile'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.00851063829787234
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'Lionsgate'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundBy]->(m0:Person)<-[r1:foundBy]-(m1:Company {name: 'Lionsgate'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Rich Hume'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Rich Hume'}) WITH DISTINCT n WHERE 'United States of America' IN n.country RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Steve Jobs'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Jerry York'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Steve Jobs'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Jerry York'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.75
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Bobby Mehta'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Sears'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Bobby Mehta'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Sears'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'extraction of petroleum'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'petroleum extraction'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Italy'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'retail'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred_cypher": "MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'retail industry'}),(n:Company)-[r1:basedIn]->(m1:Country {name: 'Italy'}) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH DISTINCT n WHERE n.launch_year < 1907 RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH DISTINCT n WHERE n.launch_year < 1907 RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Switzerland'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Georges Favre-Jacot'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'Switzerland'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Georges Favre-Jacot'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Albert Bourla'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Albert Bourla'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.13333333333333333
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Georg von Arco'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Georg von Arco'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Mandalay Television'}),(n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Mandalay Entertainment'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundBy]-(m0:Company {name: 'Malanday Television'}),(n:Person)<-[r1:foundBy]-(m1:Company {name: 'Malanday Entertainment'}) WITH DISTINCT n RETURN n.name, n.date_of_birth",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r1:hasCEO]-(m1:Company {name: 'McDonald’s'}) OPTIONAL MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)-[r1:hasCEO]->(m1:Company {name: 'McDonald\\'s'}) OPTIONAL MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'SpaceX'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company {name: 'SpaceX'}) WITH DISTINCT n RETURN n.name WHERE n.hasCEO IS TRUE",
+    "metrics": {
+      "executable": 0.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Hersch Klaff'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'United Supermarkets'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Hersch Klaff'}),(n:Company)-[r1:operatesIndustry]->(m1:Industry {name: 'United Supermarkets'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Teva- Pharmaceutical Industries Ltd.'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Person {name: 'Teva Pharmaceutical Industries Ltd.'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Leslie Ireland'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Leslie Ireland'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person),(n:Company)-[r1:hasCEO]->(m0:Person) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person)-[r1:hasBoardMember]->(m1:Company) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company),(n:Person)<-[r1:foundedBy]-(m0:Company) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company)-[r1:foundBy]->(m1:Company {name: 'and'}),(n:Person)-[r1:hasBoardMember]->(m1:Company) WITH DISTINCT n UNWIND n.country_of_citizenship AS prop RETURN DISTINCT prop",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:hasCEO]->(m1:Person) OPTIONAL MATCH (n:Company)-[r0:hasCEO]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.007888167748377434
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Disney Platform Distribution'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Disney Platform Distribution'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.5
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Person)<-[r0:foundedBy]-(m0:Company {name: 'Saxo Bank A/S'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:hasCEO]-(m1:Company {name: 'Saxo Bank A/S'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Person)<-[r0:hasCEO]-(m0:Company {name: 'Saxo Bank A/S'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Saxo Bank A/S'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:hasCEO]->(m1:Person {name: 'Sundar Pichai'}) OPTIONAL MATCH (n:Company)-[r0:foundedBy]->(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r1:hasCEO]-(m1:Person {name: 'Sundar Pichai'}) OPTIONAL MATCH (n:Company)<-[r0:foundBy]-(m0:Person) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Hiroto Saikawa'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Carlos Ghosn'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Hiroto Saikawa'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Carlos Ghosn'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Leon Black'}),(n:Company)-[r1:hasCEO]->(m1:Person {name: 'Leon Black'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Leon Black'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Paul Desmarais, Jr.'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Paul Desmarais, Jr.'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'human resource management'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'human resource management industry'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'powertrain technology'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'electrical industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:operatesIn]->(m0:Industry {name: 'powertrain technology'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'electrical industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Jamie Dimon'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Jamie Dimon'}) WHERE r0.start_year IS NOT NULL AND r0.end_year IS NULL WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'ice cream manufacturer'}) OPTIONAL MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'ice cream manufacturing'}) OPTIONAL MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Larry Rossy'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:foundBy]->(m1:Company {name: 'Larry Rossy'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Jack Rogers'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'William R. Johnson'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:hasCEO]-(m0:Person {name: 'Jack Rogers'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'William R. Johnson'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Berkshire Hathaway'}) OPTIONAL MATCH (n:Person)<-[r0:foundedBy]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Beverham Berkshire Hathaway'}) OPTIONAL MATCH (n:Person)-[r0:foundBy]->(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Vivek Sankaran'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Vivek Sankaran'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Drake'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: '40'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundBy]-(m0:Person {name: 'Drake'}),(n:Company)<-[r1:foundBy]-(m1:Person {name: '40'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Adidas AG'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'textile industry'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Adidas AG'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:operatesIn]->(m1:Industry {name: 'textile'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.008839779005524863
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Belén Garijo'}),(n:Company)-[r1:foundedBy]->(m1:Person {name: 'Heinrich Emanuel Merck'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Belén Garijo'}),(n:Company)-[r1:foundBy]->(m1:Company {name: 'Heinrich Emanuel Merck'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Jerry Perenchio'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Jerry Perenchio'}) OPTIONAL MATCH (n:Company)-[r0:operatesIn]->(m0:Industry) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jérôme Hatt'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Jéréome Hatt'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:foundedBy]-(m1:Company {name: 'DreamWorks'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundBy]-(m0:Person)-[r1:foundBy]->(m1:Company {name: 'DreamWorks'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r1:hasBoardMember]-(m1:Company {name: 'Goldman Sachs'}) OPTIONAL MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)-[r1:hasBoardMember]->(m1:Company {name: 'Goldman Sachs'}) OPTIONAL MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Redcats'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Ginori 1735'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Redcats'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Ginori 1735'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:foundedBy]->(m1:Person {name: 'Samuel van den Bergh'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:foundBy]->(m1:Company {name: 'Samuel van den Bergh'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Jiří Paták'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Czech Republic'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Jičír Patík'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'Czech Republic'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.9999575929773971
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Juan José Martínez García'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'computer security'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Company)-[r0:foundBy]->(m0:Person {name: 'Juan José Martánez Garcia'}),(n:Company)-[r1:operatesIn]->(m1:Industry {name: 'computer security'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Tim Cook'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death ASC",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person {name: 'Tim Cook'}) WITH DISTINCT n RETURN n.name ORDER BY n.date_of_death ASC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company),(n:Person)<-[r1:hasBoardMember]-(m0:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (n:Person)-[r0:hasCEO]->(m0:Company)<-[r1:hasBoardMember]-(m1:Company) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasSubdirectory]->(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Australia'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Roberto Setúbal'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "pred_cypher": "MATCH (n:Person)<-[r0:foundedBy]-(m0:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Roberto Setâbal'}) WITH DISTINCT n RETURN DISTINCT n.gender",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Switzerland'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country)<-[r0:hasROC]-(m0:Company)-[r1:basedIn]->(m1:Country {name: 'Switzerland'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person) WITH DISTINCT n RETURN n.name ORDER BY n.launch_year DESC",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'Take-Two Interactive'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:foundedBy]->(m1:Person {name: 'Sam Houser'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'Take-Two Interactive'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:foundBy]-(m1:Person {name: 'Sam Houser'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'Škoda Praha'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'Škoda Praha'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Tidjane Thiam'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'UBS'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:hasCEO]->(m0:Company {name: 'Tidjane Thiam'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'UBS'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Thomas Horton'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Compagnia Generale di Elettricità'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person {name: 'Thomas Horton'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Compagnia Generale di Elettricità'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.75
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'Agrofert'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:basedIn]-(m1:Company {name: 'Amazon Logistic Prague'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Country)<-[r0:basedIn]-(m0:Company {name: 'Agrofert'}) RETURN n, m0 as m UNION MATCH (n:Country)<-[r1:basedIn]-(m1:Company {name: 'Amazon Logistic Prague'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'educational technology'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:operatesIn]->(m1:Industry {name: 'educational technology'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 1.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)<-[r1:subsidiaryOf]-(m1:Company {name: 'Domino\\'s Pizza Group plc'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "pred_cypher": "MATCH (n:Company)-[r0:basedIn]->(m0:Country {name: 'United States of America'}),(n:Company)-[r1:operatesIn]->(m1:Company {name: 'Domino\\'s Pizza Group plc'}) WITH DISTINCT n RETURN n.name, n.launch_year",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:foundedBy]->(m0:Person {name: 'Eytan Elbaz'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Company)-[r0:foundBy]->(m0:Person {name: 'Eytan Elbaz'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:basedIn]->(m1:Country {name: 'United States of America'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.9999756649551018
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company)-[r1:hasCEO]->(m1:Person {name: 'Ulrich Bez'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "pred_cypher": "MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company)-[r1:hasCEO]->(m1:Company {name: 'Ulrich Bez'}) WITH DISTINCT n RETURN count(DISTINCT n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:foundedBy]->(m0:Person)<-[r1:hasCEO]-(m1:Company {name: 'Dreamhaven'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Company)<-[r0:foundBy]-(m0:Person)-[r1:hasCEO]->(m1:Company {name: 'Dreamhaven'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company {name: 'Bell Resources'}) RETURN n, m0 as m UNION MATCH (n:Person)<-[r1:foundedBy]-(m1:Company {name: 'Bell Property Group'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "pred_cypher": "CALL { MATCH (n:Person)-[r0:hasBoardMember]->(m0:Company {name: 'Bell Resources'}) RETURN n, m0 as m UNION MATCH (n:Person)-[r1:foundedBy]->(m1:Company {name: 'Bell Property Group'}) RETURN n, m1 as m } WITH DISTINCT n RETURN count(n)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: '2K Games'}) WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "MATCH (n:Industry)<-[r0:operatesIn]-(m0:Company)<-[r1:subsidiaryOf]-(m1:Company {name: '2K Games'}) WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 1.0,
+      "psjs": 0.25
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasCEO]-(m0:Company)-[r1:subsidiaryOf]->(m1:Company {name: 'Vinci'}) WITH DISTINCT n RETURN n.name, n.place_of_birth",
+    "pred_cypher": "MATCH (n:Company)-[r0:hasCEO]->(m0:Person {name: 'Vinci'}),(n:Company)-[r1:subsidiaryOf]->(m1:Company) WITH DISTINCT n RETURN n.name, n.place_of_birth",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Kjeld Kirk Kristiansen'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "pred_cypher": "MATCH (n:Person)<-[r0:hasBoardMember]-(m0:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Kjeld Kirk Kristiansen'}) WITH n, count(DISTINCT m0) AS num RETURN n.name, num",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "CALL { MATCH (n:Company)-[r0:subsidiaryOf]->(m0:Company {name: 'DuPont'}) RETURN n, m0 as m UNION MATCH (n:Company)-[r1:hasBoardMember]->(m1:Person {name: 'Ajaypal Singh Banga'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "pred_cypher": "CALL { MATCH (n:Company)<-[r0:subsidiaryOf]-(m0:Company {name: 'DuPont'}) RETURN n, m0 as m UNION MATCH (n:Company)<-[r1:hasBoardMember]-(m1:Person {name: 'Ajaypal Singh Banga'}) RETURN n, m1 as m } WITH DISTINCT n RETURN n.name",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  },
+  {
+    "graph": "company",
+    "gold_cypher": "MATCH (n:Company)-[r0:hasBoardMember]->(m0:Person) WITH DISTINCT n RETURN max(n.launch_year)",
+    "pred_cypher": "MATCH (n:Company)<-[r0:hasBoardMember]-(m0:Person) WITH DISTINCT n RETURN max(n.launch_year)",
+    "metrics": {
+      "executable": 1.0,
+      "execution_accuracy": 0.0,
+      "psjs": 0.0
+    }
+  }
+]
