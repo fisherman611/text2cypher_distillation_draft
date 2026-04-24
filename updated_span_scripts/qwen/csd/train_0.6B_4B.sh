@@ -32,8 +32,7 @@ EPOCHS=5
 # length
 MAX_LENGTH=892
 # runtime
-# SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_fdd_sfkl"   #default kd_ratio 0.5
-SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_fdd_sfkl_new"
+SAVE_PATH="${BASE_PATH}/results/qwen3/updated_span_0.6B_4B_Cypherbench_csd_new"
 # seed
 SEED=42
 
@@ -41,7 +40,6 @@ SEED=42
 W_REL_LOSS=1
 GROUNDING_LOSS_CAP=1000000000
 GROUNDING_WARMUP_STEPS=1
-
 
 OPTS=""
 # model
@@ -68,12 +66,11 @@ OPTS+=" --lr-decay-style cosine"
 OPTS+=" --weight-decay 1e-2"
 OPTS+=" --clip-grad 1.0"
 OPTS+=" --epochs ${EPOCHS}"
-OPTS+=" --kd-ratio 0.5"
+OPTS+=" --kd-ratio 0.7"
 # grounding loss
 OPTS+=" --w-rel-loss ${W_REL_LOSS}"
 OPTS+=" --grounding-loss-cap ${GROUNDING_LOSS_CAP}"
 OPTS+=" --grounding-warmup-steps ${GROUNDING_WARMUP_STEPS}"
-OPTS+=" --fdd-weight 0.05"
 # length
 OPTS+=" --max-length ${MAX_LENGTH}"
 OPTS+=" --max-prompt-length 797"
@@ -92,7 +89,7 @@ OPTS+=" --seed ${SEED}"
 OPTS+=" --deepspeed"
 OPTS+=" --deepspeed_config ${BASE_PATH}/configs/deepspeed/ds_config_fp16.json"
 # type
-OPTS+=" --type sfkl"
+OPTS+=" --type csd"
 # gen
 OPTS+=" --do-sample"
 OPTS+=" --top-k 0"
@@ -111,15 +108,12 @@ OPTS+=" --peft-lora-r 32"
 OPTS+=" --peft-lora-alpha 64"
 OPTS+=" --peft-lora-dropout 0.1"
 
-OPTS+=" --teacher_layer_mapping 11 23"
-OPTS+=" --student_layer_mapping 9 18"
-
 
 export NCCL_DEBUG=""
 export WANDB_DISABLED=True
 export TF_CPP_MIN_LOG_LEVEL=3
 export PYTHONPATH=${BASE_PATH}
-CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/updated_fdd_finetune.py ${OPTS} $@"
+CMD="torchrun ${DISTRIBUTED_ARGS} ${BASE_PATH}/updated_finetune.py ${OPTS} $@"
 
 echo ${CMD}
 echo "PYTHONPATH=${PYTHONPATH}"
