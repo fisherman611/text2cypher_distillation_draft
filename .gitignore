@@ -437,6 +437,11 @@ results/qwen3/updated_span_0.6B_4B_Cypherbench_fdd_srkl_new/639/
 results/qwen3/updated_span_0.6B_4B_Cypherbench_fdd_srkl_new/852/
 results/qwen3/updated_span_0.6B_4B_Cypherbench_fdd_srkl_new/1065/
 
+results/qwen3/updated_span_0.6B_4B_Cypherbench_csd_new/213/
+results/qwen3/updated_span_0.6B_4B_Cypherbench_csd_new/426/
+results/qwen3/updated_span_0.6B_4B_Cypherbench_csd_new/639/
+results/qwen3/updated_span_0.6B_4B_Cypherbench_csd_new/852/
+results/qwen3/updated_span_0.6B_4B_Cypherbench_csd_new/1065/
 
 distill_results/
 benchmarks.zip
